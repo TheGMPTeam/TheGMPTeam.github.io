@@ -16,17 +16,27 @@
     function stop(){
       var f=car.querySelector('.slide .thumb iframe');
       if(f) f.remove();
+      var b=car.querySelector('.slide .mute-btn');
+      if(b) b.remove();
     }
     function render(){
       slides.forEach(function(s,i){
         var off=i-cur;
         if(off===0){
-          s.style.transform='translate3d(0,0,0) scale(0.94)';
+          s.style.transform='translate3d(0,0,0)';
           s.style.opacity='1';
         } else {
           var mag=Math.abs(off);
-          s.style.transform='translate3d('+(off*62)+'%,0,'+(-mag*220)+'px) rotateY('+(off*32)+'deg) scale(0.8)';
-          s.style.opacity=mag===1?'0.45':(mag===2?'0.15':'0');
+          if(mag<=2){
+            var sgn=off>0?1:-1;
+            var x=mag===1?52:98, z=mag===1?-100:-260, rot=mag===1?34:50;
+            s.style.transform='translate3d('+(sgn*x)+'%,0,'+z+'px) rotateY('+(sgn*rot)+'deg)';
+            s.style.opacity=mag===1?'0.55':'0.3';
+          } else {
+            var sgn2=off>0?1:-1;
+            s.style.transform='translate3d('+(sgn2*120)+'%,0,-400px) rotateY('+(sgn2*55)+'deg)';
+            s.style.opacity='0';
+          }
         }
         s.style.zIndex=String(100-Math.abs(off));
         s.style.pointerEvents=off===0?'auto':'none';
@@ -48,10 +58,22 @@
         var h=s.querySelector('.thumb');
         if(!h||h.querySelector('iframe')) return;
         var f=document.createElement('iframe');
-        f.src='https://www.youtube.com/embed/'+s.dataset.vid+'?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1';
+        f.src='https://www.youtube.com/embed/'+s.dataset.vid+'?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
         f.allow='autoplay; encrypted-media; picture-in-picture';
         f.allowFullscreen=true; f.loading='lazy';
         h.appendChild(f);
+        // mute toggle overlay: small pill, click flips muted state via YouTube postMessage API
+        var b=document.createElement('button');
+        b.type='button'; b.className='mute-btn'; b.textContent='UNMUTE';
+        var muted=true;
+        b.addEventListener('click',function(ev){
+          ev.stopPropagation(); ev.preventDefault();
+          try{ f.contentWindow.postMessage(JSON.stringify({event:'command',func:muted?'unMute':'mute',args:[]}),'*'); }catch(err){}
+          muted=!muted;
+          b.textContent=muted?'UNMUTE':'MUTE';
+          b.classList.toggle('on',!muted);
+        });
+        h.appendChild(b);
       });
     });
     car.addEventListener('mouseleave',stop);
@@ -70,4 +92,42 @@
     });
     render();
   });
+
+  // Splash overlay: shows once per session; click, keypress, or 3.2s timer dismisses it.
+  (function(){
+    var s=document.getElementById('splash');
+    if(!s) return;
+    if(sessionStorage.getItem('splashSeen')==='1'){ s.remove(); return; }
+    var done=false;
+    function dismiss(){
+      if(done) return; done=true;
+      sessionStorage.setItem('splashSeen','1');
+      s.classList.add('out');
+      setTimeout(function(){ s.remove(); },900);
+    }
+    s.addEventListener('click',dismiss);
+    document.addEventListener('keydown',dismiss,{once:true});
+    setTimeout(dismiss,3200);
+  })();
+
+  // Full-page demo-reel background hook.
+  // When real demo videos exist: drop the file into assets/brand/ and add its path to BG_VIDEOS.
+  var BG_VIDEOS=[]; // e.g. ['/assets/brand/hero-reel.mp4']
+  (function(){
+    if(!BG_VIDEOS.length) return;
+    var host=document.querySelector('.bg-media');
+    if(!host) return;
+    var v=host.querySelector('video');
+    var i=0;
+    function tryNext(){
+      if(i>=BG_VIDEOS.length) return;
+      var src=BG_VIDEOS[i++];
+      var t=document.createElement('video');
+      t.preload='auto';
+      t.oncanplay=function(){ v.src=src; var p=v.play(); if(p) p.then(function(){ document.body.classList.add('has-bg-video'); }).catch(function(){}); };
+      t.onerror=function(){ tryNext(); };
+      t.src=src;
+    }
+    tryNext();
+  })();
 })();
