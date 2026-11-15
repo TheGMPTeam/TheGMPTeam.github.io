@@ -47,10 +47,10 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
 @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
 .car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:720px;margin:0 auto;overflow:visible}
-.slides{position:absolute;inset:0;transform-style:preserve-3d}
+.slides{display:contents}
 .slide{position:absolute;inset:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel2);
   transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .55s;will-change:transform;
-  transform-style:preserve-3d;backface-visibility:hidden;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+  backface-visibility:hidden;box-shadow:0 14px 34px rgba(0,0,0,.5)}
 .slide.current{border-color:var(--line-hot);box-shadow:0 0 70px rgba(0,217,255,.16),0 30px 70px rgba(0,0,0,.65)}
 .slide a{position:absolute;inset:0;display:block;text-decoration:none}
 .slide .meta{position:absolute;left:0;right:0;bottom:0;padding:13px 18px;
