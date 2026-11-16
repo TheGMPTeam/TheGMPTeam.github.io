@@ -21,6 +21,10 @@
 .splash .sub{color:#c9d6e8;font-size:.95rem;max-width:620px;margin-top:22px}
 .splash .sub b{color:var(--cyan)}
 .hero-scrim{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(1,3,10,.15),rgba(1,3,10,.85) 60%)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);margin-right:8px;vertical-align:middle;flex:0 0 auto}
+#pills .dot{width:12px;height:12px;margin:0 6px 12px 0}
+.hero{transition:opacity .7s ease,transform .7s ease}
+.hero.scrolled{opacity:0;transform:translateY(-70px);pointer-events:none}
 #content{padding:86px 0 40px}
 .pills{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 24px}
 .pill{i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px;animation:pulse 2.2s infinite}
@@ -111,42 +115,47 @@ footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wr
 const NODES=[{g:"CORE",n:"SERVER CORE",p:"su",t:"cold boot — workers joining"}, {g:"CORE",n:"N8N ENGINE",p:"up",t:"workflows queued · 147 active"}, {g:"CORE",n:"BEDROCK VAULT",p:"id",t:"index 412 · searchable"}, {g:"CORE",n:"REDIS QUEUE",p:"up",t:"draining · 217 jobs in flight"}, {g:"CORE",n:"MAC NODE",p:"id",t:"director heartbeat 02s"}, {g:"MIND",n:"OLLAMA",p:"up",t:"7 models · 33 tok/s"}, {g:"MIND",n:"STRATA ENGINE",p:"id",t:"qwen3.8-flash serving"}, {g:"MIND",n:"LLM EVAL",p:"te",t:"benchmark sweep v2"}, {g:"MIND",n:"GPU SWITCH",p:"up",t:"rtx 5060 ti online"}, {g:"MIND",n:"VIRUSGPT CORE",p:"up",t:"stt → thought → speak"}, {g:"CREATE",n:"COMFYUI RENDER",p:"id",t:"prompts queued 07"}, {g:"CREATE",n:"FFMPEG FORGE",p:"up",t:"4k export round 02"}, {g:"CREATE",n:"BLENDER FORGE",p:"su",t:"scene load 014 of 014"}, {g:"CREATE",n:"SEARXNG",p:"id",t:"anon search active"}, {g:"CREATE",n:"LIVE BROWSER",p:"su",t:"CDP harness warming"}, {g:"VOICE",n:"WHISPER EARS",p:"up",t:"nemo-1.6 · low latency"}, {g:"VOICE",n:"PARAKEET EARS",p:"id",t:"auto speech recognition"}, {g:"VOICE",n:"POCKETTTS VOICE",p:"up",t:"voice bank 05 live"}, {g:"EDGE",n:"CADDY GATE",p:"id",t:"lan + live endpoints routed"}, {g:"EDGE",n:"N8N TABLE UI",p:"up",t:"the production command center"}];
 const TAG={su:"STARTING UP",te:"TUNING",id:"IDEAL",up:"ACTIVE",st:"STOPPED"};
 const TX=[["SERVER CORE","base 309 workers"],["OLLAMA","7 models rolled"],["BEDROCK VAULT","index stable"],["MAC NODE","02s heartbeat"],["N8N ENGINE","queue draining"],["LPFORGE","codec moving"],["BLENDER FORGE","export prime"],["COMFYUI","prompt 07 queued"],["GPU SWITCH","driver confirmed"],["VIRUSGPT CORE","voice loop"],["PARAKEET EARS","asr hot"],["POCKETTTS","seed #0092"]];
-let sim=()=>{};
 (function(){
   const pills=document.getElementById('pills'),stamp=document.getElementById('stamp');
   const cnt={up:0,te:0,id:0,su:0,st:0};
+  NODES.forEach(function(n){cnt[n.p]++;});
   const card={};
   NODES.forEach(function(n,i){
-    const d=document.createElement('div');d.className='node';
-    d.dataset.i=i;card[i]=d;
-    const ph='ph-'+n.p;
-    d.innerHTML='<div class="top"><span class="grp">'+n.g.toUpperCase()+'</span><span class="ph '+ph+'">'+TAG[n.p]+'</span></div><h3>'+n.n+'</h3><div class="log">'+n.t+'</div>';
+    const d=document.createElement('div');d.className='node';d.dataset.i=i;card[i]=d;
+    d.innerHTML='<div class="top"><span class="grp">'+n.g.toUpperCase()+'</span><span class="ph ph-'+n.p+'">'+TAG[n.p]+'</span></div><h3>'+n.n+'</h3><div class="log">'+n.t+'</div>';
     document.getElementById('cards-'+n.g.toLowerCase()).appendChild(d);
   });
-  NODES.forEach(function(n,i){card[i].addEventListener('click',function(){card[i].querySelector('.ph').textContent=TAG[n.p]+'·'+TAG[n.p];card[i].querySelector('.ph').className='ph p-'+n.p;}) });
-  setInterval((function(){
-    const act=NODES.filter(function(n){return cnts[n.p]>0});
-    const ticks=Math.floor(Math.random()*4)+3;
-    for(let k=0;k<ticks;k++){
-      const cand=NODES.filter(function(n){return !n.fixed});
-      if(!cand.length)break;
-      const src=cand[Math.floor(Math.random()*cand.length)];
-      const nxt=Object.keys(TAG)[Math.floor(Math.random()*Object.keys(TAG).length)];
-      if(nxt===src.p)continue;
-      src.p=nxt;cnts[nxt]++;cnts[src.p]--;
-      const c=document.getElementById('cards-'+src.g.toLowerCase()).querySelector('.node[data-i="'+src.i+'"]');
-      c.querySelector('.ph').textContent=TAG[src.p];c.querySelector('.ph').className='ph ph-'+src.p;
-      if(c.querySelector('.log').textContent==''){
-        const j=Math.floor(Math.random()*TX.length);c.querySelector('.log').textContent=TX[j][0]+': '+TX[j][1];
+  function paint(i){
+    const n=NODES[i],d=card[i];
+    d.querySelector('.ph').textContent=TAG[n.p];
+    d.querySelector('.ph').className='ph ph-'+n.p;
+  }
+  NODES.forEach(function(n,i){
+    card[i].addEventListener('click',function(){
+      const j=Math.floor(Math.random()*TX.length);
+      card[i].querySelector('.log').textContent=TX[j][0]+' > '+n.n+': '+TX[j][1];
+    });
+  });
+  const order=['up','id','te','su','st'];
+  function tick(){
+    for(let k=0;k<3;k++){
+      const i=Math.floor(Math.random()*NODES.length),n=NODES[i];
+      let nxt;do{nxt=order[Math.floor(Math.random()*order.length)];}while(nxt===n.p);
+      cnt[n.p]--;n.p=nxt;cnt[nxt]++;paint(i);
+      if(Math.random()<.5){
+        const j=Math.floor(Math.random()*TX.length);
+        card[i].querySelector('.log').textContent=TX[j][1];
       }
     }
-    for(let k=0;k<4;k++){const n=NODES[Math.floor(Math.random()*NODES.length)];n.p='su';cnts.su++;}
     let s='';
-    for(const k of Object.keys(cnt)){s+='<i class="dot dot-'+{'up':'on','id':'ok','te':'am','su':'up','st':'st'}[k]+'"></i><span class="span">'+TAG[k]+' <b>'+cnts[k]+'</b></span>';}
+    const dot={up:'ok',id:'on',te:'am',su:'up',st:'st'};
+    for(const k of order){s+='<i class="dot dot-'+dot[k]+'"></i><span style="color:#7d90a8;font-size:.72rem;margin-right:14px;letter-spacing:.12em">'+TAG[k]+' <b style="color:#cfe4f7">'+cnt[k]+'</b></span>';}
     pills.innerHTML=s;
-    const d=new Date();const z=1*(d.getUTCMinutes()>30?1:-1);
-    stamp.textContent='SYS TIME '+d.toISOString().slice(11,19)+'Z  ·  LOOP '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+'  ·  SIMULATION';
-  })(),1000);
+    const d=new Date();
+    stamp.textContent='SYS TIME '+d.toISOString().slice(11,19)+'Z  ·  LOOP ACTIVE  ·  SIMULATION';
+  }
+  tick();
+  setInterval(tick,1000);
 })();
 const splash=document.getElementById('splash'),v=document.getElementById('bgvid');
 let splashEnd=6400;
