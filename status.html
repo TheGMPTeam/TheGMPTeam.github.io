@@ -1,1 +1,164 @@
-{"offset": |}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet Status — TheGMPTeam Studios</title>
+<meta name="description" content="Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css?v=2">
+<link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
+<style>
+.hero{position:relative;overflow:hidden;z-index:20;min-height:calc(100vh - 62px);display:flex;align-items:center;justify-content:center;text-align:center;color:#fff}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.95;transition:opacity .9s}
+.hero .wrap{position:relative;z-index:3;max-width:1080px;padding:0 24px}
+.splash{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#01030a}
+.splash .logo{font-family:'Orbitron',sans-serif;letter-spacing:.28em;font-size:1.7rem}
+.splash .logo b{color:#00d9ff;font-size:2.1rem}
+.splash .eyebrow{color:#00d9ff;letter-spacing:.32em;font-size:.72rem;text-transform:uppercase;margin-top:46px}
+.splash h1{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.18em;font-size:clamp(2.4rem,7vw,4.6rem);margin-top:34px;color:#fff}
+.splash .sub{color:#c9d6e8;font-size:.95rem;max-width:620px;margin-top:22px}
+.splash .sub b{color:var(--cyan)}
+.hero-scrim{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(1,3,10,.15),rgba(1,3,10,.85) 60%)}
+#content{padding:86px 0 40px}
+.pills{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 24px}
+.pill{i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px;animation:pulse 2.2s infinite}
+.dot-on{background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.dot-ok{background:#3fe0a0;box-shadow:0 0 12px #3fe0a0}
+.dot-am{background:#ffb347;box-shadow:0 0 12px #ffb347}
+.dot-up{background:#3b8bff;box-shadow:0 0 12px #3b8bff}
+.dot-st{background:#5a6472;border-color:rgba(138,152,175,.5)}
+.span{display:inline-block;color:var(--muted);font-size:.82rem;letter-spacing:.1em}
+#stamp{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);letter-spacing:.06em}
+.hub-note{color:#ffb347;letter-spacing:.12em;font-size:.78rem;opacity:.9}
+main#simgrid{margin-top:54px}
+.g{display:none}
+.g.show{display:block}
+.sec{margin-top:46px}
+.sec h2{display:flex;align-items:center;gap:12px;font-size:1.05rem;letter-spacing:.12em;color:var(--cyan);margin-bottom:18px}
+.sec h2 .idx{color:#2b3a55;font-family:'Orbitron',sans-serif;font-size:.95rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));gap:16px}
+.node{position:relative;background:linear-gradient(165deg,rgba(11,18,32,.94),rgba(6,10,16,.88));border:1px solid var(--line);border-radius:12px;padding:18px 18px 15px;transition:transform .2s, border-color .2s, box-shadow .2s;cursor:default}
+.node:hover{transform:translateY(-4px);border-color:var(--line-hot);box-shadow:0 0 34px rgba(0,217,255,.16)}
+.node .top{display:flex;align-items:center;gap:12px}
+.node .grp{font-size:.68rem;letter-spacing:.16em;color:var(--violet);text-transform:uppercase}
+.node h3{font-family:'Orbitron',sans-serif;font-size:.92rem;margin-bottom:8px;color:#fff;letter-spacing:.04em}
+.node .ph{display:inline-block;font-size:.64rem;letter-spacing:.1em;padding:3px 8px;border-radius:5px;font-weight:700;text-transform:uppercase}
+.ph-up{background:#3b8bff;color:#fff}
+.ph-te{background:#ffb347;color:#fff}
+.ph-te{color:#fff}
+.ph-id{background:#3fe0a0;color:#fff}
+.ph-su{background:#5aa9ff;color:#fff}
+.ph-st{background:#5a6472;color:#fff}
+.node .log{font-size:.78rem;color:var(--muted);line-height:1.5;min-height:22px;transition:opacity .5s}
+.node:hover .log{opacity:1}
+footer.site-footer{border-top:1px solid var(--line);padding:24px 24px;color:var(--muted);font-size:.75rem}
+footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.sim-tag{position:absolute;top:14px;right:18px;z-index:6;color:#ffb347;letter-spacing:.2em;font-size:.62rem;text-transform:uppercase;opacity:.9}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<section class="hero" id="hero">
+  <video autoplay muted playsinline loop=false id="bgvid">
+    <source src="/assets/status/topbg.mp4" type="video/mp4">
+  </video>
+  <div class="hero-wrap wrap">
+    <div class="splash" id="splash">
+      <div class="logo">THEGMP<b>TEAM</b> STUDIOS</div>
+      <p class="eyebrow">FLEET CONTROL — SIMULATION LOOP</p>
+      <h1>FLEET STATUS</h1>
+      <p class="sub">Every node lights up as if <b>doing something</b>. <b>Reconstruction — not a live feed.</b></p>
+    </div>
+  </div>
+  <div class="hero-scrim" id="heroBottomLine"></div>
+</section>
+<main id="simgrid">
+  <div id="pills" class="pills"></div>
+  <div id="stamp" class="hub-note">connecting…</div>
+  <div class="wrap">
+    <div class="g show" data-grp="CORE">
+      <h2><span class="idx">◈</span>CORE — HARDWARE & QUEUES</h2>
+      <div class="cards" id="cards-core"></div>
+    </div>
+    <div class="g" data-grp="MIND">
+      <h2><span class="idx">◈</span>MIND — INFERENCE & SWITCHING</h2>
+      <div class="cards" id="cards-mind"></div>
+    </div>
+    <div class="g" data-grp="CREATE">
+      <h2><span class="idx">◈</span>CREATE — RENDER & CONTENT</h2>
+      <div class="cards" id="cards-create"></div>
+    </div>
+    <div class="g" data-grp="VOICE">
+      <h2><span class="idx">◈</span>VOICE — INGEST & OUTPUT</h2>
+      <div class="cards" id="cards-voice"></div>
+    </div>
+    <div class="g" data-grp="EDGE">
+      <h2><span class="idx">◈</span>EDGE — ROUTING & ACCESS</h2>
+      <div class="cards" id="cards-edge"></div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="dot"></span>
+    <span>&copy; 2026 TheGMPTeam Studios — <b style="color:var(--cyan)">FLEET STATUS · SIMULATION LOOP</b> &middot; this build is reconstructed for review; nothing here is live</span>
+  </div>
+</footer>
+
+<script>
+const NODES=[{g:"CORE",n:"SERVER CORE",p:"su",t:"cold boot — workers joining"}, {g:"CORE",n:"N8N ENGINE",p:"up",t:"workflows queued · 147 active"}, {g:"CORE",n:"BEDROCK VAULT",p:"id",t:"index 412 · searchable"}, {g:"CORE",n:"REDIS QUEUE",p:"up",t:"draining · 217 jobs in flight"}, {g:"CORE",n:"MAC NODE",p:"id",t:"director heartbeat 02s"}, {g:"MIND",n:"OLLAMA",p:"up",t:"7 models · 33 tok/s"}, {g:"MIND",n:"STRATA ENGINE",p:"id",t:"qwen3.8-flash serving"}, {g:"MIND",n:"LLM EVAL",p:"te",t:"benchmark sweep v2"}, {g:"MIND",n:"GPU SWITCH",p:"up",t:"rtx 5060 ti online"}, {g:"MIND",n:"VIRUSGPT CORE",p:"up",t:"stt → thought → speak"}, {g:"CREATE",n:"COMFYUI RENDER",p:"id",t:"prompts queued 07"}, {g:"CREATE",n:"FFMPEG FORGE",p:"up",t:"4k export round 02"}, {g:"CREATE",n:"BLENDER FORGE",p:"su",t:"scene load 014 of 014"}, {g:"CREATE",n:"SEARXNG",p:"id",t:"anon search active"}, {g:"CREATE",n:"LIVE BROWSER",p:"su",t:"CDP harness warming"}, {g:"VOICE",n:"WHISPER EARS",p:"up",t:"nemo-1.6 · low latency"}, {g:"VOICE",n:"PARAKEET EARS",p:"id",t:"auto speech recognition"}, {g:"VOICE",n:"POCKETTTS VOICE",p:"up",t:"voice bank 05 live"}, {g:"EDGE",n:"CADDY GATE",p:"id",t:"lan + live endpoints routed"}, {g:"EDGE",n:"N8N TABLE UI",p:"up",t:"the production command center"}];
+const TAG={su:"STARTING UP",te:"TUNING",id:"IDEAL",up:"ACTIVE",st:"STOPPED"};
+const TX=[["SERVER CORE","base 309 workers"],["OLLAMA","7 models rolled"],["BEDROCK VAULT","index stable"],["MAC NODE","02s heartbeat"],["N8N ENGINE","queue draining"],["LPFORGE","codec moving"],["BLENDER FORGE","export prime"],["COMFYUI","prompt 07 queued"],["GPU SWITCH","driver confirmed"],["VIRUSGPT CORE","voice loop"],["PARAKEET EARS","asr hot"],["POCKETTTS","seed #0092"]];
+let sim=()=>{};
+(function(){
+  const pills=document.getElementById('pills'),stamp=document.getElementById('stamp');
+  const cnt={up:0,te:0,id:0,su:0,st:0};
+  const card={};
+  NODES.forEach(function(n,i){
+    const d=document.createElement('div');d.className='node';
+    d.dataset.i=i;card[i]=d;
+    const ph='ph-'+n.p;
+    d.innerHTML='<div class="top"><span class="grp">'+n.g.toUpperCase()+'</span><span class="ph '+ph+'">'+TAG[n.p]+'</span></div><h3>'+n.n+'</h3><div class="log">'+n.t+'</div>';
+    document.getElementById('cards-'+n.g.toLowerCase()).appendChild(d);
+  });
+  NODES.forEach(function(n,i){card[i].addEventListener('click',function(){card[i].querySelector('.ph').textContent=TAG[n.p]+'·'+TAG[n.p];card[i].querySelector('.ph').className='ph p-'+n.p;}) });
+  setInterval((function(){
+    const act=NODES.filter(function(n){return cnts[n.p]>0});
+    const ticks=Math.floor(Math.random()*4)+3;
+    for(let k=0;k<ticks;k++){
+      const cand=NODES.filter(function(n){return !n.fixed});
+      if(!cand.length)break;
+      const src=cand[Math.floor(Math.random()*cand.length)];
+      const nxt=Object.keys(TAG)[Math.floor(Math.random()*Object.keys(TAG).length)];
+      if(nxt===src.p)continue;
+      src.p=nxt;cnts[nxt]++;cnts[src.p]--;
+      const c=document.getElementById('cards-'+src.g.toLowerCase()).querySelector('.node[data-i="'+src.i+'"]');
+      c.querySelector('.ph').textContent=TAG[src.p];c.querySelector('.ph').className='ph ph-'+src.p;
+      if(c.querySelector('.log').textContent==''){
+        const j=Math.floor(Math.random()*TX.length);c.querySelector('.log').textContent=TX[j][0]+': '+TX[j][1];
+      }
+    }
+    for(let k=0;k<4;k++){const n=NODES[Math.floor(Math.random()*NODES.length)];n.p='su';cnts.su++;}
+    let s='';
+    for(const k of Object.keys(cnt)){s+='<i class="dot dot-'+{'up':'on','id':'ok','te':'am','su':'up','st':'st'}[k]+'"></i><span class="span">'+TAG[k]+' <b>'+cnts[k]+'</b></span>';}
+    pills.innerHTML=s;
+    const d=new Date();const z=1*(d.getUTCMinutes()>30?1:-1);
+    stamp.textContent='SYS TIME '+d.toISOString().slice(11,19)+'Z  ·  LOOP '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+'  ·  SIMULATION';
+  })(),1000);
+})();
+const splash=document.getElementById('splash'),v=document.getElementById('bgvid');
+let splashEnd=6400;
+const t0=Date.now();
+setTimeout(function(){splash.style.opacity='0';setTimeout(function(){splash.style.display='none';v.play();},700)},splashEnd);
+v.addEventListener('ended',function(){v.style.opacity='0';v.pause();
+  setTimeout(function(){document.getElementById('hero').style.opacity='0';document.getElementById('hero').style.pointerEvents='none';},700);});
+const hero=document.getElementById('hero');
+window.addEventListener('scroll',function(){
+  hero.classList.toggle('scrolled',window.scrollY>40);
+},{passive:true});
+window.addEventListener('resize',function(){hero.classList.remove('scrolled');},{passive:true});
+</script>
+</body>
+</html>
