@@ -174,3 +174,5 @@ body.has-bg-video .grid-bg{opacity:.45}
 #pmlink{display:none;margin-top:16px;color:var(--cy);font-size:12px;letter-spacing:.2em;text-decoration:none}
 #pmlink:hover{text-decoration:underline}
 @media (max-width:720px){#pmt{font-size:18px}#pmtext{padding:16px 16px 20px}}
+
+#pmmedia img.pmimg{display:block;width:calc(100% - 28px);margin:14px;max-height:40vh;object-fit:contain;border:1px solid rgba(0,217,255,.3);border-radius:8px;background:#111}
