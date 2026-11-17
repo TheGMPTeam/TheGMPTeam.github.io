@@ -11,7 +11,8 @@
 <link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
 <style>
 .hero{position:relative;z-index:20;text-align:center;color:#fff;padding:70px 0 46px;transition:opacity .7s ease,transform .7s ease}
-.hero video{display:block;width:min(320px,70vw);aspect-ratio:480/864;height:auto;margin:28px auto 0;object-fit:cover;border:1px solid rgba(0,217,255,.45);box-shadow:0 0 30px rgba(0,217,255,.22);background:#01030a;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px))}
+.hero video{display:block;width:min(360px,72vw);aspect-ratio:480/864;height:auto;margin:28px auto 0;object-fit:cover;border:1px solid rgba(0,217,255,.45);box-shadow:0 0 30px rgba(0,217,255,.22);background:#01030a;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px))}
+#bgvid.parked{position:fixed;top:88px;right:24px;width:190px;aspect-ratio:480/864;margin:0;z-index:70;opacity:.88;box-shadow:0 0 26px rgba(0,217,255,.35);transform-origin:top left;pointer-events:none;border:1px solid rgba(0,217,255,.45);background:#01030a;object-fit:cover;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
 .hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
 .hero-eyebrow{color:#7d90a8;letter-spacing:.26em;font-size:.66rem;text-transform:uppercase}
 .splash{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#01030a;cursor:pointer;transition:opacity .7s}
@@ -74,6 +75,12 @@ footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wr
 </style>
 </head>
 <body>
+<nav><div class="wrap">
+  <a class="logo" href="/"><img class="logo-mark" src="/assets/brand/logo-128.jpg" alt="">THEGMPTeam STUDIOS</a>
+  <span class="links">
+    <a href="/">HOME</a><a href="/products.html">PRODUCTS</a><a href="/games.html">GAMES</a><a class="on" href="/status.html">STATUS</a><a href="/videos.html">VIDEOS</a>
+  </span>
+</div></nav>
 <div class="grid-bg"></div>
 <section class="hero" id="hero">
   <div class="hero-wrap wrap">
@@ -208,11 +215,45 @@ function tour(i){
 ['wheel','touchstart','mousedown'].forEach(function(ev){
   window.addEventListener(ev,function(){tourOn=false;},{once:true,passive:true});
 });
+var idleMode=false;
+function parkVideo(){
+  var r0=v.getBoundingClientRect();
+  document.body.appendChild(v);
+  v.classList.add('parked');
+  var r1=v.getBoundingClientRect();
+  if(r0.width>0&&r1.width>0){
+    v.style.transition='none';
+    v.style.transform='translate('+(r0.left-r1.left)+'px,'+(r0.top-r1.top)+'px) scale('+(r0.width/r1.width)+')';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      v.style.transition='transform .9s cubic-bezier(.2,.7,.2,1)';
+      v.style.transform='translate(0px,0px) scale(1)';
+    });});
+  }
+}
+function idleLoop(){
+  if(!idleMode)return;
+  var d=v.duration||5.2;
+  var a=Math.random()*Math.max(.2,d-1.4);
+  var stop=a+1.2+Math.random()*Math.max(.2,d-a-1.2);
+  v.muted=true;
+  try{v.currentTime=a;}catch(e){}
+  var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});
+  var iv=setInterval(function(){
+    if(v.currentTime>=stop-0.06||v.ended){
+      v.pause();clearInterval(iv);
+      setTimeout(idleLoop,1000+Math.random()*3000);
+    }
+  },150);
+}
 v.addEventListener('ended',function(){
+  if(idleMode){setTimeout(idleLoop,800);return;}
+  idleMode=true;
   v.pause();
   hero.classList.add('scrolled');
+  parkVideo();
   tourOn=true;
-  setTimeout(function(){tour(0);},600);
+  setTimeout(function(){tour(0);},1100);
+  setTimeout(idleLoop,2800);
 });
 window.addEventListener('scroll',function(){
   if(window.scrollY>40)hero.classList.add('scrolled');
