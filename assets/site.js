@@ -320,6 +320,14 @@
       return e;
     }
     function ensurePre(){if(pre!==null)return;var e=pick();if(!e)return;buf.muted=true;buf.src=e.u;try{buf.load();}catch(e2){}pre=e;}
+    function forcePlay(u){
+      var e=has(u);
+      if(!e)return false;
+      pre=e;
+      idleLoop();
+      return true;
+    }
+    window.__vgForce=forcePlay;
     function firstWalkon(){
       var w=IV.filter(function(x){return x.role==='walkon';});
       if(!w.length)return null;
@@ -338,7 +346,7 @@
         var enterU=firstWalkon();
         document.addEventListener('vg:portal-done',function(){
           exiting=false;paused=false;lastEndGone=false;
-          if(enterU){forceNext(enterU);}else{ensurePre();idleLoop();}
+          if(enterU){forcePlay(enterU);}else{ensurePre();idleLoop();}
         },{once:true});
         try{document.dispatchEvent(new CustomEvent('vg:portal'));}catch(ev1){}
         return;
@@ -567,16 +575,10 @@
     // Clicking the page chain also makes the mascot grab ITS chain: the
     // pull-chain action clip (action2) is forced as the very next port clip.
     var PULLU='/assets/status/action2.mp4';
-    function forceNext(u){
-      var e=has(u);
-      if(!e)return;
-      pre=e;
-      idleLoop();
-    }
     chain.addEventListener('click',function(ev){
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
-      forceNext(PULLU);
+      if(window.__vgForce)window.__vgForce(PULLU);
       if(!window.__vgMuted){try{var cc=new Audio('/assets/sfx/chainclink.mp3');cc.volume=0.7;var cp=cc.play();if(cp&&cp.catch)cp.catch(function(){});}catch(ea){}}
       chain.classList.remove('vg-tug');void chain.offsetWidth;chain.classList.add('vg-tug');
       host.classList.remove('vg-react');void host.offsetWidth;host.classList.add('vg-react');
