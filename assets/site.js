@@ -543,51 +543,6 @@
       }catch(e){}
       function txtlenSafe(x){return x;}
     };
-    // Page sweeps: read real text blocks between speech passes.
-    var busy=false;
-    function pickText(){
-      var els=[].slice.call(document.querySelectorAll('.wrap p,.wrap h1,.wrap h2,.wrap h3,.card p,.card h3'));
-      var vh=window.innerHeight,cands=[];
-      for(var k=0;k<els.length;k++){
-        var rc=els[k].getBoundingClientRect();
-        if(rc.top>50&&rc.bottom<vh-30&&rc.width>140&&rc.height>14)cands.push(els[k]);
-      }
-      if(!cands.length)return null;
-      return cands[Math.floor(Math.random()*Math.min(3,cands.length))];
-    }
-    function sweep(el,done){
-      var rects=[].slice.call(el.getClientRects()).filter(function(rc){return rc.width>40&&rc.height>10&&rc.height<50;});
-      if(!rects.length){done();return;}
-      if(rects.length>4)rects=rects.slice(0,4);
-      var k=0;
-      (function next(){
-        if(k>=rects.length){done();return;}
-        var rc=rects[k++];
-        var port=host.getBoundingClientRect();
-        tilt(rc.left+rc.width/2-(port.left+port.width/2));
-        var dur=Math.max(450,Math.round(rc.width/6*14));
-        eye.style.transition='none';
-        eye.style.left=Math.round(rc.left)+'px';
-        eye.style.top=Math.round(rc.top)+'px';
-        eye.style.height=Math.round(rc.height)+'px';
-        eye.classList.add('on');
-        requestAnimationFrame(function(){requestAnimationFrame(function(){
-          eye.style.transition='left '+dur+'ms linear';
-          eye.style.left=Math.round(rc.right)+'px';
-        });});
-        setTimeout(next,dur+160);
-      })();
-    }
-    function cycle(){
-      if(!live()||busy){setTimeout(cycle,4000);return;}
-      var bub=document.getElementById('vgbubble');
-      if(bub&&bub.classList.contains('on')){setTimeout(cycle,4000);return;}
-      var t=pickText();
-      if(!t){setTimeout(cycle,4000);return;}
-      busy=true;
-      sweep(t,function(){busy=false;setTimeout(cycle,6000+Math.floor(Math.random()*6000));});
-    }
-    setTimeout(cycle,5000);
   })();
 
   // Full-page demo-reel background hook.
