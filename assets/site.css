@@ -189,3 +189,11 @@ body.has-bg-video .grid-bg{opacity:.45}
 .pipe-list li::before{content:">";position:absolute;left:0;color:var(--cy)}
 .wide-img{display:block;width:100%;max-width:1040px;margin:26px auto 0;border:1px solid var(--line);border-radius:10px;background:#111}
 @media (max-width:820px){.game-feature{grid-template-columns:1fr}}
+
+/* ---- Assistant bubble + mascot react (v32) ---- */
+#vgbubble{position:fixed;right:24px;top:292px;max-width:min(340px,58vw);background:rgba(4,12,18,.93);border:1px solid rgba(0,255,255,.35);box-shadow:0 0 18px rgba(0,255,255,.12);color:#cfefff;font:12px/1.55 'Courier New',monospace;padding:10px 13px;z-index:1200;opacity:0;transform:translateY(-8px);transition:opacity .3s,transform .3s;pointer-events:none;border-radius:6px;letter-spacing:.5px}
+#vgbubble.on{opacity:1;transform:none}
+@media(max-width:720px){#vgbubble{right:12px;top:214px;max-width:64vw;font-size:11px}}
+.vg-react{animation:vgr .6s ease}
+@keyframes vgr{30%{transform:scale(1.1)}60%{transform:scale(.97)}}
+@media(prefers-reduced-motion: reduce){.vg-react{animation:none}}

@@ -394,6 +394,75 @@
     host.addEventListener('click',function(){window.vgCtl.mute();});
   })();
 
+  // ---- Assistant layer (context-aware guide) ----
+  // Sections/elements carry data-tip text; the mascot speaks them in a terminal
+  // bubble as you reach, hover, or click them, and offers help when you go idle.
+  // Copy lives in the page markup, not here: edit tips without touching JS.
+  (function(){
+    var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var bub=null,lastSay=0,COOLDOWN=25000,seen={},lastAct=Date.now(),helpOffered=0,hideT=null,hovT=null;
+    function active(){
+      var s=document.getElementById('splash');if(s&&s.style.display!=='none')return false;
+      var i=document.getElementById('intro');if(i&&i.style.display!=='none')return false;
+      if(document.body.classList.contains('vg-pre'))return false;
+      return true;
+    }
+    function speak(txt,force){
+      if(!txt||!active())return;
+      var now=Date.now();
+      if(!force&&now-lastSay<COOLDOWN)return;
+      lastSay=now;
+      if(!bub){bub=document.createElement('div');bub.id='vgbubble';document.body.appendChild(bub);}
+      clearTimeout(hideT);
+      bub.classList.add('on');
+      var m=document.getElementById('mascot');
+      if(m){m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}
+      if(REDUCE){bub.textContent=txt;}
+      else{
+        var k=0;(function tw(){if(k<txt.length){bub.textContent=txt.slice(0,++k);setTimeout(tw,16);}})();
+      }
+      hideT=setTimeout(function(){bub.classList.remove('on');},2600+txt.length*40);
+    }
+    function act(){lastAct=Date.now();}
+    ['scroll','keydown','click','mousemove','touchstart'].forEach(function(ev){
+      document.addEventListener(ev,act,{passive:true});
+    });
+    function ioTips(){
+      if(!('IntersectionObserver' in window))return;
+      var io=new IntersectionObserver(function(en){
+        en.forEach(function(e){
+          if(!e.isIntersecting)return;
+          var t=e.target.getAttribute('data-tip');
+          if(!t||seen[t])return;
+          seen[t]=1;speak(t);
+        });
+      },{threshold:0.55});
+      var els=document.querySelectorAll('[data-tip-section]');
+      for(var i=0;i<els.length;i++)io.observe(els[i]);
+    }
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ioTips);else ioTips();
+    document.addEventListener('mouseover',function(e){
+      var t=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
+      if(!t)return;
+      var txt=t.getAttribute('data-tip');
+      if(!txt||seen[txt])return;
+      clearTimeout(hovT);
+      hovT=setTimeout(function(){seen[txt]=1;speak(txt);},1300);
+    });
+    document.addEventListener('click',function(e){
+      var t=e.target&&e.target.closest?e.target.closest('[data-say]'):null;
+      if(t){speak(t.getAttribute('data-say'));return;}
+      var c=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
+      if(c){var txt=c.getAttribute('data-tip');seen[txt]=1;speak(txt);}
+    });
+    setInterval(function(){
+      if(helpOffered>=2||Date.now()-lastAct<45000)return;
+      if(!active())return;
+      helpOffered++;
+      speak(helpOffered===1?'Need a hand? Hover anything on the page and I will talk. Right-click me for playback controls.':'Still there? The live fleet sim runs at /status.html, product demos at /videos.html.',true);
+    },5000);
+  })();
+
   // Full-page demo-reel background hook.
   // When real demo videos exist: drop the file into assets/brand/ and add its path to BG_VIDEOS.
   var BG_VIDEOS=[]; // e.g. ['/assets/brand/hero-reel.mp4']
