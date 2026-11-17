@@ -161,6 +161,8 @@
     var IV=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
     var IA=['/assets/status/idle1.m4a','/assets/status/idle2.m4a','/assets/status/idle3.m4a'];
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
+    var mediaDead=false;
+    [shown,buf].forEach(function(x){x.addEventListener('error',function(){mediaDead=true;});});
     var q=[],pre=null,lastIdx=0,audioOn=false;
     function refill(){q=[0,1,2];for(var i=q.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=q[i];q[i]=q[j];q[j]=t;}}
     function blip(){if(!audioOn)return;try{var s=new Audio(IA[lastIdx]);s.volume=.85;var p=s.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
@@ -207,7 +209,7 @@
     }
     ensurePre();
     setInterval(function(){
-      if(!engineOn){return;}
+      if(mediaDead||!engineOn){return;}
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
       idleLoop();
     },1500);
