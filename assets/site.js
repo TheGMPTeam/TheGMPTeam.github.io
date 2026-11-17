@@ -588,7 +588,10 @@
     var rigQueued=false;
     document.addEventListener('vg:enter',function(){rig();});
     if(!REDUCE){
-      (function tick(){
+      // Interval-driven, not rAF: a single rAF chain dies silently in some
+      // environments and throttles hard in background tabs. 400ms steps +
+      // the CSS transition below stay smooth.
+      setInterval(function(){
         var now=performance.now();
         if(lastReal){
           var dt=(now-lastReal)/1000;
@@ -596,8 +599,7 @@
         }
         lastReal=now;
         rig();
-        requestAnimationFrame(tick);
-      })();
+      },400);
     }
     window.addEventListener('scroll',function(){
       if(rigQueued)return;

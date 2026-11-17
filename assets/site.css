@@ -223,6 +223,8 @@ body.has-bg-video .grid-bg{opacity:.45}
 #vgchain::after{content:'PULL';position:absolute;left:-2px;top:-16px;font:bold 9px "Courier New",monospace;color:#00d9ff;text-shadow:0 0 8px rgba(0,217,255,.9);opacity:0;transition:opacity .25s;letter-spacing:1px}
 #vgchain:hover::after,#vgchain.vg-tug::after{opacity:.95}
 #vgtrack{width:20px;height:clamp(118px,38vh,380px);overflow:hidden;position:relative}
+#vglinks{transition:transform .5s linear}
+#vgpull,#vggear2{transition:transform .5s linear}
 #vglinks i{display:block;width:14px;height:14px;border:2px solid #00d9ff;border-radius:50%;margin:3px 1px;background:rgba(0,217,255,.10);box-shadow:0 0 6px rgba(0,217,255,.5)}
 #vggears{display:flex;align-items:baseline;gap:2px;margin-top:2px}
 #vggear2{font:bold 17px "Courier New",monospace;color:rgba(0,217,255,.5);line-height:1;user-select:none}
