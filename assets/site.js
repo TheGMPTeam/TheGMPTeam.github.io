@@ -680,19 +680,43 @@
       }).catch(function(){return null;});
       return FB[u];
     }
+    function audioEl(u,vol){try{var x=new Audio(u);x.volume=vol;var p=x.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
     window.__vgFx=function(u,vol){
       if(window.__vgMuted)return;
       var a=ac();
-      if(!a){try{var x=new Audio(u);x.volume=vol;var p=x.play();if(p&&p.catch)p.catch(function(){});}catch(e){}return;}
+      if(!a){audioEl(u,vol);return;}
+      bufp(u).then(function(b){
+        if(!b){audioEl(u,vol);return;}
+        window.__vgFxN=(window.__vgFxN||0)+1;
+        function go(){
+          var s=a.createBufferSource();s.buffer=b;
+          var g=a.createGain();g.gain.value=vol;
+          s.connect(g);g.connect(a.destination);
+          try{s.start();}catch(e){}
+        }
+        if(a.state!=='running'){try{var r=a.resume();if(r&&r.then)r.then(go);else go();}catch(e){go();}}
+        else go();
+      });
+    };
+    var humH=null;
+    window.__vgFxLoop=function(u,vol){
+      if(window.__vgMuted)return;
+      var a=ac();if(!a)return;
       bufp(u).then(function(b){
         if(!b)return;
         window.__vgFxN=(window.__vgFxN||0)+1;
-        var s=a.createBufferSource();s.buffer=b;
-        var g=a.createGain();g.gain.value=vol;
-        s.connect(g);g.connect(a.destination);
-        try{s.start();}catch(e){}
+        function go(){
+          var s=a.createBufferSource();s.buffer=b;s.loop=true;
+          var g=a.createGain();g.gain.value=vol;
+          s.connect(g);g.connect(a.destination);
+          try{s.start();}catch(e){return;}
+          humH={s:s};
+        }
+        if(a.state!=='running'){try{var r=a.resume();if(r&&r.then)r.then(go);else go();}catch(e){go();}}
+        else go();
       });
     };
+    window.__vgFxStop=function(){if(humH){try{humH.s.stop();}catch(e){}humH=null;}};
     function poofSound(){window.__vgFx('/assets/sfx/poof.mp3',0.7);}
     function playIn(v,u,next,err){
       // Portal legs carry the clip's OWN audio (James v56: ambience is part of
@@ -726,11 +750,14 @@
       requestAnimationFrame(function(){P.classList.add('open');});
       window.__vgFx('/assets/sfx/whoosh.mp3',0.55);
       setTimeout(function(){window.__vgFx('/assets/sfx/ignite.mp3',0.6);},280);
+      window.__vgFxLoop('/assets/sfx/hum.mp3',0.22);
       function cleanup(){
+        window.__vgFxStop();
         P.classList.add('gone');
         setTimeout(function(){if(P.parentNode)P.parentNode.removeChild(P);busy=false;announceDone();},450);
       }
       function smoke(){
+        window.__vgFxStop();
         poofSound();
         P.classList.add('smoke');
         setTimeout(cleanup,850);
@@ -738,6 +765,7 @@
       function leg2(){
         p1.style.opacity='0';
         p2.style.opacity='1'; // p2 starts hidden for the crossfade; without this the exit leg plays INVISIBLE
+        window.__vgFx('/assets/sfx/ignite.mp3',0.4); // second portal throat opens
         playIn(p2,woffs[Math.floor(Math.random()*woffs.length)],smoke,cleanup);
       }
       // v46 order per James: inside the portal he ENTERS first (walk-on),
