@@ -216,6 +216,8 @@ function tour(i){
   window.addEventListener(ev,function(){tourOn=false;},{once:true,passive:true});
 });
 var idleMode=false;
+var idleSrcs=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
+var idleNext=null;
 function parkVideo(){
   var r0=v.getBoundingClientRect();
   document.body.appendChild(v);
@@ -232,28 +234,20 @@ function parkVideo(){
 }
 function idleLoop(){
   if(!idleMode)return;
-  var d=v.duration||5.2;
-  var a=Math.random()*Math.max(.2,d-1.4);
-  var stop=a+1.2+Math.random()*Math.max(.2,d-a-1.2);
+  var src=idleSrcs[Math.floor(Math.random()*idleSrcs.length)];
   v.muted=true;
-  try{v.currentTime=a;}catch(e){}
+  v.src=src;
   var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});
-  var iv=setInterval(function(){
-    if(v.currentTime>=stop-0.06||v.ended){
-      v.pause();clearInterval(iv);
-      setTimeout(idleLoop,1000+Math.random()*3000);
-    }
-  },150);
 }
 v.addEventListener('ended',function(){
-  if(idleMode){setTimeout(idleLoop,800);return;}
+  if(idleMode){clearTimeout(idleNext);idleNext=setTimeout(idleLoop,1000+Math.random()*3000);return;}
   idleMode=true;
   v.pause();
   hero.classList.add('scrolled');
   parkVideo();
   tourOn=true;
   setTimeout(function(){tour(0);},1100);
-  setTimeout(idleLoop,2800);
+  idleNext=setTimeout(idleLoop,2600);
 });
 window.addEventListener('scroll',function(){
   if(window.scrollY>40)hero.classList.add('scrolled');
