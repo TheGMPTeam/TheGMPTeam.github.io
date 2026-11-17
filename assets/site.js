@@ -577,6 +577,7 @@
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
       forceNext(PULLU);
+      if(!window.__vgMuted){try{var cc=new Audio('/assets/sfx/chainclink.mp3');cc.volume=0.7;var cp=cc.play();if(cp&&cp.catch)cp.catch(function(){});}catch(ea){}}
       chain.classList.remove('vg-tug');void chain.offsetWidth;chain.classList.add('vg-tug');
       host.classList.remove('vg-react');void host.offsetWidth;host.classList.add('vg-react');
       setTimeout(scrollOn,REDUCE?0:360);
