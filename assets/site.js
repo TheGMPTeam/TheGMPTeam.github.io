@@ -300,6 +300,9 @@
     function has(u){for(var k=0;k<IV.length;k++)if(IV[k].u===u)return IV[k];return null;}
     function pick(){
       if(!IV.length)return null;
+      // v70 loop: with a loop URL set, always hand back the same clip -- the
+      // rotation engine becomes a single-clip looper (see __vgLoop).
+      if(LOOPU){var le=has(LOOPU);if(le){lastU=le.u;lastEndGone=le.endGone;lastRole=le.role;return le;}}
       var e=null,i;
       for(i=0;i<PAIRS.length;i++){if(lastU===PAIRS[i].a){e=has(PAIRS[i].b);break;}}
       if(!e){
@@ -327,6 +330,20 @@
       return true;
     }
     window.__vgForce=forcePlay;
+    // v70: status-tour loop -- force the pull-chain clip on REPEAT so the
+    // rig's beat-sync demos continuously while the auto-tour scrolls.
+    // Retries until the clip is probed into the pool; unloop restores the
+    // normal idle rotation.
+    var LOOPU=null;
+    window.__vgLoop=function(u){
+      LOOPU=u;var tries=0;
+      var iv=setInterval(function(){
+        tries++;
+        if(!LOOPU||tries>30){clearInterval(iv);return;}
+        if(has(LOOPU)&&forcePlay(LOOPU)){clearInterval(iv);window.__vgLooping=true;}
+      },600);
+    };
+    window.__vgUnloop=function(){LOOPU=null;window.__vgLooping=false;};
     function firstWalkon(){
       var w=IV.filter(function(x){return x.role==='walkon';});
       if(!w.length)return null;
@@ -548,10 +565,48 @@
       try{window.scrollTo({top:top,left:0,behavior:REDUCE?'auto':'smooth'});}catch(e){window.scrollTo(0,top);}
     }
     var chain=document.createElement('div');chain.id='vgchain';chain.setAttribute('aria-hidden','true');
-    // Chain-in-a-track + two meshed gears. Scroll position drives the rig:
-    // links crawl through the track, big gear turns, small counter-gear turns
-    // at 2x (half the teeth), all synced by requestAnimationFrame.
-    chain.innerHTML='<div id="vgtrack"><div id="vglinks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div id="vggears"><b id="vgpull">&#9881;</b><b id="vggear2">&#9881;</b></div>';
+    // v70 (James 2026-11-17): REAL chain and REAL gears. The unicode gear
+    // glyphs and CSS dot-links are replaced by generated SVG: two gears with
+    // true 60/36 tooth counts whose PITCH CIRCLES ARE TANGENT (centers 72px
+    // apart, opposite spin, speed ratio = inverse tooth ratio), and a
+    // roller-chain link stack. The main gear's pitch circle (60 teeth,
+    // r=45px -> 282.7px circumference) defines the chain pitch: 4.71px per
+    // tooth, so 1px of chain travel = 1.27324deg of main-gear rotation and
+    // the teeth and the crawling links read as ONE machine.
+    var MAIN_T=60,MAIN_R=45,SEC_T=36,SEC_R=27,CX1=45,CY=57,CX2=CX1+MAIN_R+SEC_R;
+    function gearInner(n,rp){
+      // one tooth per angular pitch: flanks are straight lines between the
+      // dedendum (rp-1.8) and the addendum (rp+2.4); tip and root are arcs.
+      var ra=rp+2.4,rf=rp-1.8,pa=2*Math.PI/n,d='',k,c;
+      function pt(r,a){return (rp+r*Math.cos(a)).toFixed(1)+' '+(rp+r*Math.sin(a)).toFixed(1);}
+      for(k=0;k<n;k++){
+        c=k*pa;
+        d+=(k?'L':'M')+pt(rf,c-0.30*pa)+'L'+pt(ra,c-0.18*pa)+
+           'A'+ra+' '+ra+' 0 0 1 '+pt(ra,c+0.18*pa)+
+           'L'+pt(rf,c+0.30*pa)+
+           'A'+rf+' '+rf+' 0 0 1 '+pt(rf,c+pa-0.30*pa);
+      }
+      d+='Z';
+      var hub=rp*0.28,sp='';
+      for(k=0;k<4;k++){var a=k*Math.PI/4;
+        sp+='<line x1="'+(rp-hub*0.9*Math.cos(a)).toFixed(1)+'" y1="'+(rp-hub*0.9*Math.sin(a)).toFixed(1)+'" x2="'+(rp+hub*0.9*Math.cos(a)).toFixed(1)+'" y2="'+(rp+hub*0.9*Math.sin(a)).toFixed(1)+'" stroke="rgba(0,217,255,.4)" stroke-width="'+(rp*0.1).toFixed(1)+'"/>';}
+      return '<path d="'+d+'" fill="rgba(8,18,30,.92)" stroke="rgba(0,217,255,.85)" stroke-width="1.2"/>'+
+        '<circle cx="'+rp+'" cy="'+rp+'" r="'+(rp-5).toFixed(1)+'" fill="none" stroke="rgba(0,217,255,.25)" stroke-width="1"/>'+sp+
+        '<circle cx="'+rp+'" cy="'+rp+'" r="'+hub.toFixed(1)+'" fill="rgba(0,217,255,.18)" stroke="rgba(0,217,255,.8)" stroke-width="1.5"/>';
+    }
+    var lk='',LIX;
+    for(LIX=0;LIX<30;LIX++){
+      lk+='<svg class="vlink" viewBox="0 0 18 15" width="18" height="15">'+
+        '<path d="M6 4.2L12 4.2L12 10.8L6 10.8Z" fill="rgba(1,3,10,.8)" stroke="rgba(0,217,255,.85)" stroke-width="1.5"/>'+
+        '<circle cx="9" cy="4.2" r="3.4" fill="rgba(1,3,10,.8)" stroke="rgba(0,217,255,.85)" stroke-width="1.5"/>'+
+        '<circle cx="9" cy="10.8" r="3.4" fill="rgba(1,3,10,.8)" stroke="rgba(0,217,255,.85)" stroke-width="1.5"/></svg>';
+    }
+    chain.innerHTML='<div id="vgtrack"><div id="vglinks">'+lk+'</div></div>'+
+      '<svg id="vggears" viewBox="0 0 144 114" width="144" height="114">'+
+      '<g id="vgpull"><g transform="translate('+(CX1-MAIN_R)+','+(CY-MAIN_R)+')">'+gearInner(MAIN_T,MAIN_R)+'</g></g>'+
+      '<g id="vggear2"><g transform="translate('+(CX2-SEC_R)+','+(CY-SEC_R)+')">'+gearInner(SEC_T,SEC_R)+'</g></g>'+
+      '<g class="pitchring"><circle cx="'+CX1+'" cy="'+CY+'" r="'+MAIN_R+'" fill="none" stroke="rgba(0,217,255,.18)" stroke-width="1" stroke-dasharray="2 3"/>'+
+      '<circle cx="'+CX2+'" cy="'+CY+'" r="'+SEC_R+'" fill="none" stroke="rgba(0,217,255,.18)" stroke-width="1" stroke-dasharray="2 3"/></g></svg>';
     // The port clips its children (circular overflow:hidden) -- a chain hanging
     // below the host box was invisible there. It lives on <body> as a fixed
     // element, anchored to the port rect every frame instead.
@@ -559,7 +614,8 @@
     var pull=document.getElementById('vgpull');
     var gear2=document.getElementById('vggear2');
     var links=document.getElementById('vglinks');
-    var PITCH=23; // link height + margins, keeps the loop seamless
+    var LP=17; // link box (15px + 1px padding) keeps the loop seamless
+    var DEG_PER_PX=360/(2*Math.PI*MAIN_R); // teeth-per-chain-pixel lock
     // v69: the chain is a LONG rig whose motion is synced to the port video:
     // while any mascot clip is playing, links crawl and gears turn at a steady
     // crawl rate (an accumulator, so clip switches never jump), and page
@@ -573,7 +629,7 @@
       }
       return null;
     }
-    function rig(){
+    function rig(tug){
       var mr=host.getBoundingClientRect();
       var pre=document.body.classList.contains('vg-pre')||(document.getElementById('splash')&&document.getElementById('splash').style.display!=='none')||(document.getElementById('intro')&&document.getElementById('intro').style.display!=='none');
       chain.style.display=pre?'none':'';
@@ -581,10 +637,69 @@
       chain.style.left=Math.round(mr.left+mr.width/2-24)+'px';
       var y=window.pageYOffset||document.documentElement.scrollTop||0;
       if(REDUCE)return;
-      var pos=y+crawl;
-      links.style.transform='translateY('+(pos%PITCH)+'px)';
-      pull.style.transform='rotate('+(pos*0.5)+'deg)';
-      gear2.style.transform='rotate('+(-pos*1.0)+'deg)';
+      var pos=y+crawl+(tug||0);
+      links.style.transform='translateY('+(((pos%LP)+LP)%LP)+'px)';
+      var _a=pos*DEG_PER_PX; // chain pixels -> gear degrees (teeth lock)
+      pull.style.transform='rotate('+_a+'deg)';
+      gear2.style.transform='rotate('+(-_a*MAIN_T/SEC_T)+'deg)';
+    }
+    // v70 clip-sync: while the pull-chain action clip (action2.mp4) is the
+    // live port clip, the page rig reproduces the ON-VIDEO chain pulls at the
+    // beats measured frame-by-frame from the video (2026-11-17, +/-0.125s):
+    //   P1 grip 1.500  bottom 2.500  release 3.500
+    //   P2 grip 3.875  bottom 4.500  release 5.375
+    //   P3 grip 5.625  bottom 6.500  release 7.250
+    //   P4 grip 7.625  bottom 8.375  (hand lets go; the chain STAYS DOWN)
+    // Idle 0-1.375s, idle after ~8.5s. Cross-checked against right-column
+    // (chain region) frame motion, which spikes exactly on these transitions.
+    var BEATS=[[1.5,2.5,3.5],[3.875,4.5,5.375],[5.625,6.5,7.25],[7.625,8.375,8.5]];
+    var TUGD=24,TUP=0.4;
+    function tugAt(t){
+      // piecewise from the measured beats: yank g->b (ease-in), pinned hold
+      // b->r with slight strain, snap-up over 0.3s at release plus a small
+      // spring overshoot dip; the LAST pull stays down until clip end.
+      var o=0,i,g,b,r,f;
+      for(i=0;i<BEATS.length;i++){
+        g=BEATS[i][0];b=BEATS[i][1];r=BEATS[i][2];
+        if(t<g)break;
+        if(t<b){f=(t-g)/(b-g);o+=TUGD*(1-(1-f)*(1-f));}
+        else if(i===BEATS.length-1||t<r){o+=TUGD*(1+0.1*Math.sin((t-b)*7));}
+        else{f=(t-r)/0.3;if(f<1)o+=TUGD*(1-f);
+          if(t<r+TUP)o+=-3*Math.sin(Math.PI*(t-r)/TUP);}
+      }
+      return o;
+    }
+    window.__vgTug=tugAt; // live debug/test handle (beat waveform)
+    var CUES=[],FIRE=[];
+    (function(){
+      var k;for(k=0;k<BEATS.length;k++){
+        CUES.push({t:BEATS[k][0],v:0.55});CUES.push({t:BEATS[k][1],v:0.7});
+        if(k<BEATS.length-1)CUES.push({t:BEATS[k][2],v:0.5});
+      }
+      CUES.sort(function(a,b){return a.t-b.t;});FIRE=[];for(k=0;k<CUES.length;k++)FIRE.push(0);
+    })();
+    function clink(v){
+      if(window.__vgFx){window.__vgFx('/assets/sfx/chainclink.mp3',v);return;}
+      if(window.__vgMuted)return;
+      try{var a=new Audio('/assets/sfx/chainclink.mp3');a.volume=v;var p=a.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+    }
+    var syncT=null,lastClipT=0,exitTug=0;
+    function syncTick(){
+      var v=playing();
+      if(!v||!/action2/.test(v.currentSrc||v.src||'')){
+        if(syncT){clearInterval(syncT);syncT=null;}
+        exitTug=TUGD;chain.classList.remove('vg-sync');
+        return;
+      }
+      var t=v.currentTime;
+      if(t<lastClipT-0.5){for(var z=0;z<FIRE.length;z++)FIRE[z]=0;} // new pass
+      lastClipT=t;
+      for(var k=0;k<CUES.length;k++){
+        var d=t-CUES[k].t;
+        if(!FIRE[k]&&d>=0&&d<0.35){FIRE[k]=1;clink(CUES[k].v);}
+      }
+      chain.classList.add('vg-sync');
+      rig(tugAt(t));
     }
     var rigQueued=false;
     document.addEventListener('vg:enter',function(){rig();});
@@ -596,10 +711,19 @@
         var now=performance.now();
         if(lastReal){
           var dt=(now-lastReal)/1000;
-          if(playing())crawl+=dt*PITCH*0.85;
+          var v=playing();
+          // idle-rotation crawl: while any OTHER clip plays. During action2
+          // the beat-sync drives the rig instead (no stepped crawl on top).
+          if(v&&!/action2/.test(v.currentSrc||''))crawl+=dt*LP*0.85;
         }
         lastReal=now;
-        rig();
+        if(syncT){return;}
+        if(exitTug>0.4){rig(exitTug);exitTug*=0.55;return;} // settle after P4
+        var sv=playing();
+        if(sv&&/action2/.test(sv.currentSrc||'')){
+          syncT=setInterval(syncTick,80);lastClipT=sv.currentTime;syncTick();return;
+        }
+        rig(0);
       },400);
     }
     window.addEventListener('scroll',function(){
