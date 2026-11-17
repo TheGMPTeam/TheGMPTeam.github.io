@@ -237,8 +237,7 @@
         }
         iv.addEventListener('ended',finish);
         iv.addEventListener('click',function(){window.__vgMuted=!window.__vgMuted;iv.muted=window.__vgMuted;});
-        var sk=intro.querySelector('.iskip');
-        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();iv.currentTime=(iv.duration||15.0)-0.02;});}
+        if(skb){skb.style.cursor='pointer';skb.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();iv.currentTime=(iv.duration||15.0)-0.02;});}
       },1150);
     });
   })();
