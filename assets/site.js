@@ -502,9 +502,29 @@
       try{window.scrollTo({top:top,left:0,behavior:REDUCE?'auto':'smooth'});}catch(e){window.scrollTo(0,top);}
     }
     var chain=document.createElement('div');chain.id='vgchain';chain.setAttribute('aria-hidden','true');
-    chain.innerHTML='<i></i><i></i><i></i><b id="vgpull">&#9881;</b>';
+    // Chain-in-a-track + two meshed gears. Scroll position drives the rig:
+    // links crawl through the track, big gear turns, small counter-gear turns
+    // at 2x (half the teeth), all synced by requestAnimationFrame.
+    chain.innerHTML='<div id="vgtrack"><div id="vglinks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div id="vggears"><b id="vgpull">&#9881;</b><b id="vggear2">&#9881;</b></div>';
     host.appendChild(chain);
     var pull=document.getElementById('vgpull');
+    var gear2=document.getElementById('vggear2');
+    var links=document.getElementById('vglinks');
+    var PITCH=11; // link height + margins, keeps the loop seamless
+    function rig(){
+      var y=window.pageYOffset||document.documentElement.scrollTop||0;
+      if(REDUCE)return;
+      links.style.transform='translateY('+(y%PITCH)+'px)';
+      pull.style.transform='rotate('+(y*0.5)+'deg)';
+      gear2.style.transform='rotate('+(-y*1.0)+'deg)';
+    }
+    var rigQueued=false;
+    window.addEventListener('scroll',function(){
+      if(rigQueued)return;
+      rigQueued=true;
+      requestAnimationFrame(function(){rigQueued=false;rig();});
+    },{passive:true});
+    rig();
     pull.addEventListener('click',function(ev){
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
