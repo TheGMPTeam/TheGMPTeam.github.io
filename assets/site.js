@@ -125,7 +125,7 @@
     var hint=s.querySelector('.splash-hint');
     if(hint){hint.textContent='LOADING SYSTEM...';}
     var ready=0,opened=false;
-    function prog(){ready++;if(ready>=4){open();}}
+    function prog(){ready++;if(ready>=PRELOADS.length){open();}}
     function open(){if(opened)return;opened=true;window.__vgVidReady=true;if(hint){hint.textContent='CLICK TO ENTER';}
       // With SKIP WELCOME saved, the splash dismisses itself: no click needed.
       if(vgSet().skipWelcome){setTimeout(function(){if(!s.dataset.leaving){s.dataset.leaving='1';fastExit();}},1500);}
@@ -154,7 +154,8 @@
       // Skip mode: don't stall on media preloads the user opted out of.
       open();
     }else{
-    [ '/assets/status/idle4.mp4','/assets/status/idle5.mp4','/assets/status/action1.mp4'].forEach(function(u){
+    var PRELOADS=['/assets/status/idle1.mp4','/assets/status/idle5.mp4','/assets/status/action1.mp4'];
+    PRELOADS.forEach(function(u){
       var v=document.createElement('video');v.preload='auto';v.muted=true;
       v.addEventListener('loadeddata',prog);v.addEventListener('error',prog);
       v.src=u;
