@@ -692,9 +692,10 @@
     };
     function poofSound(){window.__vgFx('/assets/sfx/poof.mp3',0.7);}
     function playIn(v,u,next,err){
-      // Portal legs are ALWAYS silent: the walk splits carry music/ambient
-      // beds from their source renders; only the poof sfx voices this event.
-      v.muted=true;v.src=u;
+      // Portal legs carry the clip's OWN audio (James v56: ambience is part of
+      // the walk animation). Unmuted unless the site-wide mute is on; if the
+      // browser blocks unmuted autoplay we fall back to muted playback.
+      v.muted=!!window.__vgMuted;v.src=u;
       v.onended=next;v.onerror=err;
       var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;var p2=v.play();if(p2&&p2.catch)p2.catch(function(){err();});});
     }
