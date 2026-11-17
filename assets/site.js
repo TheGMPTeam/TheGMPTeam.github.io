@@ -597,7 +597,7 @@
       if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
       window.__vgForce(LEVERU);
     }
-    [].slice.call(document.querySelectorAll('.cta,.pcard')).forEach(function(el){
+    [].slice.call(document.querySelectorAll('.cta,.cards .card')).forEach(function(el){
       el.addEventListener('pointerenter',ctaHover);
     });
     chain.addEventListener('click',function(ev){
