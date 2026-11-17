@@ -594,6 +594,9 @@
     }
     function glitchEvent(){
       if(glitchOn||REDUCE)return;
+      // Never queue the fix animation over an in-flight portal FX: wait for
+      // the portal to clear, then run (James v57).
+      if(document.getElementById('vgportal')){setTimeout(glitchEvent,4000);return;}
       var els=[].slice.call(document.querySelectorAll('section h1,section h2,section h3,section p,.hero p,.hero h1,.hero h2')).filter(function(e){
         var t=e.textContent||'';return t.length>12&&t.length<170&&e.offsetParent&&(!e.closest||!e.closest('#vgmenu'));
       });
