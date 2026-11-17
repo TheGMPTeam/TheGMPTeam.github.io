@@ -121,7 +121,15 @@
     var v=document.getElementById('wvid');
     var entered=false;
     v.loop=true;
-    var pw=v.play();if(pw&&pw.catch)pw.catch(function(){});
+    // Try to start WITH audio; if the browser demands a gesture, fall back to
+    // muted and flip to audio on the first click/keypress anywhere.
+    function tryPlay(m){
+      v.muted=m;
+      var p=v.play();
+      if(p&&p.catch){p.catch(function(){if(!m){tryPlay(true);}});}
+      else if(!m){window.__audioPrearmed=true;}
+    }
+    tryPlay(false);
     w.addEventListener('click',function(){
       if(entered){return;}
       entered=true;
@@ -197,6 +205,7 @@
     function arm(){audioOn=true;}
     document.addEventListener('click',arm,{once:true});
     document.addEventListener('keydown',arm,{once:true});
+    if(window.__audioPrearmed){audioOn=true;}
     refill();
     var i0=q.pop();lastIdx=i0;shown.src=IV[i0];
     try{shown.load();}catch(e){}
