@@ -146,7 +146,7 @@
       // Skip mode: don't stall on media preloads the user opted out of.
       open();
     }else{
-    [WSRC,'/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
+    [ '/assets/status/idle4.mp4','/assets/status/idle5.mp4','/assets/status/idle6.mp4'].forEach(function(u){
       var v=document.createElement('video');v.preload='auto';v.muted=true;
       v.addEventListener('loadeddata',prog);v.addEventListener('error',prog);
       v.src=u;
@@ -222,7 +222,7 @@
         iv.addEventListener('ended',finish);
         iv.addEventListener('click',function(){window.__vgMuted=!window.__vgMuted;iv.muted=window.__vgMuted;});
         var sk=intro.querySelector('.iskip');
-        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();var D=iv.duration||15.0;iv.currentTime=Math.min(D-0.05,iv.currentTime+3);});}
+        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();iv.currentTime=(iv.duration||15.0)-0.02;});}
       },1150);
     });
   })();
@@ -419,7 +419,7 @@
       if(m){m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}
       if(REDUCE){bub.textContent=txt;}
       else{
-        var k=0;(function tw(){if(k<txt.length){bub.textContent=txt.slice(0,++k);setTimeout(tw,16);}})();
+        var k=0;(function tw(){if(k<txt.length){bub.textContent=txt.slice(0,++k);if(window.__vgEye)window.__vgEye(k,true);setTimeout(tw,16);}})();
       }
       hideT=setTimeout(function(){bub.classList.remove('on');},2600+txt.length*40);
     }
@@ -461,6 +461,117 @@
       helpOffered++;
       speak(helpOffered===1?'Need a hand? Hover anything on the page and I will talk. Right-click me for playback controls.':'Still there? The live fleet sim runs at /status.html, product demos at /videos.html.',true);
     },5000);
+  })();
+
+  // Real page interaction (v33): a pull-chain gear hangs off the port --
+  // clicking it tugs, pops the mascot, and scrolls to the next section.
+  // The mascot's "eye" sorts along its own bubble text while typing, and
+  // sweeps real text lines on the page between speech. Port tilts toward
+  // whatever it is looking at.
+  (function(){
+    var host=document.getElementById('mascot');
+    if(!host)return;
+    var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function live(){
+      var sp=document.getElementById('splash');if(sp&&sp.style.display!=='none')return false;
+      var it=document.getElementById('intro');if(it&&it.style.display!=='none')return false;
+      if(document.body.classList.contains('vg-pre'))return false;
+      return true;
+    }
+    function scrollOn(){
+      var y=window.pageYOffset||document.documentElement.scrollTop||0;
+      var secs=[].slice.call(document.querySelectorAll('section'));
+      var nx=null,k;
+      for(k=0;k<secs.length;k++){if(secs[k].offsetTop>y+40){nx=secs[k];break;}}
+      var top=nx?(nx.offsetTop-70):0;
+      try{window.scrollTo({top:top,left:0,behavior:REDUCE?'auto':'smooth'});}catch(e){window.scrollTo(0,top);}
+    }
+    var chain=document.createElement('div');chain.id='vgchain';chain.setAttribute('aria-hidden','true');
+    chain.innerHTML='<i></i><i></i><i></i><b id="vgpull">&#9881;</b>';
+    host.appendChild(chain);
+    var pull=document.getElementById('vgpull');
+    pull.addEventListener('click',function(ev){
+      ev.stopPropagation();ev.preventDefault();
+      if(!live())return;
+      chain.classList.remove('vg-tug');void chain.offsetWidth;chain.classList.add('vg-tug');
+      host.classList.remove('vg-react');void host.offsetWidth;host.classList.add('vg-react');
+      setTimeout(scrollOn,REDUCE?0:360);
+    });
+    var eye=document.createElement('span');eye.id='vgeye';document.body.appendChild(eye);
+    var eyeT=null,tiltT=null;
+    function eyeAt(x,y,h){
+      eye.style.left=Math.round(x)+'px';eye.style.top=Math.round(y)+'px';eye.style.height=Math.round(h||14)+'px';
+      eye.classList.add('on');
+      clearTimeout(eyeT);eyeT=setTimeout(function(){eye.classList.remove('on');},300);
+    }
+    function tilt(dx){
+      if(REDUCE)return;
+      host.classList.remove('vg-look-l','vg-look-r');
+      void host.offsetWidth;
+      if(dx<-40)host.classList.add('vg-look-l');
+      else if(dx>40)host.classList.add('vg-look-r');
+      clearTimeout(tiltT);tiltT=setTimeout(function(){host.classList.remove('vg-look-l','vg-look-r');},1600);
+    }
+    // Bubble-sync: speak()'s typewriter calls this per character; the eye
+    // sorts along the bubble text exactly where the next letter lands.
+    window.__vgEye=function(k){
+      var bub=document.getElementById('vgbubble');
+      if(!bub||!bub.firstChild||!bub.classList.contains('on'))return;
+      try{
+        var n=Math.min(k,(bub.firstChild.length||txtlenSafe(k)));
+        var r=document.createRange();
+        r.setStart(bub.firstChild,Math.max(0,n-1));
+        r.setEnd(bub.firstChild,n);
+        var rc=r.getBoundingClientRect();
+        if(rc.height){eyeAt(rc.right+2,rc.top,rc.height);tilt(1);}
+      }catch(e){}
+      function txtlenSafe(x){return x;}
+    };
+    // Page sweeps: read real text blocks between speech passes.
+    var busy=false;
+    function pickText(){
+      var els=[].slice.call(document.querySelectorAll('.wrap p,.wrap h1,.wrap h2,.wrap h3,.card p,.card h3'));
+      var vh=window.innerHeight,cands=[];
+      for(var k=0;k<els.length;k++){
+        var rc=els[k].getBoundingClientRect();
+        if(rc.top>50&&rc.bottom<vh-30&&rc.width>140&&rc.height>14)cands.push(els[k]);
+      }
+      if(!cands.length)return null;
+      return cands[Math.floor(Math.random()*Math.min(3,cands.length))];
+    }
+    function sweep(el,done){
+      var rects=[].slice.call(el.getClientRects()).filter(function(rc){return rc.width>40&&rc.height>10&&rc.height<50;});
+      if(!rects.length){done();return;}
+      if(rects.length>4)rects=rects.slice(0,4);
+      var k=0;
+      (function next(){
+        if(k>=rects.length){done();return;}
+        var rc=rects[k++];
+        var port=host.getBoundingClientRect();
+        tilt(rc.left+rc.width/2-(port.left+port.width/2));
+        var dur=Math.max(450,Math.round(rc.width/6*14));
+        eye.style.transition='none';
+        eye.style.left=Math.round(rc.left)+'px';
+        eye.style.top=Math.round(rc.top)+'px';
+        eye.style.height=Math.round(rc.height)+'px';
+        eye.classList.add('on');
+        requestAnimationFrame(function(){requestAnimationFrame(function(){
+          eye.style.transition='left '+dur+'ms linear';
+          eye.style.left=Math.round(rc.right)+'px';
+        });});
+        setTimeout(next,dur+160);
+      })();
+    }
+    function cycle(){
+      if(!live()||busy){setTimeout(cycle,4000);return;}
+      var bub=document.getElementById('vgbubble');
+      if(bub&&bub.classList.contains('on')){setTimeout(cycle,4000);return;}
+      var t=pickText();
+      if(!t){setTimeout(cycle,4000);return;}
+      busy=true;
+      sweep(t,function(){busy=false;setTimeout(cycle,6000+Math.floor(Math.random()*6000));});
+    }
+    setTimeout(cycle,5000);
   })();
 
   // Full-page demo-reel background hook.
