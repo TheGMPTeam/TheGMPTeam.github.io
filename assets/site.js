@@ -593,15 +593,18 @@
       return out;
     }
     function glitchEvent(){
-      if(glitchOn||REDUCE)return;
+      window.__vgGlitchWhy='run';
+      if(glitchOn){window.__vgGlitchWhy='already-running';return;}
+      if(REDUCE){window.__vgGlitchWhy='reduced-motion';return;}
       // Never queue the fix animation over an in-flight portal FX: wait for
       // the portal to clear, then run (James v57).
-      if(document.getElementById('vgportal')){setTimeout(glitchEvent,4000);return;}
+      if(document.getElementById('vgportal')){window.__vgGlitchWhy='portal-busy-retry';setTimeout(glitchEvent,4000);return;}
       var els=[].slice.call(document.querySelectorAll('section h1,section h2,section h3,section p,.hero p,.hero h1,.hero h2')).filter(function(e){
         var t=e.textContent||'';return t.length>12&&t.length<170&&e.offsetParent&&(!e.closest||!e.closest('#vgmenu'));
       });
-      if(!els.length)return;
-      if(!window.__vgForce||!window.__vgForce('/assets/status/action1.mp4'))return; // mascot must be rolling the fix clip first
+      if(!els.length){window.__vgGlitchWhy='no-text-candidates';return;}
+      if(!window.__vgForce){window.__vgGlitchWhy='no-force-seam';return;}
+      if(!window.__vgForce('/assets/status/action1.mp4')){window.__vgGlitchWhy='action1-not-in-pool';return;} // mascot must be rolling the fix clip first
       var el=els[Math.floor(Math.random()*els.length)];
       var orig=el.textContent; // exact original; every repair restores this string verbatim
       glitchOn=true;
