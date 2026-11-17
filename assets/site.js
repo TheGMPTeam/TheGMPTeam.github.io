@@ -154,7 +154,7 @@
       // Skip mode: don't stall on media preloads the user opted out of.
       open();
     }else{
-    [ '/assets/status/idle4.mp4','/assets/status/idle5.mp4','/assets/status/idle6.mp4'].forEach(function(u){
+    [ '/assets/status/idle4.mp4','/assets/status/idle5.mp4','/assets/status/action1.mp4'].forEach(function(u){
       var v=document.createElement('video');v.preload='auto';v.muted=true;
       v.addEventListener('loadeddata',prog);v.addEventListener('error',prog);
       v.src=u;
