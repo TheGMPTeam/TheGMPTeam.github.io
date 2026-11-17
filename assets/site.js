@@ -555,7 +555,7 @@
     var pull=document.getElementById('vgpull');
     var gear2=document.getElementById('vggear2');
     var links=document.getElementById('vglinks');
-    var PITCH=11; // link height + margins, keeps the loop seamless
+    var PITCH=19; // link height + margins, keeps the loop seamless
     function rig(){
       var y=window.pageYOffset||document.documentElement.scrollTop||0;
       if(REDUCE)return;
@@ -599,7 +599,23 @@
     }
     [].slice.call(document.querySelectorAll('.cta,.cards .card')).forEach(function(el){
       el.addEventListener('pointerenter',ctaHover);
+      // touch flow: tapping a CTA navigates, so arm the flag; the mascot throws
+      // the lever on ARRIVAL at the next page (watcher below).
+      el.addEventListener('click',function(){
+        if(REDUCE)return;
+        try{sessionStorage.setItem('vgcta','1');}catch(e){}
+      });
     });
+    var arrival=setInterval(function(){
+      var f=null;try{f=sessionStorage.getItem('vgcta');}catch(e){}
+      if(!f){clearInterval(arrival);return;}
+      if(live()&&window.__vgForce){
+        try{sessionStorage.removeItem('vgcta');}catch(e){}
+        clearInterval(arrival);
+        if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
+        window.__vgForce(LEVERU);
+      }
+    },1200);
     chain.addEventListener('click',function(ev){
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
