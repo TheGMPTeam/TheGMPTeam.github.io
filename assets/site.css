@@ -88,6 +88,11 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .stack{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
 .chip{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);background:rgba(0,217,255,.03)}
 .chip:hover{color:var(--cyan);border-color:rgba(0,217,255,.4)}
+html{scroll-behavior:smooth}
+/* Smooth section reveal on scroll (all pages; status tour's own display-swaps untouched) */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.rv.on{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 .cta-final{display:flex;gap:14px;justify-content:center;padding:10px 0 4px}
 footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:.75rem;letter-spacing:.08em;margin-top:40px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center}

@@ -1,4 +1,17 @@
 (function(){
+  // Smooth section reveal: children of .wrap inside <section>/<header> fade+rise on scroll-in.
+  (function(){
+    if(!('IntersectionObserver' in window))return;
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var els=document.querySelectorAll('section .wrap > *, header.hero .wrap > *');
+    if(!els.length)return;
+    Array.prototype.forEach.call(els,function(el){el.classList.add('rv');});
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});
+    },{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+    Array.prototype.forEach.call(els,function(el){io.observe(el);});
+  })();
+
   // Porthole user settings (per browser, all pages): { skipWelcome, muted }
   function vgSet(){try{return JSON.parse(localStorage.getItem('vgset')||'{}');}catch(e){return{};}}
   function vgSave(s){try{localStorage.setItem('vgset',JSON.stringify(s));}catch(e){}}
