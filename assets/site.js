@@ -572,6 +572,7 @@
       gear2.style.transform='rotate('+(-y*1.0)+'deg)';
     }
     var rigQueued=false;
+    document.addEventListener('vg:enter',function(){rig();});
     window.addEventListener('scroll',function(){
       if(rigQueued)return;
       rigQueued=true;
