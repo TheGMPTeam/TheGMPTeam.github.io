@@ -7,9 +7,9 @@
 <meta name="description" content="Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=6">
+<link rel="stylesheet" href="/assets/site.css?v=3">
 <link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
-<script src="/assets/site.js?v=6" defer></script>
+<script src="/assets/site.js?v=3" defer></script>
 <style>
 .hero{position:relative;z-index:20;text-align:center;color:#fff;padding:96px 0 6px}
 .hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
@@ -29,8 +29,7 @@ main#simgrid{margin-top:30px}
 .g{display:block;opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease;min-height:100vh;scroll-snap-align:start;padding:120px 6vw}
 .g.in{opacity:1;transform:none}
 html{scroll-snap-type:y proximity}
-#hud{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:55;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(1,3,10,.82);border:1px solid rgba(0,217,255,.25);padding:10px 20px;opacity:0;transition:opacity .8s;pointer-events:none;backdrop-filter:blur(6px)}
-body.entered #hud{opacity:1}
+#hud{display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(1,3,10,.82);border:1px solid rgba(0,217,255,.25);padding:10px 20px;margin:26px auto 0;max-width:1100px;border-radius:10px;backdrop-filter:blur(6px)}
 .g h2{display:flex;align-items:center;gap:14px;font-family:'Orbitron',sans-serif;font-size:1.4rem;letter-spacing:.16em;color:#00d9ff;margin-bottom:30px;text-shadow:0 0 18px rgba(0,217,255,.5)}
 .g h2 .idx{color:#2b3a55;font-size:1.1rem}
 .g h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(0,217,255,.55),transparent)}
@@ -168,7 +167,7 @@ function tour(i){
     else{s.style.display='none';s.style.minHeight='';}
   });
   var hud=document.getElementById('hud');
-  var off=(hud?Math.round(hud.getBoundingClientRect().bottom)+6:70);
+  var off=(hud?12:12);
   var top=Math.max(0,stages[i].offsetTop-off);
   window.scrollTo({top:top,behavior:i===0?'smooth':'auto'});
   setTimeout(function(){
