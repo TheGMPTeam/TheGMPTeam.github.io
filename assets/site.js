@@ -558,13 +558,13 @@
     var pull=document.getElementById('vgpull');
     var gear2=document.getElementById('vggear2');
     var links=document.getElementById('vglinks');
-    var PITCH=19; // link height + margins, keeps the loop seamless
+    var PITCH=23; // link height + margins, keeps the loop seamless
     function rig(){
       var mr=host.getBoundingClientRect();
       var pre=document.body.classList.contains('vg-pre')||(document.getElementById('splash')&&document.getElementById('splash').style.display!=='none')||(document.getElementById('intro')&&document.getElementById('intro').style.display!=='none');
       chain.style.display=pre?'none':'';
-      chain.style.top=Math.round(mr.top+mr.height-6)+'px';
-      chain.style.left=Math.round(mr.left+mr.width-40)+'px';
+      chain.style.top=Math.round(mr.top+mr.height+4)+'px';
+      chain.style.left=Math.round(mr.left+mr.width/2-24)+'px';
       var y=window.pageYOffset||document.documentElement.scrollTop||0;
       if(REDUCE)return;
       links.style.transform='translateY('+(y%PITCH)+'px)';
