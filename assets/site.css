@@ -225,3 +225,24 @@ body.has-bg-video .grid-bg{opacity:.45}
 #vggear2{font:bold 11px "Courier New",monospace;color:rgba(0,217,255,.5);line-height:1;user-select:none}
 #vgchain:hover #vggear2{color:#00d9ff;text-shadow:0 0 8px rgba(0,217,255,.7)}
 #vgchain.vg-tug{transform:translateY(7px);transition:transform .18s}
+
+/* v39: mid-page portal event + smoke puff */
+#vgportal{position:fixed;left:24px;bottom:96px;width:230px;height:230px;border-radius:50%;overflow:hidden;z-index:1160;border:1px solid rgba(0,217,255,.5);box-shadow:0 0 34px rgba(0,217,255,.5),0 0 90px rgba(0,217,255,.25);background:linear-gradient(180deg,#0a0d18,#01030a);transform:scale(0);transition:transform .5s cubic-bezier(.2,1.4,.3,1),opacity .45s}
+#vgportal.open{transform:scale(1)}
+#vgportal video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .4s}
+#vgportal.smoke{box-shadow:0 0 60px rgba(0,217,255,.7)}
+#vgportal.gone{transform:scale(.15);opacity:0}
+#vgpoof{position:absolute;inset:0;pointer-events:none;opacity:0}
+#vgportal.smoke #vgpoof{opacity:1}
+#vgpoof span{position:absolute;left:50%;top:55%;width:46px;height:46px;margin:-23px;border-radius:50%;background:radial-gradient(circle,rgba(200,220,235,.85) 0%,rgba(120,150,170,.4) 45%,rgba(0,0,0,0) 70%);filter:blur(4px);transform:scale(.2);opacity:0}
+#vgportal.smoke #vgpoof span{animation:vgpuff .8s ease-out forwards}
+#vgportal.smoke #vgpoof span:nth-child(1){left:42%;top:48%}
+#vgportal.smoke #vgpoof span:nth-child(2){left:58%;top:50%;animation-delay:.05s}
+#vgportal.smoke #vgpoof span:nth-child(3){left:50%;top:38%;animation-delay:.09s}
+#vgportal.smoke #vgpoof span:nth-child(4){left:46%;top:62%;animation-delay:.03s}
+#vgportal.smoke #vgpoof span:nth-child(5){left:62%;top:60%;animation-delay:.12s}
+#vgportal.smoke #vgpoof span:nth-child(6){left:36%;top:56%;animation-delay:.15s}
+#vgportal.smoke #vgpoof span:nth-child(7){left:54%;top:44%;animation-delay:.07s}
+#vgportal.smoke #vgpoof span:nth-child(8){left:50%;top:55%;animation-delay:.18s}
+@keyframes vgpuff{0%{transform:scale(.2);opacity:.95}70%{opacity:.5}100%{transform:scale(1.7);opacity:0}}
+@media (max-width:720px){#vgportal{width:150px;height:150px;left:12px;bottom:72px}}

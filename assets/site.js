@@ -267,6 +267,7 @@
     // Drop files named that way on the CDN and they join automatically.
     var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);
     var IV=[],IA=[]; // entries: {u:URL, endGone:bool}
+    window.__vgPool=IV;
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
     var mediaDead=false,probed=0,started=false;
     [shown,buf].forEach(function(x){x.addEventListener('error',function(){mediaDead=true;});});
@@ -302,6 +303,7 @@
         e=pool[Math.floor(Math.random()*pool.length)];
       }
       lastU=e.u;lastEndGone=e.endGone;
+      if(lastEndGone){try{document.dispatchEvent(new CustomEvent('vg:walkoff'));}catch(ev0){}}
       return e;
     }
     function ensurePre(){if(pre!==null)return;var e=pick();if(!e)return;buf.muted=true;buf.src=e.u;try{buf.load();}catch(e2){}pre=e;}
@@ -562,6 +564,58 @@
       }catch(e){}
       function txtlenSafe(x){return x;}
     };
+  })();
+
+
+  // Portal event (v39): when the corner port picks a walk-off, a second
+  // porthole bursts open mid-page; the mascot walks IN there, walks OUT,
+  // then a smoke puff clears the portal away. Normal rotation never stops.
+  (function(){
+    var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lastFire=0,busy=false;
+    function poofSound(){
+      if(window.__vgMuted)return;
+      try{var a=new Audio('/assets/sfx/poof.mp3');a.volume=0.7;var p=a.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+    }
+    function playIn(v,u,next,err){
+      v.muted=!!window.__vgMuted;v.src=u;
+      v.onended=next;v.onerror=err;
+      var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;var p2=v.play();if(p2&&p2.catch)p2.catch(function(){err();});});
+    }
+    document.addEventListener('vg:walkoff',function(){
+      var now=Date.now();
+      if(busy||REDUCE||now-lastFire<60000){return;}
+      var pool=window.__vgPool||[];
+      var wons=[],woffs=[],k;
+      for(k=0;k<pool.length;k++){
+        if(pool[k].u.indexOf('walkon')>=0)wons.push(pool[k].u);
+        else if(pool[k].u.indexOf('walkoff')>=0)woffs.push(pool[k].u);
+      }
+      if(!wons.length||!woffs.length)return;
+      busy=true;lastFire=now;
+      var P=document.createElement('div');P.id='vgportal';P.setAttribute('aria-hidden','true');
+      var p1=document.createElement('video');p1.playsInline=true;p1.preload='auto';
+      var p2=document.createElement('video');p2.playsInline=true;p2.preload='auto';p2.style.opacity='0';
+      var puff=document.createElement('div');puff.id='vgpoof';
+      for(k=0;k<8;k++){puff.appendChild(document.createElement('span'));}
+      P.appendChild(p1);P.appendChild(p2);P.appendChild(puff);
+      document.body.appendChild(P);
+      requestAnimationFrame(function(){P.classList.add('open');});
+      function cleanup(){
+        P.classList.add('gone');
+        setTimeout(function(){if(P.parentNode)P.parentNode.removeChild(P);busy=false;},450);
+      }
+      function smoke(){
+        poofSound();
+        P.classList.add('smoke');
+        setTimeout(cleanup,850);
+      }
+      function leg2(){
+        p1.style.opacity='0';
+        playIn(p2,woffs[Math.floor(Math.random()*woffs.length)],smoke,cleanup);
+      }
+      playIn(p1,wons[Math.floor(Math.random()*wons.length)],leg2,cleanup);
+    });
   })();
 
   // Full-page demo-reel background hook.
