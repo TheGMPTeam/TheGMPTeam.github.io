@@ -114,7 +114,9 @@
     var ready=0,opened=false;
     function prog(){ready++;if(ready>=4){open();}}
     function open(){if(opened)return;opened=true;window.__vgVidReady=true;if(hint){hint.textContent='CLICK TO ENTER';}}
-    ['/assets/status/welcome.mp4','/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
+    var ivv=document.getElementById('iv');
+    var WSRC=(ivv&&ivv.getAttribute('src'))||'/assets/status/welcome.mp4';
+    [WSRC,'/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
       var v=document.createElement('video');v.preload='auto';v.muted=true;
       v.addEventListener('loadeddata',prog);v.addEventListener('error',prog);
       v.src=u;
