@@ -84,6 +84,10 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .spec{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:rgba(0,217,255,.04);display:flex;flex-direction:column;gap:6px}
 .sl{font-size:.58rem;letter-spacing:.28em;color:var(--muted);text-transform:uppercase}
 .sv{font-family:Orbitron,sans-serif;font-size:.85rem;color:var(--cyan)}
+/* Software stack chips (home) */
+.stack{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);background:rgba(0,217,255,.03)}
+.chip:hover{color:var(--cyan);border-color:rgba(0,217,255,.4)}
 footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:.75rem;letter-spacing:.08em;margin-top:40px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 footer a{color:var(--blue);text-decoration:none}
