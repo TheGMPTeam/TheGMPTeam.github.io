@@ -624,6 +624,7 @@
         dropped.push(cand.splice(at,1)[0]);
       }
       dropped.sort(function(a,b){return a-b;});
+      window.__vgGlitchWhy='dropped:'+dropped.length+' of '+chars.length;
       // build the letter spans and capture each doomed letter's box BEFORE removal
       el.innerHTML='';
       var spans=[];
