@@ -551,12 +551,20 @@
     // links crawl through the track, big gear turns, small counter-gear turns
     // at 2x (half the teeth), all synced by requestAnimationFrame.
     chain.innerHTML='<div id="vgtrack"><div id="vglinks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div id="vggears"><b id="vgpull">&#9881;</b><b id="vggear2">&#9881;</b></div>';
-    host.appendChild(chain);
+    // The port clips its children (circular overflow:hidden) -- a chain hanging
+    // below the host box was invisible there. It lives on <body> as a fixed
+    // element, anchored to the port rect every frame instead.
+    document.body.appendChild(chain);
     var pull=document.getElementById('vgpull');
     var gear2=document.getElementById('vggear2');
     var links=document.getElementById('vglinks');
     var PITCH=19; // link height + margins, keeps the loop seamless
     function rig(){
+      var mr=host.getBoundingClientRect();
+      var pre=document.body.classList.contains('vg-pre')||(document.getElementById('splash')&&document.getElementById('splash').style.display!=='none')||(document.getElementById('intro')&&document.getElementById('intro').style.display!=='none');
+      chain.style.display=pre?'none':'';
+      chain.style.top=Math.round(mr.top+mr.height-6)+'px';
+      chain.style.left=Math.round(mr.left+mr.width-40)+'px';
       var y=window.pageYOffset||document.documentElement.scrollTop||0;
       if(REDUCE)return;
       links.style.transform='translateY('+(y%PITCH)+'px)';
