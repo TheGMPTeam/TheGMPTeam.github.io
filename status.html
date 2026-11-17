@@ -217,7 +217,9 @@ function tour(i){
 });
 var idleMode=false;
 var idleSrcs=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
+var idleQueue=[];
 var idleNext=null;
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function parkVideo(){
   var r0=v.getBoundingClientRect();
   document.body.appendChild(v);
@@ -233,20 +235,28 @@ function parkVideo(){
   }
 }
 function idleLoop(){
-  if(!idleMode)return;
-  var src=idleSrcs[Math.floor(Math.random()*idleSrcs.length)];
-  v.muted=true;
-  v.src=src;
-  var pr=v.play();if(pr&&pr.catch)pr.catch(function(){});
+  if(!idleMode||!idleQueue.length)return;
+  v.muted=false;
+  v.src=idleQueue.pop();
+  var pr=v.play();
+  if(pr&&pr.catch)pr.catch(function(){
+    v.muted=true;
+    var p2=v.play();
+    if(p2&&p2.catch)p2.catch(function(){});
+  });
 }
 v.addEventListener('ended',function(){
-  if(idleMode){clearTimeout(idleNext);idleNext=setTimeout(idleLoop,1000+Math.random()*3000);return;}
+  if(idleMode){
+    if(idleQueue.length){clearTimeout(idleNext);idleNext=setTimeout(idleLoop,1000+Math.random()*3000);}
+    return;
+  }
   idleMode=true;
   v.pause();
   hero.classList.add('scrolled');
   parkVideo();
   tourOn=true;
   setTimeout(function(){tour(0);},1100);
+  idleQueue=shuffle(idleSrcs.slice());
   idleNext=setTimeout(idleLoop,2600);
 });
 window.addEventListener('scroll',function(){
