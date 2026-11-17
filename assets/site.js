@@ -107,7 +107,7 @@
     var ready=0,opened=false;
     function prog(){ready++;if(ready>=4){open();}}
     function open(){if(opened)return;opened=true;window.__vgVidReady=true;if(hint){hint.textContent='CLICK TO ENTER';}}
-    ['/assets/status/topbg.mp4','/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
+    ['/assets/status/welcome.mp4','/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
       var v=document.createElement('video');v.preload='auto';v.muted=true;
       v.addEventListener('loadeddata',prog);v.addEventListener('error',prog);
       v.src=u;
@@ -130,16 +130,57 @@
         s.style.transform='translate('+(cx-vw/2)+'px,'+(cy-vh/2)+'px) scale(.06)';
         s.classList.add('collapse');
       },580);
-      // 3) port ignites (iris open + ring pulse + reel flicker) and the reel starts
+      // 3) full-screen welcome presentation, then it collapses into the port
       setTimeout(function(){
         s.remove();
-        if(m){
-          m.classList.add('ignite');
-          var vs=document.querySelectorAll('#mascot video');
-          if(vs[0]){vs[0].classList.add('flick');}
+        var intro=document.getElementById('intro');
+        if(!intro){
+          if(m){m.classList.add('ignite');}
+          document.dispatchEvent(new CustomEvent('vg:enter'));
+          return;
         }
-        document.dispatchEvent(new CustomEvent('vg:enter'));
-      },1200);
+        var iv=document.getElementById('iv');
+        intro.style.display='flex';
+        (function tryP(mm){
+          iv.muted=mm;
+          var p=iv.play();
+          if(p&&p.catch){p.catch(function(){if(!mm){tryP(true);}});}
+        })(false);
+        var fin=false;
+        function finish(){
+          if(fin){return;}
+          fin=true;
+          if(!m){intro.remove();document.dispatchEvent(new CustomEvent('vg:enter'));return;}
+          var mc=m.getBoundingClientRect();
+          var small=window.innerWidth<=720;
+          var size=small?120:190,top=small?84:88,right=small?12:24;
+          var r0=intro.getBoundingClientRect();
+          intro.classList.add('parked');
+          intro.style.inset='auto';
+          intro.style.top=top+'px';intro.style.right=right+'px';intro.style.width=size+'px';intro.style.height=size+'px';
+          var r1=intro.getBoundingClientRect();
+          intro.style.transformOrigin='top left';
+          intro.style.transition='none';
+          intro.style.transform='translate('+(r0.left-r1.left)+'px,'+(r0.top-r1.top)+'px) scale('+(r0.width/r1.width)+')';
+          requestAnimationFrame(function(){requestAnimationFrame(function(){
+            intro.style.transition='transform .9s cubic-bezier(.2,.7,.2,1)';
+            intro.style.transform='translate(0px,0px) scale(1)';
+          });});
+          setTimeout(function(){
+            intro.style.transition='opacity .5s';
+            intro.style.opacity='0';
+            setTimeout(function(){intro.remove();},550);
+            m.classList.add('ignite');
+            var vs=document.querySelectorAll('#mascot video');
+            if(vs[0]){vs[0].classList.add('flick');}
+            document.dispatchEvent(new CustomEvent('vg:enter'));
+          },1000);
+        }
+        iv.addEventListener('ended',finish);
+        iv.addEventListener('click',function(){iv.currentTime=Math.max(0,iv.duration-0.05);});
+        var sk=intro.querySelector('.iskip');
+        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();iv.currentTime=Math.min(iv.duration-0.05,iv.currentTime+3);});}
+      },1150);
     });
   })();
 
@@ -187,25 +228,21 @@
     if(window.__audioPrearmed){audioOn=true;}
     refill();
     var engineOn=!document.getElementById('splash');
-    if(document.getElementById('splash')){
-      // Home: port stays paused under the splash; the enter click starts the
-      // reel (with audio, since the click is a user gesture), then the idle loop.
-      shown.src='/assets/status/topbg.mp4';
-      try{shown.load();}catch(e){}
-      document.addEventListener('vg:enter',function(){
-        engineOn=true;
-        audioOn=true;
-        function tryPlayReel(m){
-          shown.muted=m;
-          var p=shown.play();
-          if(p&&p.catch){p.catch(function(){if(!m){tryPlayReel(true);}});}
-        }
-        tryPlayReel(false);
-      },{once:true});
-    }else{
+    function startIdle(){
       var i0=q.pop();lastIdx=i0;shown.src=IV[i0];
       try{shown.load();}catch(e){}
       var p0=shown.play();if(p0&&p0.catch)p0.catch(function(){});
+    }
+    if(document.getElementById('splash')){
+      // Home: port stays paused under the splash; vg:enter (fired when the
+      // welcome presentation finishes its collapse) starts the idle loop.
+      document.addEventListener('vg:enter',function(){
+        engineOn=true;
+        audioOn=true;
+        startIdle();
+      },{once:true});
+    }else{
+      startIdle();
     }
     ensurePre();
     setInterval(function(){
