@@ -194,6 +194,11 @@ function init() {
     if (shown.paused && !shown.ended) return null;
     if (shown.seeking) return null;
     if (shown.readyState < 2) return null;
+    // crossfade window guard: 'shown' may still point at the OUTGOING
+    // clip while curEntry already names the incoming one. Only report a
+    // clip whose source is actually loaded in the element we measure.
+    var base = curEntry.u.split('/').pop();
+    if ((shown.currentSrc || '').indexOf(base) < 0) return null;
     if (shown.duration && shown.currentTime >= shown.duration - 0.05) return null;
     return { u: curEntry.u, role: curEntry.role, v: shown,
              t: shown.currentTime, d: shown.duration };

@@ -74,9 +74,12 @@ function init() {
       d.sp.classList.add('vg-dropin');
       vg.fx('/assets/sfx/chainclink.mp3', 0.5);
     }
+    var seenAction = false;
+    var mended = false;
     var iv = setInterval(function () {
       var p = vg.playing && vg.playing();
       if (p && p.u.indexOf('action1') >= 0) {
+        seenAction = true;
         var prog = p.t / (p.d || 1);
         if (prog < 0.35) return;
         var k = Math.min(1, (prog - 0.35) / 0.5);   // 35-85% window
@@ -88,8 +91,9 @@ function init() {
           if (!dropped[next].done) { dropped[next].done = true; mend(dropped[next]); fixed++; }
           next++;
         }
-      } else {
-        // fix clip already over: finish any remaining mends, then idle-poll
+      } else if (seenAction && !mended) {
+        // fix clip actually started and is now over: finish any leftovers
+        mended = true;
         dropped.forEach(function (d) { if (!d.done) { d.done = true; mend(d); } });
       }
     }, 240);
