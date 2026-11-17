@@ -585,6 +585,42 @@
       host.classList.remove('vg-react');void host.offsetWidth;host.classList.add('vg-react');
       setTimeout(scrollOn,REDUCE?0:360);
     });
+    // TEXT GLITCH-FIX event (v54): visible on-page text corrupts itself, the
+    // mascot immediately plays the page-fix action clip, and the text repairs
+    // WHILE the animation is still playing -- the mascot "fixes the browser".
+    var glitchOn=false;
+    function corrupt(t){
+      var g='#%&@$/\\|<>~*+=?',out='',k,c;
+      for(k=0;k<t.length;k++){c=t[k];if(c===' '&&Math.random()<0.85){out+=c;continue;}out+=(Math.random()<0.42?g.charAt(Math.floor(Math.random()*g.length)):c);}
+      return out;
+    }
+    function glitchEvent(){
+      if(glitchOn||REDUCE)return;
+      var els=[].slice.call(document.querySelectorAll('section h1,section h2,section h3,section p,.hero p,.hero h1,.hero h2')).filter(function(e){
+        var t=e.textContent||'';return t.length>12&&t.length<170&&e.offsetParent&&(!e.closest||!e.closest('#vgmenu'));
+      });
+      if(!els.length)return;
+      if(!window.__vgForce||!window.__vgForce('/assets/status/action1.mp4'))return; // mascot must be rolling the fix clip first
+      var el=els[Math.floor(Math.random()*els.length)];
+      var orig=el.textContent;
+      glitchOn=true;
+      if(window.__vgFx)window.__vgFx('/assets/sfx/glitch.mp3',0.5);
+      el.classList.add('vg-glitch');
+      var n=0;
+      setTimeout(function(){
+        var iv=setInterval(function(){n++;el.textContent=corrupt(orig);if(n>=4){clearInterval(iv);}},240);
+        setTimeout(function(){
+          el.textContent=orig;
+          el.classList.remove('vg-glitch');
+          el.classList.add('vg-fixed');
+          if(window.__vgFx)window.__vgFx('/assets/sfx/chainclink.mp3',0.5);
+          setTimeout(function(){el.classList.remove('vg-fixed');},700);
+          glitchOn=false;
+        },3900);
+      },1400);
+    }
+    window.__vgGlitch=glitchEvent;
+    (function schedule(){setTimeout(glitchEvent,60000+Math.random()*90000);})();
     var eye=document.createElement('span');eye.id='vgeye';document.body.appendChild(eye);
     var eyeT=null,tiltT=null;
     function eyeAt(x,y,h){

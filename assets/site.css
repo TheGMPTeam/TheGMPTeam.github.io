@@ -266,3 +266,7 @@ body.has-bg-video .grid-bg{opacity:.45}
 #vgportal.smoke::before{animation-duration:.7s}
 @keyframes vgspin{to{transform:rotate(360deg)}}
 @keyframes vgswirl{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.04)}100%{transform:rotate(360deg) scale(1)}}
+
+/* v54: text glitch + repair beats */
+.vg-glitch{color:#ff4d6d;text-shadow:1px 0 0 rgba(0,217,255,.75),-1px 0 0 rgba(255,77,109,.75);letter-spacing:.04em}
+.vg-fixed{color:#00ffb0;text-shadow:0 0 10px rgba(0,255,176,.8);transition:color .3s}
