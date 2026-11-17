@@ -278,3 +278,8 @@ body.has-bg-video .grid-bg{opacity:.45}
 .vg-dropin{animation:vgdropin .45s cubic-bezier(.2,1.4,.4,1) backwards}
 @keyframes vgfall{40%{opacity:1}100%{transform:translateY(90px) rotate(40deg) scale(.85);opacity:0}}
 @keyframes vgdropin{0%{transform:translateY(-30px) scale(1.15);opacity:0;color:#00ffb0;text-shadow:0 0 10px rgba(0,255,176,.8)}100%{transform:none;opacity:1}}
+
+/* v64: mascot-click poke + valve-wheel action */
+#mascot{cursor:pointer}
+#mascot.vg-poke{animation:vgpoke .38s cubic-bezier(.3,1.6,.4,1)}
+@keyframes vgpoke{30%{transform:scale(1.06)}100%{transform:none}}

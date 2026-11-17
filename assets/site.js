@@ -573,6 +573,18 @@
     // Clicking the page chain also makes the mascot grab ITS chain: the
     // pull-chain action clip (action2) is forced as the very next port clip.
     var PULLU='/assets/status/action2.mp4';
+    // v64: clicking the mascot ITSELF asks it to do maintenance -- forces the
+    // valve-wheel action clip (action3). Chain clicks stay exclusive to action2.
+    var WHEELU='/assets/status/action3.mp4';
+    host.addEventListener('click',function(e){
+      if(!live()||REDUCE)return;
+      if(e.target.closest&&e.target.closest('#vgchain'))return;
+      if(!window.__vgForce)return;
+      host.classList.add('vg-poke');
+      setTimeout(function(){host.classList.remove('vg-poke');},380);
+      if(window.__vgFx)window.__vgFx('/assets/sfx/chainclink.mp3',0.45);
+      window.__vgForce(WHEELU);
+    });
     chain.addEventListener('click',function(ev){
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
