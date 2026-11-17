@@ -380,12 +380,13 @@
       }
     };
     var MENU=document.createElement('div');MENU.id='vgmenu';
-    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
+    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="portal">PORTAL FX</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
     document.body.appendChild(MENU);
     function closeMenu(){MENU.style.display='none';}
     function openMenu(x,y){
       MENU.querySelector('[data-a="skip"]').textContent='SKIP WELCOME'+(vgSet().skipWelcome?' \u2713':'');
       MENU.querySelector('[data-a="mute"]').textContent=(window.__vgMuted?'UNMUTE':'MUTE')+(window.__vgMuted?' \u2713':'');
+      MENU.querySelector('[data-a="portal"]').textContent='PORTAL FX'+(vgSet().portalFx===false?'':' \u2713');
       MENU.style.display='block';
       var w=MENU.offsetWidth,h=MENU.offsetHeight;
       MENU.style.left=Math.min(x,window.innerWidth-w-8)+'px';
@@ -396,6 +397,7 @@
       if(!it)return;
       var a=it.getAttribute('data-a');
       if(a==='skip')window.vgCtl.skip();
+      else if(a==='portal'){var ps=vgSet();ps.portalFx=ps.portalFx===false;vgSave(ps);}
       else if(a==='stop')window.vgCtl.stop();
       else if(a==='resume')window.vgCtl.resume();
       else window.vgCtl.mute();
@@ -585,6 +587,7 @@
       var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;var p2=v.play();if(p2&&p2.catch)p2.catch(function(){err();});});
     }
     document.addEventListener('vg:walkoff',function(){
+      if(vgSet().portalFx===false)return; // submenu toggle: OFF kills the spectacle
       var now=Date.now();
       if(busy||REDUCE||now-lastFire<60000){return;}
       var pool=window.__vgPool||[];
