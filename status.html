@@ -213,26 +213,28 @@ const stages=[].slice.call(document.querySelectorAll('#simgrid .g'));
 const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.3});
 stages.forEach(function(s){io.observe(s);});
 let tourOn=false;
+window.__t={i:-1,on:false};
 function tourEnd(){
-  tourOn=false;
-  const vh=(window.innerHeight||document.documentElement.clientHeight)+'px';
+  tourOn=false;window.__t={i:-1,on:false};
   stages.forEach(function(s){s.style.display='';s.style.minHeight='';});
   document.documentElement.style.scrollSnapType='y proximity';
 }
 function tour(i){
   if(!tourOn){return;}
   if(i>=stages.length){tourEnd();return;}
+  window.__t={i:i,on:true};
   const vh=(window.innerHeight||document.documentElement.clientHeight)+'px';
   stages.forEach(function(s,k){
     if(k===i){s.style.display='block';s.style.minHeight=vh;}
     else{s.style.display='none';s.style.minHeight='';}
   });
-  document.documentElement.style.scrollSnapType='y mandatory';
-  var top=stages[i].offsetTop;
-  window.scrollTo({top:top,behavior:'smooth'});
+  var hud=document.getElementById('hud');
+  var off=(hud?Math.round(hud.getBoundingClientRect().bottom)+6:70);
+  var top=Math.max(0,stages[i].offsetTop-off);
+  window.scrollTo({top:top,behavior:i===0?'smooth':'auto'});
   setTimeout(function(){
-    if(tourOn&&Math.abs(window.scrollY-top)>4)window.scrollTo({top:top,behavior:'smooth'});
-  },750);
+    if(tourOn&&Math.abs(window.scrollY-top)>4)window.scrollTo({top:top,behavior:'auto'});
+  },700);
   setTimeout(function(){tour(i+1);},4600);
 }
 ['wheel','touchstart','mousedown'].forEach(function(ev){
