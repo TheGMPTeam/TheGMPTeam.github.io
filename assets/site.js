@@ -95,21 +95,29 @@
     render();
   });
 
-  // Splash overlay: shows once per session; click, keypress, or 3.2s timer dismisses it.
+  // Home splash: ALWAYS shown (every load), no auto timer, click required to enter.
+  // Stays up while reel + idle clips preload, then hints CLICK TO ENTER.
+  // The side mascot port sits under the splash, paused, until the enter click
+  // (the click gesture is what unlocks audio for the reel).
   (function(){
     var s=document.getElementById('splash');
-    if(!s) return;
-    if(sessionStorage.getItem('splashSeen')==='1'){ s.remove(); return; }
-    var done=false;
-    function dismiss(){
-      if(done) return; done=true;
-      sessionStorage.setItem('splashSeen','1');
+    if(!s){window.__vgEntered=true;return;}
+    var hint=s.querySelector('.splash-hint');
+    if(hint){hint.textContent='LOADING SYSTEM...';}
+    var ready=0,opened=false;
+    function prog(){ready++;if(ready>=4){open();}}
+    function open(){if(opened)return;opened=true;window.__vgVidReady=true;if(hint){hint.textContent='CLICK TO ENTER';}}
+    ['/assets/status/topbg.mp4','/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
+      var v=document.createElement('video');v.preload='auto';v.muted=true;
+      v.addEventListener('loadeddata',prog);v.addEventListener('error',prog);
+      v.src=u;
+    });
+    setTimeout(open,6000);
+    s.addEventListener('click',function(){
       s.classList.add('out');
-      setTimeout(function(){ s.remove(); },900);
-    }
-    s.addEventListener('click',dismiss);
-    document.addEventListener('keydown',dismiss,{once:true});
-    setTimeout(dismiss,3200);
+      setTimeout(function(){s.remove();},850);
+      document.dispatchEvent(new CustomEvent('vg:enter'));
+    });
   })();
 
   // Site-wide assistant mascot: circular port playing shuffled idle clips forever,
@@ -153,18 +161,22 @@
     document.addEventListener('keydown',arm,{once:true});
     if(window.__audioPrearmed){audioOn=true;}
     refill();
+    var engineOn=!document.getElementById('splash');
     if(document.getElementById('splash')){
-      // Home: the reel plays first inside the side port (audio attempt),
-      // then the ticker hands off to the endless idle cycle.
+      // Home: port stays paused under the splash; the enter click starts the
+      // reel (with audio, since the click is a user gesture), then the idle loop.
       shown.src='/assets/status/topbg.mp4';
       try{shown.load();}catch(e){}
-      function tryPlayHome(m){
-        shown.muted=m;
-        var p=shown.play();
-        if(p&&p.catch){p.catch(function(){if(!m){tryPlayHome(true);}});}
-        else if(!m){audioOn=true;}
-      }
-      tryPlayHome(false);
+      document.addEventListener('vg:enter',function(){
+        engineOn=true;
+        audioOn=true;
+        function tryPlayReel(m){
+          shown.muted=m;
+          var p=shown.play();
+          if(p&&p.catch){p.catch(function(){if(!m){tryPlayReel(true);}});}
+        }
+        tryPlayReel(false);
+      },{once:true});
     }else{
       var i0=q.pop();lastIdx=i0;shown.src=IV[i0];
       try{shown.load();}catch(e){}
@@ -172,6 +184,7 @@
     }
     ensurePre();
     setInterval(function(){
+      if(!engineOn){return;}
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
       idleLoop();
     },1500);
