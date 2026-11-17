@@ -183,6 +183,10 @@
         }
         var iv=document.getElementById('iv');
         intro.style.display='flex';
+        // SKIP must live outside the circular intro box: fixed positioning
+        // inside a transformed ancestor is clipped by the porthole corners.
+        var skb=intro.querySelector('.iskip');
+        if(skb){document.body.appendChild(skb);}
         (function tryP(mm){
           iv.muted=mm;
           var p=iv.play();
@@ -192,6 +196,7 @@
         function finish(){
           if(fin){return;}
           fin=true;
+          if(skb){skb.style.display='none';}
           if(!m){intro.remove();document.dispatchEvent(new CustomEvent('vg:enter'));return;}
           var mc=m.getBoundingClientRect();
           var small=window.innerWidth<=720;
