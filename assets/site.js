@@ -638,7 +638,7 @@
     document.addEventListener('vg:portal',function(){
       if(vgSet().portalFx===false){announceDone();return;} // submenu toggle: OFF skips straight past
       var now=Date.now();
-      if(busy||REDUCE||now-lastFire<60000){announceDone();return;}
+      if(busy||REDUCE||now-lastFire<20000){announceDone();return;}
       var pool=window.__vgPool||[];
       var wons=[],woffs=[],k;
       for(k=0;k<pool.length;k++){
@@ -671,6 +671,7 @@
       }
       function leg2(){
         p1.style.opacity='0';
+        p2.style.opacity='1'; // p2 starts hidden for the crossfade; without this the exit leg plays INVISIBLE
         playIn(p2,woffs[Math.floor(Math.random()*woffs.length)],smoke,cleanup);
       }
       // v46 order per James: inside the portal he ENTERS first (walk-on),
