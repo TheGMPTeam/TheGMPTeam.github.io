@@ -132,6 +132,7 @@
     }
     var ivv=document.getElementById('iv');
     function fastExit(){
+      sfx('whoosh');
       s.style.transition='opacity .25s';
       s.classList.add('collapse');
       setTimeout(function(){
@@ -142,6 +143,13 @@
       },280);
     }
     var WSRC=(ivv&&ivv.getAttribute('src'))||'/assets/status/welcome.mp4';
+    // Transition sound effects (synthesized, local): glitch zap on click,
+    // vacuum suck on collapse, power-on hum+pop when the welcome ignites.
+    var SFXP={glitch:'/assets/sfx/glitch.mp3',whoosh:'/assets/sfx/whoosh.mp3',ignite:'/assets/sfx/ignite.mp3'};
+    function sfx(n){
+      if(window.__vgMuted||!SFXP[n])return;
+      try{var a=new Audio(SFXP[n]);a.volume=0.75;var p=a.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+    }
     if(vgSet().skipWelcome){
       // Skip mode: don't stall on media preloads the user opted out of.
       open();
@@ -156,6 +164,7 @@
     s.addEventListener('click',function(){
       if(s.dataset.leaving){return;}
       s.dataset.leaving='1';
+      sfx('glitch');
       var m=document.getElementById('mascot');
       var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if(reduce){s.remove();document.dispatchEvent(new CustomEvent('vg:enter'));return;}
@@ -165,6 +174,7 @@
       s.classList.add('glitch');
       // 2) whole splash collapses into the port circle
       setTimeout(function(){
+        sfx('whoosh');
         var mc=m?m.getBoundingClientRect():{left:window.innerWidth-120,top:96,width:190,height:190};
         var cx=mc.left+mc.width/2,cy=mc.top+mc.height/2;
         var vw=window.innerWidth,vh=window.innerHeight;
@@ -183,6 +193,7 @@
         }
         var iv=document.getElementById('iv');
         intro.style.display='flex';
+        sfx('ignite');
         // SKIP must live outside the circular intro box: fixed positioning
         // inside a transformed ancestor is clipped by the porthole corners.
         var skb=intro.querySelector('.iskip');
