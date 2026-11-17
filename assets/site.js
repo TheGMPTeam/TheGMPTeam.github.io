@@ -603,22 +603,37 @@
       if(!els.length)return;
       if(!window.__vgForce||!window.__vgForce('/assets/status/action1.mp4'))return; // mascot must be rolling the fix clip first
       var el=els[Math.floor(Math.random()*els.length)];
-      var orig=el.textContent;
+      var orig=el.textContent; // exact original; every repair restores this string verbatim
       glitchOn=true;
       if(window.__vgFx)window.__vgFx('/assets/sfx/glitch.mp3',0.5);
       el.classList.add('vg-glitch');
-      var n=0;
-      setTimeout(function(){
-        var iv=setInterval(function(){n++;el.textContent=corrupt(orig);if(n>=4){clearInterval(iv);}},240);
-        setTimeout(function(){
+      // v59: the corruption lasts exactly as long as the fix animation plays.
+      // Tick keeps re-scrambling (always FROM the pristine orig string, so no
+      // drift) and watches action1 in the port; when the clip ends -- or at a
+      // 20s safety cap -- restore the exact original text and flash repaired.
+      var t0=Date.now();
+      var iv=setInterval(function(){
+        el.textContent=corrupt(orig);
+        var now=Date.now(),done=false;
+        if(now-t0>20000)done=true;
+        else if(now-t0>2500){
+          var mv=document.querySelectorAll('#mascot video'),playing=false;
+          for(var i=0;i<mv.length;i++){
+            var v=mv[i];
+            if(((v.currentSrc||v.src||'').indexOf('/action1.mp4')>=0)&&!v.ended&&!v.paused&&v.currentTime<(v.duration||0)-0.06)playing=true;
+          }
+          if(!playing)done=true;
+        }
+        if(done){
+          clearInterval(iv);
           el.textContent=orig;
           el.classList.remove('vg-glitch');
           el.classList.add('vg-fixed');
           if(window.__vgFx)window.__vgFx('/assets/sfx/chainclink.mp3',0.5);
           setTimeout(function(){el.classList.remove('vg-fixed');},700);
           glitchOn=false;
-        },3900);
-      },1400);
+        }
+      },250);
     }
     window.__vgGlitch=glitchEvent;
     (function schedule(){setTimeout(glitchEvent,60000+Math.random()*90000);})();
