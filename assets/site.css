@@ -288,3 +288,17 @@ body.has-bg-video .grid-bg{opacity:.45}
 #mascot{cursor:pointer}
 #mascot.vg-poke{animation:vgpoke .38s cubic-bezier(.3,1.6,.4,1)}
 @keyframes vgpoke{30%{transform:scale(1.06)}100%{transform:none}}
+
+/* ---- modular engine additions (M3) ---- */
+#vgeyes{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .4s;z-index:3}
+#vgeyes.on{opacity:1}
+.vgpupil{position:absolute;top:34%;width:9px;height:9px;border-radius:50%;background:#00d9ff;box-shadow:0 0 8px #00d9ff;transition:height .1s}
+.vgpupil.l{left:38%}
+.vgpupil.r{left:56%}
+.vgpupil.blink{height:2px}
+.vg-bright #vglinks i{filter:brightness(1.9)}
+.vg-spin{animation:vgspin 1.6s linear!important}
+@keyframes vgspin{to{transform:rotate(360deg)}}
+.vg-jolt{animation:vgjolt .5s}
+@keyframes vgjolt{30%{translate:0 -7px}60%{translate:0 3px}}
+.vg-sway-off{animation:none!important}
