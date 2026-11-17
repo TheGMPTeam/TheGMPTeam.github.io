@@ -242,17 +242,32 @@
       host.appendChild(a);host.appendChild(b);
       document.body.appendChild(host);
     }
-    var IV=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
-    var IA=['/assets/status/idle1.m4a','/assets/status/idle2.m4a','/assets/status/idle3.m4a'];
+    // Idle pool: drop assets/status/idle1.mp4 ... idle8.mp4 on the CDN and they
+    // join the shuffled rotation automatically. Clips carry embedded audio;
+    // the visible layer is unmuted (honors the saved MUTE setting).
+    var CANDS=[1,2,3,4,5,6,7,8];
+    var IV=[],IA=[];
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
-    var mediaDead=false;
+    var mediaDead=false,probed=0,started=false;
     [shown,buf].forEach(function(x){x.addEventListener('error',function(){mediaDead=true;});});
     var q=[],pre=null,lastIdx=0,audioOn=false;
-    function refill(){q=[0,1,2];for(var i=q.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=q[i];q[i]=q[j];q[j]=t;}}
-    function blip(){if(!audioOn)return;try{var s=new Audio(IA[lastIdx]);s.volume=.85;var p=s.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
-    function ensurePre(){if(pre!==null)return;if(!q.length)refill();var i=q.pop();buf.muted=true;buf.src=IV[i];try{buf.load();}catch(e){}pre=i;}
+    function refill(){q=[];for(var k=0;k<IV.length;k++)q.push(k);for(var i=q.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=q[i];q[i]=q[j];q[j]=t;}}
+    var engineOn=!document.getElementById('splash');
+    function maybeStart(){
+      if(probed===CANDS.length&&!IV.length){mediaDead=true;return;}
+      if(IV.length&&engineOn&&!started){started=true;startIdle();ensurePre();}
+    }
+    CANDS.forEach(function(n){
+      var v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
+      v.addEventListener('loadeddata',function(){IV.push('/assets/status/idle'+n+'.mp4');maybeStart();});
+      v.addEventListener('error',function(){probed++;maybeStart();});
+      v.src='/assets/status/idle'+n+'.mp4';
+    });
+    function ensurePre(){if(pre!==null)return;if(!IV.length)return;if(!q.length)refill();if(!q.length)return;var i=q.pop();buf.muted=true;buf.src=IV[i];try{buf.load();}catch(e){}pre=i;}
     function idleLoop(){
+      if(!IV.length)return;
       if(pre===null)ensurePre();
+      if(pre===null)return;
       var i=pre;pre=null;lastIdx=i;
       buf.muted=true;buf.style.opacity='0';
       if(buf.currentSrc.indexOf(IV[i])<0){buf.src=IV[i];}
@@ -261,18 +276,20 @@
         buf.removeEventListener('playing',on);
         buf.style.opacity='1';shown.style.opacity='0';
         var t=shown;shown=buf;buf=t;
-        blip();
+        try{shown.muted=!!window.__vgMuted;}catch(e){}
         setTimeout(function(){try{buf.pause();}catch(e){}ensurePre();},450);
       },{once:true});
     }
-    function arm(){audioOn=!window.__vgMuted;}
+    function arm(){audioOn=!window.__vgMuted;try{shown.muted=!!window.__vgMuted;}catch(e){}}
     document.addEventListener('click',arm,{once:true});
     document.addEventListener('keydown',arm,{once:true});
     if(window.__audioPrearmed){audioOn=true;}
-    refill();
-    var engineOn=!document.getElementById('splash');
     function startIdle(){
-      var i0=q.pop();lastIdx=i0;shown.src=IV[i0];
+      if(!IV.length)return;
+      if(!q.length)refill();if(!q.length)return;
+      var i0=q.pop();lastIdx=i0;
+      try{shown.muted=!!window.__vgMuted;}catch(e){}
+      shown.src=IV[i0];
       try{shown.load();}catch(e){}
       var p0=shown.play();if(p0&&p0.catch)p0.catch(function(){});
     }
@@ -282,14 +299,13 @@
       document.addEventListener('vg:enter',function(){
         engineOn=true;
         audioOn=!window.__vgMuted;
-        startIdle();
+        maybeStart();
       },{once:true});
     }else{
-      startIdle();
+      maybeStart();
     }
-    ensurePre();
     setInterval(function(){
-      if(mediaDead||!engineOn){return;}
+      if(mediaDead||!engineOn||!started||!IV.length){return;}
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
       idleLoop();
     },1500);
@@ -318,6 +334,7 @@
         var mm=!window.__vgMuted;window.__vgMuted=mm;audioOn=!mm;
         var st=vgSet();st.muted=mm;vgSave(st);
         var v=document.getElementById('iv');if(v){v.muted=mm;}
+        try{shown.muted=mm;buf.muted=true;}catch(e){}
       }
     };
     var MENU=document.createElement('div');MENU.id='vgmenu';
