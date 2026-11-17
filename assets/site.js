@@ -585,6 +585,21 @@
       if(window.__vgFx)window.__vgFx('/assets/sfx/chainclink.mp3',0.45);
       window.__vgForce(WHEELU);
     });
+    // v65: hovering a CTA -- the mascot throws ITS lever: power-on presenting
+    // beat (action4). Once per page load, 90s cooldown, never during intro/portal.
+    var LEVERU='/assets/status/action4.mp4';
+    var leverFired=false;
+    function ctaHover(){
+      if(leverFired||!live()||REDUCE||!window.__vgForce)return;
+      var now=Date.now();
+      if(window.__leverT&&now-window.__leverT<90000)return;
+      leverFired=true;window.__leverT=now;
+      if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
+      window.__vgForce(LEVERU);
+    }
+    [].slice.call(document.querySelectorAll('.cta,.pcard')).forEach(function(el){
+      el.addEventListener('pointerenter',ctaHover);
+    });
     chain.addEventListener('click',function(ev){
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
