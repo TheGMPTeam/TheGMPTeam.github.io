@@ -1,4 +1,8 @@
 (function(){
+  // Porthole user settings (per browser, all pages): { skipWelcome, muted }
+  function vgSet(){try{return JSON.parse(localStorage.getItem('vgset')||'{}');}catch(e){return{};}}
+  function vgSave(s){try{localStorage.setItem('vgset',JSON.stringify(s));}catch(e){}}
+  if(vgSet().muted){window.__vgMuted=true;}
   // 3D perspective coverflow: active video dead-center, neighbors angled back on Z.
   // Hover on the current slide injects a muted autoplaying YouTube embed; removed on leave/slide change.
   document.querySelectorAll('.car').forEach(function(car){
@@ -122,6 +126,17 @@
       var m=document.getElementById('mascot');
       var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if(reduce){s.remove();document.dispatchEvent(new CustomEvent('vg:enter'));return;}
+      // Saved SKIP preference: no welcome presentation, straight to the port.
+      if(vgSet().skipWelcome){
+        s.style.transition='opacity .25s';
+        s.classList.add('collapse');
+        setTimeout(function(){
+          s.remove();
+          if(m){m.classList.add('ignite');}
+          document.dispatchEvent(new CustomEvent('vg:enter'));
+        },280);
+        return;
+      }
       // 1) scanline sweep + glitch shatter
       s.classList.add('glitch');
       // 2) whole splash collapses into the port circle
@@ -148,7 +163,7 @@
           iv.muted=mm;
           var p=iv.play();
           if(p&&p.catch){p.catch(function(){if(!mm){tryP(true);}});}
-        })(false);
+        })(!!window.__vgMuted);
         var fin=false;
         function finish(){
           if(fin){return;}
@@ -258,10 +273,10 @@
     // Playback controls for the portholes: click = mute toggle, right-click = menu.
     window.vgCtl={
       skip:function(){
+        // SKIP is a saved preference: toggles skipping the welcome presentation.
+        var st=vgSet();st.skipWelcome=!st.skipWelcome;vgSave(st);
         var i=document.getElementById('intro'),v=document.getElementById('iv');
-        if(i&&i.style.display!=='none'){if(v&&!v.ended){v.currentTime=(v.duration||10.2)-0.05;}return;}
-        if(mediaDead)return;
-        idleLoop();
+        if(i&&i.style.display!=='none'&&v&&!v.ended){v.currentTime=(v.duration||10.2)-0.05;}
       },
       stop:function(){
         var i=document.getElementById('intro'),v=i&&i.style.display!=='none'&&document.getElementById('iv');
@@ -277,15 +292,17 @@
       },
       mute:function(){
         var mm=!window.__vgMuted;window.__vgMuted=mm;audioOn=!mm;
+        var st=vgSet();st.muted=mm;vgSave(st);
         var v=document.getElementById('iv');if(v){v.muted=mm;}
       }
     };
     var MENU=document.createElement('div');MENU.id='vgmenu';
-    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
+    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
     document.body.appendChild(MENU);
     function closeMenu(){MENU.style.display='none';}
     function openMenu(x,y){
-      MENU.querySelector('[data-a="mute"]').textContent=window.__vgMuted?'UNMUTE':'MUTE';
+      MENU.querySelector('[data-a="skip"]').textContent='SKIP WELCOME'+(vgSet().skipWelcome?' \u2713':'');
+      MENU.querySelector('[data-a="mute"]').textContent=(window.__vgMuted?'UNMUTE':'MUTE')+(window.__vgMuted?' \u2713':'');
       MENU.style.display='block';
       var w=MENU.offsetWidth,h=MENU.offsetHeight;
       MENU.style.left=Math.min(x,window.innerWidth-w-8)+'px';
@@ -304,7 +321,7 @@
     document.addEventListener('mousedown',function(e){if(MENU.style.display==='block'&&!MENU.contains(e.target))closeMenu();});
     document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
     document.addEventListener('contextmenu',function(e){
-      var t=e.target&&e.target.closest?e.target.closest('#mascot,#intro'):null;
+      var t=e.target&&e.target.closest?e.target.closest('#mascot,#intro,#splash'):null;
       if(!t)return;
       e.preventDefault();openMenu(e.clientX,e.clientY);
     });
