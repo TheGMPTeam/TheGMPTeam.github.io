@@ -11,10 +11,11 @@
 <link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
 <style>
 .hero{position:relative;z-index:20;text-align:center;color:#fff;padding:70px 0 46px;transition:opacity .7s ease,transform .7s ease}
-.hero video{display:block;width:min(360px,72vw);aspect-ratio:480/864;height:auto;margin:28px auto 0;object-fit:cover;border:1px solid rgba(0,217,255,.45);box-shadow:0 0 30px rgba(0,217,255,.22);background:#01030a;border-radius:34px}
-#bgvid.parked,#bgvid2.parked{position:fixed;top:88px;right:24px;width:190px;aspect-ratio:1/1;height:190px;margin:0;z-index:70;opacity:.88;box-shadow:0 0 26px rgba(0,217,255,.35);transform-origin:top left;pointer-events:none;border:1px solid rgba(0,217,255,.45);background:#01030a;object-fit:cover;object-position:center 30%;border-radius:50%}
-#bgvid2{display:none;background:#01030a}
-#bgvid2.parked{display:block;opacity:0}
+#vbox{position:relative;display:block;width:min(360px,72vw);aspect-ratio:480/864;margin:28px auto 0;border:1px solid rgba(0,217,255,.45);border-radius:34px;overflow:hidden;box-shadow:0 0 30px rgba(0,217,255,.22);background:#01030a}
+#vbox video{display:block;width:100%;height:100%;object-fit:cover;background:#01030a}
+#bgvid2{position:absolute;inset:0;opacity:0;pointer-events:none}
+#vbox.parked{position:fixed;top:88px;right:24px;width:190px;height:190px;aspect-ratio:1/1;margin:0;z-index:70;opacity:.88;border-radius:50%;box-shadow:0 0 26px rgba(0,217,255,.35);pointer-events:none;transform-origin:top left}
+#vbox.parked video{object-position:center 30%}
 .hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
 .hero-eyebrow{color:#7d90a8;letter-spacing:.26em;font-size:.66rem;text-transform:uppercase}
 .splash{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#01030a;cursor:pointer;transition:opacity .7s}
@@ -88,10 +89,12 @@ footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wr
   <div class="hero-wrap wrap">
     <h1 class="hero-hd">FLEET STATUS</h1>
     <p class="hero-eyebrow">SIMULATION LOOP &mdash; RECONSTRUCTION, NOT LIVE</p>
-    <video id="bgvid" playsinline preload="auto">
-      <source src="/assets/status/topbg.mp4" type="video/mp4">
-    </video>
-    <video id="bgvid2" playsinline preload="auto"></video>
+    <div id="vbox">
+      <video id="bgvid" playsinline preload="auto">
+        <source src="/assets/status/topbg.mp4" type="video/mp4">
+      </video>
+      <video id="bgvid2" playsinline preload="auto"></video>
+    </div>
   </div>
   <div class="splash" id="splash">
     <div class="logo">THEGMP<b>TEAM</b> STUDIOS</div>
@@ -249,21 +252,18 @@ function blip(){
   }catch(e){}
 }
 function parkVideo(){
-  var r0=v.getBoundingClientRect();
-  document.body.appendChild(v);
-  v.classList.add('parked');
-  var v2=document.getElementById('bgvid2');
-  document.body.appendChild(v2);
-  v2.classList.add('parked');
-  v2.style.pointerEvents='none';
-  var r1=v.getBoundingClientRect();
+  var box=document.getElementById('vbox');
+  var r0=box.getBoundingClientRect();
+  document.body.appendChild(box);
+  box.classList.add('parked');
+  var r1=box.getBoundingClientRect();
   if(r0.width>0&&r1.width>0){
-    v.style.transition='none';
-    v.style.transform='translate('+(r0.left-r1.left)+'px,'+(r0.top-r1.top)+'px) scale('+(r0.width/r1.width)+')';
+    box.style.transition='none';
+    box.style.transform='translate('+(r0.left-r1.left)+'px,'+(r0.top-r1.top)+'px) scale('+(r0.width/r1.width)+')';
     requestAnimationFrame(function(){requestAnimationFrame(function(){
-      v.style.transition='transform .9s cubic-bezier(.2,.7,.2,1)';
-      v.style.transform='translate(0px,0px) scale(1)';
-      setTimeout(function(){v.style.transition='opacity .35s ease';v.style.opacity='.88';},950);
+      box.style.transition='transform .9s cubic-bezier(.2,.7,.2,1)';
+      box.style.transform='translate(0px,0px) scale(1)';
+      setTimeout(function(){box.style.transition='opacity .35s ease';box.style.opacity='.92';},950);
     });});
   }
 }
