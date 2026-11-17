@@ -242,42 +242,59 @@
       host.appendChild(a);host.appendChild(b);
       document.body.appendChild(host);
     }
-    // Idle pool: drop assets/status/idle1.mp4 ... idle8.mp4 on the CDN and they
-    // join the shuffled rotation automatically. Clips carry embedded audio;
-    // the visible layer is unmuted (honors the saved MUTE setting).
-    var CANDS=[1,2,3,4,5,6,7,8];
-    var IV=[],IA=[];
+    // Idle pool with WALK PAIRING. Filenames encode the role:
+    //   idleN.mp4     -- starts and ends with the character present (neutral)
+    //   walkonN.mp4   -- starts off-stage and walks in, ends present
+    //   walkoffN.mp4  -- starts present, ends with the character gone
+    // Pairing rules (James 2026-11-17): a walk-off ending must be followed by a
+    // walk-on; walk-ons only follow walk-off endings (never an occupied stage);
+    // when walk-ons run out after an empty ending, fall back to anything.
+    // Drop files named that way on the CDN and they join automatically.
+    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);
+    var IV=[],IA=[]; // entries: {u:URL, endGone:bool}
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
     var mediaDead=false,probed=0,started=false;
     [shown,buf].forEach(function(x){x.addEventListener('error',function(){mediaDead=true;});});
-    var q=[],pre=null,lastIdx=0,audioOn=false;
-    function refill(){q=[];for(var k=0;k<IV.length;k++)q.push(k);for(var i=q.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=q[i];q[i]=q[j];q[j]=t;}}
+    var pre=null,audioOn=false,lastEndGone=false,lastU='';
     var engineOn=!document.getElementById('splash');
     function maybeStart(){
-      if(probed===CANDS.length&&!IV.length){mediaDead=true;return;}
+      if(probed===SLOT.length&&!IV.length){mediaDead=true;return;}
       if(IV.length&&engineOn&&!started){started=true;startIdle();ensurePre();}
     }
-    CANDS.forEach(function(n){
+    SLOT.forEach(function(s){
+      var u='/assets/status/'+s[0]+s[1]+'.mp4';
       var v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
-      v.addEventListener('loadeddata',function(){IV.push('/assets/status/idle'+n+'.mp4');maybeStart();});
+      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:s[0]==='walkoff'});maybeStart();});
       v.addEventListener('error',function(){probed++;maybeStart();});
-      v.src='/assets/status/idle'+n+'.mp4';
+      v.src=u;
     });
-    function ensurePre(){if(pre!==null)return;if(!IV.length)return;if(!q.length)refill();if(!q.length)return;var i=q.pop();buf.muted=true;buf.src=IV[i];try{buf.load();}catch(e){}pre=i;}
+    function pick(){
+      if(!IV.length)return null;
+      var pool;
+      if(lastEndGone)pool=IV.filter(function(x){return x.u.indexOf('walkon')>=0;});
+      else pool=IV.filter(function(x){return x.u.indexOf('walkon')<0;});
+      if(!pool.length)pool=IV;
+      var alt=pool.filter(function(x){return x.u!==lastU;});
+      if(alt.length)pool=alt;
+      var e=pool[Math.floor(Math.random()*pool.length)];
+      lastU=e.u;lastEndGone=e.endGone;
+      return e;
+    }
+    function ensurePre(){if(pre!==null)return;var e=pick();if(!e)return;buf.muted=true;buf.src=e.u;try{buf.load();}catch(e2){}pre=e;}
     function idleLoop(){
       if(!IV.length)return;
       if(pre===null)ensurePre();
       if(pre===null)return;
-      var i=pre;pre=null;lastIdx=i;
+      var e=pre;pre=null;
       buf.muted=true;buf.style.opacity='0';
-      if(buf.currentSrc.indexOf(IV[i])<0){buf.src=IV[i];}
+      if(buf.currentSrc.indexOf(e.u)<0){buf.src=e.u;}
       var pr=buf.play();if(pr&&pr.catch)pr.catch(function(){});
       buf.addEventListener('playing',function on(){
         buf.removeEventListener('playing',on);
         buf.style.opacity='1';shown.style.opacity='0';
         var t=shown;shown=buf;buf=t;
-        try{shown.muted=!!window.__vgMuted;}catch(e){}
-        setTimeout(function(){try{buf.pause();}catch(e){}ensurePre();},450);
+        try{shown.muted=!!window.__vgMuted;}catch(e2){}
+        setTimeout(function(){try{buf.pause();}catch(e2){}ensurePre();},450);
       },{once:true});
     }
     function arm(){audioOn=!window.__vgMuted;try{shown.muted=!!window.__vgMuted;}catch(e){}}
@@ -286,10 +303,9 @@
     if(window.__audioPrearmed){audioOn=true;}
     function startIdle(){
       if(!IV.length)return;
-      if(!q.length)refill();if(!q.length)return;
-      var i0=q.pop();lastIdx=i0;
+      var e0=pick();if(!e0)return;
       try{shown.muted=!!window.__vgMuted;}catch(e){}
-      shown.src=IV[i0];
+      shown.src=e0.u;
       try{shown.load();}catch(e){}
       var p0=shown.play();if(p0&&p0.catch)p0.catch(function(){});
     }
