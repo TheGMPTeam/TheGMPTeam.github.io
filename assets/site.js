@@ -737,12 +737,24 @@
     window.__vgFxStop=function(){if(humH){try{humH.s.stop();}catch(e){}humH=null;}};
     function poofSound(){window.__vgFx('/assets/sfx/poof.mp3',0.7);}
     function playIn(v,u,next,err){
-      // Portal legs carry the clip's OWN audio (James v56: ambience is part of
-      // the walk animation). Unmuted unless the site-wide mute is on; if the
-      // browser blocks unmuted autoplay we fall back to muted playback.
-      v.muted=!!window.__vgMuted;v.src=u;
+      // Portal legs START MUTED: an unmuted play() on a video element created
+      // without a user gesture can return a promise that NEVER settles -- no
+      // reject, no playback -- so the enter leg would silently never run
+      // (the "portal shows but enter doesn't play" bug). Muted playback is
+      // always allowed; we attempt the clip's own-audio unmute only once it
+      // is actually rolling, and a watchdog re-kicks any stalled video.
+      v.muted=true;v.src=u;
+      try{v.load();}catch(e0){}
       v.onended=next;v.onerror=err;
-      var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;var p2=v.play();if(p2&&p2.catch)p2.catch(function(){err();});});
+      function go(){try{var p=v.play();if(p&&p.catch)p.catch(function(){err();});}catch(e1){err();}}
+      go();
+      var stall=setTimeout(function(){
+        if(v.paused&&!v.ended){try{v.load();var q=v.play();if(q&&q.catch)q.catch(function(){err();});}catch(e2){err();}}
+      },6000);
+      v.addEventListener('playing',function(){
+        clearTimeout(stall);
+        if(!window.__vgMuted){try{v.muted=false;}catch(e3){v.muted=true;}}
+      },{once:true});
     }
     function announceDone(){try{document.dispatchEvent(new CustomEvent('vg:portal-done'));}catch(e1){}}
     document.addEventListener('vg:portal',function(){
