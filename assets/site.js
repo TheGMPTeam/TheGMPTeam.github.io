@@ -304,7 +304,7 @@
       if(!e){
         var pool;
         if(lastEndGone)pool=IV.filter(function(x){return x.role==='walkon';});
-        else pool=IV.filter(function(x){return x.role==='idle'||x.role==='action';});
+        else pool=IV.filter(function(x){return x.role==='idle'||x.role==='action'||x.role==='walkoff';});
         // Actions are guests: not right after another action, and only every
         // other non-walk slot, so the neutral idles stay the identity anchor.
         var acts=pool.filter(function(x){return x.role==='action';});
