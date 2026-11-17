@@ -208,12 +208,23 @@ const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isInt
 stages.forEach(function(s){io.observe(s);});
 let tourOn=false;
 function tour(i){
-  if(!tourOn||i>=stages.length)return;
-  stages[i].scrollIntoView({behavior:'smooth',block:'start'});
+  if(!tourOn||i>=stages.length){
+    document.documentElement.style.scrollSnapType='y proximity';
+    return;
+  }
+  document.documentElement.style.scrollSnapType='y mandatory';
+  var top=stages[i].offsetTop;
+  window.scrollTo({top:top,behavior:'smooth'});
+  setTimeout(function(){
+    if(tourOn&&Math.abs(window.scrollY-top)>4)window.scrollTo({top:top,behavior:'smooth'});
+  },750);
   setTimeout(function(){tour(i+1);},4600);
 }
 ['wheel','touchstart','mousedown'].forEach(function(ev){
-  window.addEventListener(ev,function(){tourOn=false;},{once:true,passive:true});
+  window.addEventListener(ev,function(){
+    tourOn=false;
+    document.documentElement.style.scrollSnapType='y proximity';
+  },{once:true,passive:true});
 });
 var idleMode=false;
 var idleSrcs=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
@@ -245,11 +256,17 @@ function idleLoop(){
     if(p2&&p2.catch)p2.catch(function(){});
   });
 }
+var idleTimer=null;
+function idleStart(){
+  if(idleTimer)return;
+  idleTimer=setInterval(function(){
+    if(!idleQueue.length){clearInterval(idleTimer);idleTimer=null;return;}
+    if(!v.paused&&!v.ended)return;
+    idleLoop();
+  },1500);
+}
 v.addEventListener('ended',function(){
-  if(idleMode){
-    if(idleQueue.length){clearTimeout(idleNext);idleNext=setTimeout(idleLoop,1000+Math.random()*3000);}
-    return;
-  }
+  if(idleMode)return;
   idleMode=true;
   v.pause();
   hero.classList.add('scrolled');
@@ -258,7 +275,11 @@ v.addEventListener('ended',function(){
   setTimeout(function(){tour(0);},1100);
   idleQueue=shuffle(idleSrcs.slice());
   idleNext=setTimeout(idleLoop,2600);
+  idleStart();
 });
+document.addEventListener('click',function(){
+  if(idleMode&&v.ended&&v.paused&&idleQueue.length)idleLoop();
+},true);
 window.addEventListener('scroll',function(){
   if(window.scrollY>40)hero.classList.add('scrolled');
 },{passive:true});
