@@ -187,7 +187,7 @@ splash.addEventListener('click',gesture);
 if(sndoff)sndoff.addEventListener('click',gesture);
 document.addEventListener('keydown',gesture);
 document.addEventListener('click',function(){if(started&&!soundOn)unmute();});
-setTimeout(function(){dismiss();if(!started)start(false);},6400);
+setTimeout(function(){dismiss();if(!started)start(true);},6400);
 v.addEventListener('ended',function(){
   v.pause();
   hero.classList.add('scrolled');
