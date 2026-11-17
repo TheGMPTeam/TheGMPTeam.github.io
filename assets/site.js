@@ -573,7 +573,7 @@
       pre=e;
       idleLoop();
     }
-    pull.addEventListener('click',function(ev){
+    chain.addEventListener('click',function(ev){
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
       forceNext(PULLU);
