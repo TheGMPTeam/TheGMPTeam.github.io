@@ -542,9 +542,19 @@
       requestAnimationFrame(function(){rigQueued=false;rig();});
     },{passive:true});
     rig();
+    // Clicking the page chain also makes the mascot grab ITS chain: the
+    // pull-chain action clip (action2) is forced as the very next port clip.
+    var PULLU='/assets/status/action2.mp4';
+    function forceNext(u){
+      var e=has(u);
+      if(!e)return;
+      pre=e;
+      idleLoop();
+    }
     pull.addEventListener('click',function(ev){
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
+      forceNext(PULLU);
       chain.classList.remove('vg-tug');void chain.offsetWidth;chain.classList.add('vg-tug');
       host.classList.remove('vg-react');void host.offsetWidth;host.classList.add('vg-react');
       setTimeout(scrollOn,REDUCE?0:360);
