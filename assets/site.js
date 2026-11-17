@@ -293,8 +293,8 @@
       v.src=u;
     });
     // Hard pairs: 'b' plays ONLY immediately after 'a', and 'a' always hands to 'b'.
-    // Board (idle2) -> Houser (idle3) per James 2026-11-17.
-    var PAIRS=[{a:'/assets/status/idle2.mp4',b:'/assets/status/idle3.mp4'}];
+    // Board->Houser retired 2026-11-17 when James pulled idle3 (Houser).
+    var PAIRS=[];
     function has(u){for(var k=0;k<IV.length;k++)if(IV[k].u===u)return IV[k];return null;}
     function pick(){
       if(!IV.length)return null;
