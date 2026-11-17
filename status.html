@@ -213,11 +213,19 @@ const stages=[].slice.call(document.querySelectorAll('#simgrid .g'));
 const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.3});
 stages.forEach(function(s){io.observe(s);});
 let tourOn=false;
+function tourSizing(on){
+  const vh=(window.innerHeight||document.documentElement.clientHeight)+'px';
+  stages.forEach(function(s){s.style.minHeight=on?vh:'';});
+}
+function tourEnd(){
+  tourOn=false;
+  tourSizing(false);
+  document.documentElement.style.scrollSnapType='y proximity';
+}
 function tour(i){
-  if(!tourOn||i>=stages.length){
-    document.documentElement.style.scrollSnapType='y proximity';
-    return;
-  }
+  if(!tourOn){return;}
+  if(i>=stages.length){tourEnd();return;}
+  tourSizing(true);
   document.documentElement.style.scrollSnapType='y mandatory';
   var top=stages[i].offsetTop;
   window.scrollTo({top:top,behavior:'smooth'});
@@ -227,10 +235,7 @@ function tour(i){
   setTimeout(function(){tour(i+1);},4600);
 }
 ['wheel','touchstart','mousedown'].forEach(function(ev){
-  window.addEventListener(ev,function(){
-    tourOn=false;
-    document.documentElement.style.scrollSnapType='y proximity';
-  },{once:true,passive:true});
+  window.addEventListener(ev,function(){tourEnd();},{once:true,passive:true});
 });
 var idleMode=false;
 var idleV=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
