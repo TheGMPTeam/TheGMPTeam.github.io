@@ -650,8 +650,13 @@
       var puff=document.createElement('div');puff.id='vgpoof';
       for(k=0;k<8;k++){puff.appendChild(document.createElement('span'));}
       P.appendChild(p1);P.appendChild(p2);P.appendChild(puff);
+      P.appendChild(Object.assign(document.createElement('div'),{id:'vgpswirl'}));
       document.body.appendChild(P);
       requestAnimationFrame(function(){P.classList.add('open');});
+      if(!window.__vgMuted){
+        try{var w=new Audio('/assets/sfx/whoosh.mp3');w.volume=0.55;var wp=w.play();if(wp&&wp.catch)wp.catch(function(){});
+        setTimeout(function(){var i2=new Audio('/assets/sfx/ignite.mp3');i2.volume=0.6;var ip=i2.play();if(ip&&ip.catch)ip.catch(function(){});},280);}catch(es){}
+      }
       function cleanup(){
         P.classList.add('gone');
         setTimeout(function(){if(P.parentNode)P.parentNode.removeChild(P);busy=false;announceDone();},450);

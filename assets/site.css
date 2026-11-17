@@ -250,3 +250,19 @@ body.has-bg-video .grid-bg{opacity:.45}
 /* v46: empty-port attention pulse between the walk-off and the portal FX */
 #mascot.vg-pulse{animation:vgpulse 1.5s ease-in-out}
 @keyframes vgpulse{0%,100%{filter:none}30%{filter:brightness(1.8) drop-shadow(0 0 18px rgba(0,217,255,.8))}45%{filter:brightness(.9)}60%{filter:brightness(1.6) drop-shadow(0 0 14px rgba(0,217,255,.6))}}
+
+/* v47: portal reads as a live portal -- spinning energy rim, interior swirl, scanlines */
+#vgportal::before{content:'';position:absolute;inset:-7px;border-radius:50%;z-index:3;pointer-events:none;
+ background:conic-gradient(from 0deg,rgba(0,217,255,0) 0deg,rgba(0,217,255,.65) 50deg,rgba(0,217,255,0) 130deg,rgba(0,217,255,.4) 200deg,rgba(0,217,255,0) 290deg);
+ -webkit-mask:radial-gradient(circle,transparent 62%,#000 66%);mask:radial-gradient(circle,transparent 62%,#000 66%);
+ animation:vgspin 2.8s linear infinite;opacity:0;transition:opacity .4s}
+#vgportal.open::before{opacity:1}
+#vgportal.gone::before{opacity:0;transition:opacity .3s}
+#vgpswirl{position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;
+ background:radial-gradient(circle at 50% 50%,rgba(0,217,255,.16) 0%,rgba(0,217,255,.05) 40%,rgba(0,0,0,0) 65%),
+ repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,rgba(0,0,0,0) 1px 4px),
+ radial-gradient(circle,rgba(0,0,0,0) 55%,rgba(0,0,0,.5) 100%);
+ animation:vgswirl 5.5s linear infinite}
+#vgportal.smoke::before{animation-duration:.7s}
+@keyframes vgspin{to{transform:rotate(360deg)}}
+@keyframes vgswirl{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.04)}100%{transform:rotate(360deg) scale(1)}}
