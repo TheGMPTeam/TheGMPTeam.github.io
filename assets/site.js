@@ -649,32 +649,49 @@
         fallers.push(f);
         setTimeout(function(){if(f.parentNode)f.parentNode.removeChild(f);},1200);
       });
-      var t0=Date.now();
+      // v63: repair is SYNCHRONIZED to the fix clip's own timeline. Each
+      // letter's drop-back point is mapped to 35%-85% of action1's
+      // currentTime -- the mascot repairs letters as it animates, and the
+      // last ones land just as the clip ends.
+      var th=[],j0;
+      for(j0=0;j0<dropped.length;j0++){
+        th.push(dropped.length===1?0.55:0.35+0.5*(j0/(dropped.length-1)));
+      }
+      var fixed=0,t0=Date.now();
+      function mendLetter(j){
+        var sp=spans[dropped[j]];
+        sp.classList.remove('vg-hole');
+        sp.classList.add('vg-dropin');
+        fixed++;
+        if(window.__vgFx)window.__vgFx('/assets/sfx/chainclink.mp3',0.45);
+      }
       var iv=setInterval(function(){
-        var now=Date.now(),done=false;
-        if(now-t0>20000)done=true;
-        else if(now-t0>2500){
-          var mv=document.querySelectorAll('#mascot video'),playing=false;
-          for(var k2=0;k2<mv.length;k2++){
-            var v=mv[k2];
-            if(((v.currentSrc||v.src||'').indexOf('/action1.mp4')>=0)&&!v.ended&&!v.paused&&v.currentTime<(v.duration||0)-0.06)playing=true;
+        // progress clock = the action1 clip actually on stage
+        var mv=document.querySelectorAll('#mascot video'),prog=-1,playing=false;
+        for(var k2=0;k2<mv.length;k2++){
+          var v=mv[k2];
+          if(((v.currentSrc||v.src||'').indexOf('/action1.mp4')>=0)){
+            var pr=(v.duration&&isFinite(v.duration))?v.currentTime/v.duration:0;
+            if(pr>prog)prog=pr;
+            if(!v.ended&&!v.paused&&pr<0.995)playing=true;
           }
-          if(!playing)done=true;
         }
-        if(done){
+        var done=!playing&&prog>=0;
+        if(Date.now()-t0>20000)done=true;
+        if(prog>=0){
+          for(var j1=0;j1<dropped.length;j1++){
+            if(fixed<=j1&&prog>=th[j1])mendLetter(j1);
+          }
+        }
+        if((done||prog>=0.995)&&fixed<dropped.length){
+          while(fixed<dropped.length)mendLetter(fixed);
+        }
+        if(done||prog>=0.995){
           clearInterval(iv);
-          // letters drop back in, staggered, then exact restore
-          dropped.forEach(function(idx,j){
-            var sp=spans[idx];
-            sp.classList.remove('vg-hole');
-            sp.classList.add('vg-dropin');
-            sp.style.animationDelay=(j*120)+'ms';
-          });
-          if(window.__vgFx)window.__vgFx('/assets/sfx/chainclink.mp3',0.5);
           setTimeout(function(){
             el.textContent=orig; // exact original, wrappers gone
             glitchOn=false;
-          },500+dropped.length*120);
+          },700);
         }
       },250);
     }
