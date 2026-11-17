@@ -227,10 +227,24 @@ function tour(i){
   },{once:true,passive:true});
 });
 var idleMode=false;
-var idleSrcs=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
+var idleV=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
+var idleA=['/assets/status/idle1.m4a','/assets/status/idle2.m4a','/assets/status/idle3.m4a'];
 var idleQueue=[];
 var idleNext=null;
+var lastSound=null;
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function refill(){idleQueue=shuffle([0,1,2]);}
+function blip(){
+  if(!idleA.length)return;
+  var i=Math.floor(Math.random()*idleA.length);
+  try{
+    var a=new Audio(idleA[i]);
+    a.volume=.85;
+    var p=a.play();
+    if(p&&p.catch)p.catch(function(){});
+    lastSound=a;
+  }catch(e){}
+}
 function parkVideo(){
   var r0=v.getBoundingClientRect();
   document.body.appendChild(v);
@@ -246,22 +260,21 @@ function parkVideo(){
   }
 }
 function idleLoop(){
-  if(!idleMode||!idleQueue.length)return;
-  v.muted=false;
-  v.src=idleQueue.pop();
+  if(!idleMode)return;
+  if(!idleQueue.length)refill();
+  var i=idleQueue.pop();
+  v.muted=true;
+  v.src=idleV[i];
   var pr=v.play();
-  if(pr&&pr.catch)pr.catch(function(){
-    v.muted=true;
-    var p2=v.play();
-    if(p2&&p2.catch)p2.catch(function(){});
-  });
+  if(pr&&pr.catch)pr.catch(function(){});
+  blip();
 }
 var idleTimer=null;
 function idleStart(){
   if(idleTimer)return;
   idleTimer=setInterval(function(){
-    if(!idleQueue.length){clearInterval(idleTimer);idleTimer=null;return;}
-    if(!v.paused&&!v.ended)return;
+    if(!idleMode)return;
+    if(!v.paused&&!v.ended&&!v.seeking)return;
     idleLoop();
   },1500);
 }
@@ -273,12 +286,13 @@ v.addEventListener('ended',function(){
   parkVideo();
   tourOn=true;
   setTimeout(function(){tour(0);},1100);
-  idleQueue=shuffle(idleSrcs.slice());
-  idleNext=setTimeout(idleLoop,2600);
+  refill();
   idleStart();
 });
 document.addEventListener('click',function(){
-  if(idleMode&&v.ended&&v.paused&&idleQueue.length)idleLoop();
+  if(!idleMode)return;
+  if(!v.paused&&!v.ended)return;
+  idleLoop();
 },true);
 window.addEventListener('scroll',function(){
   if(window.scrollY>40)hero.classList.add('scrolled');
