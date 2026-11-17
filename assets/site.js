@@ -156,7 +156,8 @@
           var size=small?120:190,top=small?84:88,right=small?12:24;
           var r0=intro.getBoundingClientRect();
           intro.classList.add('parked');
-          intro.style.inset='auto';
+          intro.style.left='auto';intro.style.inset='auto';
+          intro.style.transform='none';
           intro.style.top=top+'px';intro.style.right=right+'px';intro.style.width=size+'px';intro.style.height=size+'px';
           var r1=intro.getBoundingClientRect();
           intro.style.transformOrigin='top left';
