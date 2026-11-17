@@ -101,7 +101,7 @@ a.plain{color:var(--cyan);text-decoration:none}
 body.has-bg-video .bg-media{opacity:.42}
 body.has-bg-video .grid-bg{opacity:.45}
 /* Site-wide assistant mascot port (all pages) */
-#mascot{position:fixed;top:88px;right:24px;width:190px;height:190px;border-radius:50%;overflow:hidden;z-index:60;opacity:.9;box-shadow:0 0 26px rgba(0,217,255,.35);border:1px solid rgba(0,217,255,.35);background:#01030a;pointer-events:none}
+#mascot{position:fixed;top:88px;right:24px;width:190px;height:190px;border-radius:50%;overflow:hidden;z-index:1000;opacity:.9;box-shadow:0 0 26px rgba(0,217,255,.35);border:1px solid rgba(0,217,255,.35);background:#01030a;pointer-events:none}
 #mascot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;transition:opacity .35s ease;background:#01030a}
 #mascot video:nth-child(2){opacity:0}
 @media (max-width:720px){#mascot{width:120px;height:120px;top:84px;right:12px}}
