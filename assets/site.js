@@ -612,9 +612,12 @@
       }
       function leg2(){
         p1.style.opacity='0';
-        playIn(p2,woffs[Math.floor(Math.random()*woffs.length)],smoke,cleanup);
+        playIn(p2,wons[Math.floor(Math.random()*wons.length)],smoke,cleanup);
       }
-      playIn(p1,wons[Math.floor(Math.random()*wons.length)],leg2,cleanup);
+      // Opposite order per James: the walk-OFF split plays first (he walks out
+      // of the corner stage into this portal), then the walk-ON split (he
+      // arrives and settles here), then the puff clears him and the portal.
+      playIn(p1,woffs[Math.floor(Math.random()*woffs.length)],leg2,cleanup);
     });
   })();
 
