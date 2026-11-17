@@ -102,6 +102,9 @@
   (function(){
     var s=document.getElementById('splash');
     if(!s){window.__vgEntered=true;return;}
+    // Corner port stays invisible until the welcome presentation lands in it.
+    document.body.classList.add('vg-pre');
+    document.addEventListener('vg:enter',function(){document.body.classList.remove('vg-pre');});
     var hint=s.querySelector('.splash-hint');
     if(hint){hint.textContent='LOADING SYSTEM...';}
     var ready=0,opened=false;
@@ -178,7 +181,7 @@
           },1000);
         }
         iv.addEventListener('ended',finish);
-        iv.addEventListener('click',function(){iv.currentTime=Math.max(0,iv.duration-0.05);});
+        iv.addEventListener('click',function(){window.__vgMuted=!window.__vgMuted;iv.muted=window.__vgMuted;});
         var sk=intro.querySelector('.iskip');
         if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();var D=iv.duration||10.2;iv.currentTime=Math.min(D-0.05,iv.currentTime+3);});}
       },1150);
@@ -223,7 +226,7 @@
         setTimeout(function(){try{buf.pause();}catch(e){}ensurePre();},450);
       },{once:true});
     }
-    function arm(){audioOn=true;}
+    function arm(){audioOn=!window.__vgMuted;}
     document.addEventListener('click',arm,{once:true});
     document.addEventListener('keydown',arm,{once:true});
     if(window.__audioPrearmed){audioOn=true;}
@@ -239,7 +242,7 @@
       // welcome presentation finishes its collapse) starts the idle loop.
       document.addEventListener('vg:enter',function(){
         engineOn=true;
-        audioOn=true;
+        audioOn=!window.__vgMuted;
         startIdle();
       },{once:true});
     }else{
@@ -251,6 +254,61 @@
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
       idleLoop();
     },1500);
+
+    // Playback controls for the portholes: click = mute toggle, right-click = menu.
+    window.vgCtl={
+      skip:function(){
+        var i=document.getElementById('intro'),v=document.getElementById('iv');
+        if(i&&i.style.display!=='none'){if(v&&!v.ended){v.currentTime=(v.duration||10.2)-0.05;}return;}
+        if(mediaDead)return;
+        idleLoop();
+      },
+      stop:function(){
+        var i=document.getElementById('intro'),v=i&&i.style.display!=='none'&&document.getElementById('iv');
+        if(v){v.pause();return;}
+        engineOn=false;try{shown.pause();buf.pause();}catch(e){}
+      },
+      resume:function(){
+        var i=document.getElementById('intro'),v=i&&i.style.display!=='none'&&document.getElementById('iv');
+        if(v){v.muted=!!window.__vgMuted;var p=v.play();if(p&&p.catch)p.catch(function(){});return;}
+        engineOn=true;
+        if(mediaDead||(!shown.paused&&!shown.ended))return;
+        idleLoop();
+      },
+      mute:function(){
+        var mm=!window.__vgMuted;window.__vgMuted=mm;audioOn=!mm;
+        var v=document.getElementById('iv');if(v){v.muted=mm;}
+      }
+    };
+    var MENU=document.createElement('div');MENU.id='vgmenu';
+    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
+    document.body.appendChild(MENU);
+    function closeMenu(){MENU.style.display='none';}
+    function openMenu(x,y){
+      MENU.querySelector('[data-a="mute"]').textContent=window.__vgMuted?'UNMUTE':'MUTE';
+      MENU.style.display='block';
+      var w=MENU.offsetWidth,h=MENU.offsetHeight;
+      MENU.style.left=Math.min(x,window.innerWidth-w-8)+'px';
+      MENU.style.top=Math.min(y,window.innerHeight-h-8)+'px';
+    }
+    MENU.addEventListener('click',function(e){
+      var it=e.target&&e.target.closest?e.target.closest('.vgmi'):null;
+      if(!it)return;
+      var a=it.getAttribute('data-a');
+      if(a==='skip')window.vgCtl.skip();
+      else if(a==='stop')window.vgCtl.stop();
+      else if(a==='resume')window.vgCtl.resume();
+      else window.vgCtl.mute();
+      closeMenu();
+    });
+    document.addEventListener('mousedown',function(e){if(MENU.style.display==='block'&&!MENU.contains(e.target))closeMenu();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu();});
+    document.addEventListener('contextmenu',function(e){
+      var t=e.target&&e.target.closest?e.target.closest('#mascot,#intro'):null;
+      if(!t)return;
+      e.preventDefault();openMenu(e.clientX,e.clientY);
+    });
+    host.addEventListener('click',function(){window.vgCtl.mute();});
   })();
 
   // Full-page demo-reel background hook.
