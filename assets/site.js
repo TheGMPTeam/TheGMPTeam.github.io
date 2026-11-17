@@ -600,41 +600,81 @@
       // the portal to clear, then run (James v57).
       if(document.getElementById('vgportal')){window.__vgGlitchWhy='portal-busy-retry';setTimeout(glitchEvent,4000);return;}
       var els=[].slice.call(document.querySelectorAll('section h1,section h2,section h3,section p,.hero p,.hero h1,.hero h2')).filter(function(e){
-        var t=e.textContent||'';return t.length>12&&t.length<170&&e.offsetParent&&(!e.closest||!e.closest('#vgmenu'));
+        var t=e.textContent||'';return t.length>12&&t.length<170&&e.offsetParent&&e.children.length===0&&(!e.closest||!e.closest('#vgmenu'));
       });
       if(!els.length){window.__vgGlitchWhy='no-text-candidates';return;}
       if(!window.__vgForce){window.__vgGlitchWhy='no-force-seam';return;}
       if(!window.__vgForce('/assets/status/action1.mp4')){window.__vgGlitchWhy='action1-not-in-pool';return;} // mascot must be rolling the fix clip first
       var el=els[Math.floor(Math.random()*els.length)];
-      var orig=el.textContent; // exact original; every repair restores this string verbatim
+      var orig=el.textContent;
       glitchOn=true;
       if(window.__vgFx)window.__vgFx('/assets/sfx/glitch.mp3',0.5);
-      el.classList.add('vg-glitch');
-      // v59: the corruption lasts exactly as long as the fix animation plays.
-      // Tick keeps re-scrambling (always FROM the pristine orig string, so no
-      // drift) and watches action1 in the port; when the clip ends -- or at a
-      // 20s safety cap -- restore the exact original text and flash repaired.
+      // v62 LETTERS-FALL-OFF gag: instead of scrambling symbols (which could
+      // leave residue), a few real letters detach and fall off the page. The
+      // gap lasts exactly as long as the fix clip plays; when the clip ends
+      // the letters drop back into place and the exact original text is
+      // restored byte-for-byte.
+      var chars=orig.split('');
+      var cand=[],ci;
+      for(ci=0;ci<chars.length;ci++){if(chars[ci]!==' '&&chars[ci]!=='\n')cand.push(ci);}
+      var nd=Math.min(cand.length,2+Math.floor(Math.random()*4));
+      var dropped=[];
+      for(ci=0;ci<nd&&cand.length;ci++){
+        var at=Math.floor(Math.random()*cand.length);
+        dropped.push(cand.splice(at,1)[0]);
+      }
+      dropped.sort(function(a,b){return a-b;});
+      // build the letter spans and capture each doomed letter's box BEFORE removal
+      el.innerHTML='';
+      var spans=[];
+      for(ci=0;ci<chars.length;ci++){
+        var sp=document.createElement('span');
+        sp.className='vgl';
+        sp.textContent=chars[ci];
+        el.appendChild(sp);
+        spans.push(sp);
+      }
+      var fallers=[];
+      dropped.forEach(function(idx){
+        var sp=spans[idx];
+        var r=sp.getBoundingClientRect();
+        var f=document.createElement('span');
+        f.className='vg-faller';
+        f.textContent=chars[idx];
+        f.style.left=Math.round(r.left)+'px';
+        f.style.top=Math.round(r.top)+'px';
+        f.style.fontSize=getComputedStyle(el).fontSize;
+        document.body.appendChild(f);
+        sp.classList.add('vg-hole');
+        fallers.push(f);
+        setTimeout(function(){if(f.parentNode)f.parentNode.removeChild(f);},1200);
+      });
       var t0=Date.now();
       var iv=setInterval(function(){
-        el.textContent=corrupt(orig);
         var now=Date.now(),done=false;
         if(now-t0>20000)done=true;
         else if(now-t0>2500){
           var mv=document.querySelectorAll('#mascot video'),playing=false;
-          for(var i=0;i<mv.length;i++){
-            var v=mv[i];
+          for(var k2=0;k2<mv.length;k2++){
+            var v=mv[k2];
             if(((v.currentSrc||v.src||'').indexOf('/action1.mp4')>=0)&&!v.ended&&!v.paused&&v.currentTime<(v.duration||0)-0.06)playing=true;
           }
           if(!playing)done=true;
         }
         if(done){
           clearInterval(iv);
-          el.textContent=orig;
-          el.classList.remove('vg-glitch');
-          el.classList.add('vg-fixed');
+          // letters drop back in, staggered, then exact restore
+          dropped.forEach(function(idx,j){
+            var sp=spans[idx];
+            sp.classList.remove('vg-hole');
+            sp.classList.add('vg-dropin');
+            sp.style.animationDelay=(j*120)+'ms';
+          });
           if(window.__vgFx)window.__vgFx('/assets/sfx/chainclink.mp3',0.5);
-          setTimeout(function(){el.classList.remove('vg-fixed');},700);
-          glitchOn=false;
+          setTimeout(function(){
+            el.textContent=orig; // exact original, wrappers gone
+            glitchOn=false;
+          },500+dropped.length*120);
         }
       },250);
     }
