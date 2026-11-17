@@ -113,8 +113,21 @@
     if(hint){hint.textContent='LOADING SYSTEM...';}
     var ready=0,opened=false;
     function prog(){ready++;if(ready>=4){open();}}
-    function open(){if(opened)return;opened=true;window.__vgVidReady=true;if(hint){hint.textContent='CLICK TO ENTER';}}
+    function open(){if(opened)return;opened=true;window.__vgVidReady=true;if(hint){hint.textContent='CLICK TO ENTER';}
+      // With SKIP WELCOME saved, the splash dismisses itself: no click needed.
+      if(vgSet().skipWelcome){setTimeout(function(){if(!s.dataset.leaving){s.dataset.leaving='1';fastExit();}},1500);}
+    }
     var ivv=document.getElementById('iv');
+    function fastExit(){
+      s.style.transition='opacity .25s';
+      s.classList.add('collapse');
+      setTimeout(function(){
+        s.remove();
+        var mm=document.getElementById('mascot');
+        if(mm){mm.classList.add('ignite');}
+        document.dispatchEvent(new CustomEvent('vg:enter'));
+      },280);
+    }
     var WSRC=(ivv&&ivv.getAttribute('src'))||'/assets/status/welcome.mp4';
     [WSRC,'/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
       var v=document.createElement('video');v.preload='auto';v.muted=true;
@@ -129,16 +142,7 @@
       var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if(reduce){s.remove();document.dispatchEvent(new CustomEvent('vg:enter'));return;}
       // Saved SKIP preference: no welcome presentation, straight to the port.
-      if(vgSet().skipWelcome){
-        s.style.transition='opacity .25s';
-        s.classList.add('collapse');
-        setTimeout(function(){
-          s.remove();
-          if(m){m.classList.add('ignite');}
-          document.dispatchEvent(new CustomEvent('vg:enter'));
-        },280);
-        return;
-      }
+      if(vgSet().skipWelcome){fastExit();return;}
       // 1) scanline sweep + glitch shatter
       s.classList.add('glitch');
       // 2) whole splash collapses into the port circle
