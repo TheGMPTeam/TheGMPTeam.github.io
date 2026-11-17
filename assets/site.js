@@ -180,7 +180,7 @@
         iv.addEventListener('ended',finish);
         iv.addEventListener('click',function(){iv.currentTime=Math.max(0,iv.duration-0.05);});
         var sk=intro.querySelector('.iskip');
-        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();iv.currentTime=Math.min(iv.duration-0.05,iv.currentTime+3);});}
+        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();var D=iv.duration||10.2;iv.currentTime=Math.min(D-0.05,iv.currentTime+3);});}
       },1150);
     });
   })();
