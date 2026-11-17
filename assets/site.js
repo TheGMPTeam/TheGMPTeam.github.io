@@ -112,6 +112,48 @@
     setTimeout(dismiss,3200);
   })();
 
+  // Home-only full-screen welcome video: click-to-enter unpauses audio, FLIPs the
+  // video into the corner mascot-port geometry; when it ends, the port takes over.
+  (function(){
+    var w=document.getElementById('welcome');
+    if(!w){return;}
+    if(sessionStorage.getItem('welcomeSeen')==='1'){w.remove();return;}
+    var v=document.getElementById('wvid');
+    var entered=false;
+    v.loop=true;
+    var pw=v.play();if(pw&&pw.catch)pw.catch(function(){});
+    w.addEventListener('click',function(){
+      if(entered){return;}
+      entered=true;
+      sessionStorage.setItem('welcomeSeen','1');
+      var hint=w.querySelector('.whint');if(hint){hint.remove();}
+      v.muted=false;
+      v.loop=false;
+      if(v.ended){v.currentTime=0;var p2=v.play();if(p2&&p2.catch)p2.catch(function(){});}
+      var r0=w.getBoundingClientRect();
+      var small=window.innerWidth<=720;
+      var size=small?120:190,top=small?84:88,right=small?12:24;
+      w.style.inset='auto';
+      w.classList.add('parked');
+      w.style.top=top+'px';w.style.right=right+'px';w.style.width=size+'px';w.style.height=size+'px';
+      var r1=w.getBoundingClientRect();
+      w.style.transformOrigin='top left';
+      w.style.transition='none';
+      w.style.transform='translate('+(r0.left-r1.left)+'px,'+(r0.top-r1.top)+'px) scale('+(r0.width/r1.width)+')';
+      requestAnimationFrame(function(){requestAnimationFrame(function(){
+        w.style.transition='transform .9s cubic-bezier(.2,.7,.2,1)';
+        w.style.transform='translate(0px,0px) scale(1)';
+      });});
+    });
+    v.addEventListener('ended',function(){
+      if(!entered){return;}
+      var m=document.getElementById('mascot');
+      if(m){m.style.opacity='';}
+      w.style.opacity='0';
+      setTimeout(function(){w.remove();},750);
+    });
+  })();
+
   // Site-wide assistant mascot: circular port playing shuffled idle clips forever,
   // double-buffered with crossfade so swaps have no dead gaps. Frames and sound are
   // separate tracks (silent mp4 + m4a sprite) so a speech layer can drive audio later.
@@ -126,6 +168,10 @@
       a.preload='auto';b.preload='auto';
       host.appendChild(a);host.appendChild(b);
       document.body.appendChild(host);
+    }
+    if(document.getElementById('welcome')&&sessionStorage.getItem('welcomeSeen')!=='1'){
+      // keep the port hidden while the home welcome video owns the screen
+      host.style.opacity='0';
     }
     var IV=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
     var IA=['/assets/status/idle1.m4a','/assets/status/idle2.m4a','/assets/status/idle3.m4a'];

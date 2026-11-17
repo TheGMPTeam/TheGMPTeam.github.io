@@ -89,6 +89,13 @@ a.plain{color:var(--cyan);text-decoration:none}
 .splash-inner{display:flex;flex-direction:column;align-items:center;gap:20px}
 .splash-hint{color:var(--muted);font-size:.7rem;letter-spacing:.3em;animation:pulse 2.2s infinite}
 #splash.out{opacity:0;pointer-events:none}
+/* Home full-screen welcome video: click-to-enter FLIPs it into the corner mascot port */
+#welcome{position:fixed;inset:0;z-index:998;background:#01030a;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .7s}
+#welcome video{width:100%;height:100%;object-fit:cover;object-position:center 28%;background:#01030a}
+#welcome.parked{border-radius:50%;overflow:hidden;box-shadow:0 0 26px rgba(0,217,255,.35);border:1px solid rgba(0,217,255,.35)}
+#welcome.parked video{object-position:center 30%}
+.whint{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);color:#00d9ff;letter-spacing:.3em;font-size:.68rem;text-transform:uppercase;animation:pulse 2.2s infinite;z-index:999}
+#mascot{transition:opacity .6s}
 .bg-media{position:fixed;inset:0;z-index:-3;opacity:0;transition:opacity .8s}
 .bg-media video{width:100%;height:100%;object-fit:cover}
 body.has-bg-video .bg-media{opacity:.42}
