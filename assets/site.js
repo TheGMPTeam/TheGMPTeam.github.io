@@ -114,9 +114,32 @@
     });
     setTimeout(open,6000);
     s.addEventListener('click',function(){
-      s.classList.add('out');
-      setTimeout(function(){s.remove();},850);
-      document.dispatchEvent(new CustomEvent('vg:enter'));
+      if(s.dataset.leaving){return;}
+      s.dataset.leaving='1';
+      var m=document.getElementById('mascot');
+      var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(reduce){s.remove();document.dispatchEvent(new CustomEvent('vg:enter'));return;}
+      // 1) scanline sweep + glitch shatter
+      s.classList.add('glitch');
+      // 2) whole splash collapses into the port circle
+      setTimeout(function(){
+        var mc=m?m.getBoundingClientRect():{left:window.innerWidth-120,top:96,width:190,height:190};
+        var cx=mc.left+mc.width/2,cy=mc.top+mc.height/2;
+        var vw=window.innerWidth,vh=window.innerHeight;
+        s.style.transformOrigin='50% 50%';
+        s.style.transform='translate('+(cx-vw/2)+'px,'+(cy-vh/2)+'px) scale(.06)';
+        s.classList.add('collapse');
+      },580);
+      // 3) port ignites (iris open + ring pulse + reel flicker) and the reel starts
+      setTimeout(function(){
+        s.remove();
+        if(m){
+          m.classList.add('ignite');
+          var vs=document.querySelectorAll('#mascot video');
+          if(vs[0]){vs[0].classList.add('flick');}
+        }
+        document.dispatchEvent(new CustomEvent('vg:enter'));
+      },1200);
     });
   })();
 

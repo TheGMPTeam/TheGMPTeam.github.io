@@ -89,6 +89,18 @@ a.plain{color:var(--cyan);text-decoration:none}
 .splash-inner{display:flex;flex-direction:column;align-items:center;gap:20px}
 .splash-hint{color:var(--muted);font-size:.7rem;letter-spacing:.3em;animation:pulse 2.2s infinite}
 #splash.out{opacity:0;pointer-events:none}
+/* Enter sequence: scanline + glitch shatter, splash collapses into the mascot port, port ignites */
+#splash.glitch::before{content:'';position:absolute;left:0;right:0;height:2px;top:-4%;background:linear-gradient(90deg,transparent,#00d9ff,transparent);box-shadow:0 0 18px #00d9ff;animation:vgscan .55s linear 1}
+#splash.glitch .splash-inner{animation:vgglitch .55s steps(2) 1}
+@keyframes vgscan{to{top:104%}}
+@keyframes vgglitch{0%{transform:none;filter:none}20%{transform:translate(6px,-3px);filter:drop-shadow(3px 0 #ff2d78) drop-shadow(-3px 0 #00d9ff)}45%{transform:translate(-8px,2px);clip-path:inset(18% 0 42% 0)}70%{transform:translate(4px,1px);clip-path:inset(60% 0 6% 0);filter:drop-shadow(-4px 0 #ff2d78)}100%{transform:none;clip-path:none;filter:none;opacity:.2}}
+#splash.collapse{transition:transform .7s cubic-bezier(.6,.02,.85,.1),opacity .7s ease,filter .7s ease;filter:blur(5px);opacity:.15}
+#mascot.ignite{animation:vgiris .55s ease-out 1,vgring 1.1s ease-out 1}
+@keyframes vgiris{from{clip-path:circle(2% at 50% 50%)}to{clip-path:circle(75% at 50% 50%)}}
+@keyframes vgring{0%{box-shadow:0 0 0 0 rgba(0,217,255,.65)}100%{box-shadow:0 0 0 46px rgba(0,217,255,0)}}
+#mascot video.flick{animation:vgflick .6s steps(3) 1}
+@keyframes vgflick{0%{opacity:0}15%{opacity:1}30%{opacity:.15}45%{opacity:1}60%{opacity:.4}100%{opacity:1}}
+@media (prefers-reduced-motion: reduce){#splash.glitch::before,#splash.glitch .splash-inner,#mascot.ignite,#mascot video.flick{animation:none}#splash.collapse{transition:opacity .3s;transform:none!important;filter:none}}
 /* Home full-screen welcome video: click-to-enter FLIPs it into the corner mascot port */
 #welcome{position:fixed;inset:0;z-index:998;background:#01030a;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .7s}
 #welcome video{width:100%;height:100%;object-fit:cover;object-position:center 28%;background:#01030a}
