@@ -268,15 +268,24 @@
       v.addEventListener('error',function(){probed++;maybeStart();});
       v.src=u;
     });
+    // Hard pairs: 'b' plays ONLY immediately after 'a', and 'a' always hands to 'b'.
+    // Board (idle2) -> Houser (idle3) per James 2026-11-17.
+    var PAIRS=[{a:'/assets/status/idle2.mp4',b:'/assets/status/idle3.mp4'}];
+    function has(u){for(var k=0;k<IV.length;k++)if(IV[k].u===u)return IV[k];return null;}
     function pick(){
       if(!IV.length)return null;
-      var pool;
-      if(lastEndGone)pool=IV.filter(function(x){return x.u.indexOf('walkon')>=0;});
-      else pool=IV.filter(function(x){return x.u.indexOf('walkon')<0;});
-      if(!pool.length)pool=IV;
-      var alt=pool.filter(function(x){return x.u!==lastU;});
-      if(alt.length)pool=alt;
-      var e=pool[Math.floor(Math.random()*pool.length)];
+      var e=null,i;
+      for(i=0;i<PAIRS.length;i++){if(lastU===PAIRS[i].a){e=has(PAIRS[i].b);break;}}
+      if(!e){
+        var pool;
+        if(lastEndGone)pool=IV.filter(function(x){return x.u.indexOf('walkon')>=0;});
+        else pool=IV.filter(function(x){return x.u.indexOf('walkon')<0;});
+        pool=pool.filter(function(x){for(var k=0;k<PAIRS.length;k++)if(x.u===PAIRS[k].b)return false;return true;});
+        if(!pool.length)pool=IV;
+        var alt=pool.filter(function(x){return x.u!==lastU;});
+        if(alt.length)pool=alt;
+        e=pool[Math.floor(Math.random()*pool.length)];
+      }
       lastU=e.u;lastEndGone=e.endGone;
       return e;
     }
