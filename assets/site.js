@@ -142,7 +142,7 @@
         document.dispatchEvent(new CustomEvent('vg:enter'));
       },280);
     }
-    var WSRC=(ivv&&ivv.getAttribute('src'))||'/assets/status/welcome.mp4';
+    var WSRC=(ivv&&ivv.getAttribute('src'))||'/assets/status/welcome-home.mp4';
     // Transition sound effects (synthesized, local): glitch zap on click,
     // vacuum suck on collapse, power-on hum+pop when the welcome ignites.
     var SFXP={glitch:'/assets/sfx/glitch.mp3',whoosh:'/assets/sfx/whoosh.mp3',ignite:'/assets/sfx/ignite.mp3'};
@@ -265,13 +265,21 @@
     // walk-on; walk-ons only follow walk-off endings (never an occupied stage);
     // when walk-ons run out after an empty ending, fall back to anything.
     // Drop files named that way on the CDN and they join automatically.
-    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);
-    var IV=[],IA=[]; // entries: {u:URL, endGone:bool}
+    // Pool roles (naming contract v2):
+    //   idleN.mp4     neutral loops          -- rotation staple
+    //   actionN.mp4   scene beats (page-fix, wave work) -- rotation guest,
+    //                 never twice in a row, never adjacent to another action
+    //   walkonN.mp4   enters stage           -- only after an empty stage
+    //   walkoffN.mp4  exits stage            -- only from a present stage
+    //   welcome-home.mp4 / welcome-videos.mp4 are NEVER probed into the pool:
+    //   they belong to the enter presentation only.
+    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);for(i=1;i<=4;i++)SLOT.push(['action',i]);
+    var IV=[],IA=[]; // entries: {u:URL, endGone:bool, role:'idle'|'walkon'|'walkoff'|'action'}
     window.__vgPool=IV;
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
     var mediaDead=false,probed=0,started=false;
     [shown,buf].forEach(function(x){x.addEventListener('error',function(){mediaDead=true;});});
-    var pre=null,audioOn=false,lastEndGone=false,lastU='';
+    var pre=null,audioOn=false,lastEndGone=false,lastU='',lastRole='';
     var engineOn=!document.getElementById('splash');
     function maybeStart(){
       if(probed===SLOT.length&&!IV.length){mediaDead=true;return;}
@@ -280,7 +288,7 @@
     SLOT.forEach(function(s){
       var u='/assets/status/'+s[0]+s[1]+'.mp4';
       var v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
-      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:s[0]==='walkoff'});maybeStart();});
+      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:s[0]==='walkoff',role:s[0]});maybeStart();});
       v.addEventListener('error',function(){probed++;maybeStart();});
       v.src=u;
     });
@@ -294,15 +302,20 @@
       for(i=0;i<PAIRS.length;i++){if(lastU===PAIRS[i].a){e=has(PAIRS[i].b);break;}}
       if(!e){
         var pool;
-        if(lastEndGone)pool=IV.filter(function(x){return x.u.indexOf('walkon')>=0;});
-        else pool=IV.filter(function(x){return x.u.indexOf('walkon')<0;});
+        if(lastEndGone)pool=IV.filter(function(x){return x.role==='walkon';});
+        else pool=IV.filter(function(x){return x.role==='idle'||x.role==='action';});
+        // Actions are guests: not right after another action, and only every
+        // other non-walk slot, so the neutral idles stay the identity anchor.
+        var acts=pool.filter(function(x){return x.role==='action';});
+        if(lastRole==='action'||Math.random()<0.5)pool=pool.filter(function(x){return x.role!=='action';});
+        else if(acts.length&&Math.random()<0.35)pool=acts;
         pool=pool.filter(function(x){for(var k=0;k<PAIRS.length;k++)if(x.u===PAIRS[k].b)return false;return true;});
         if(!pool.length)pool=IV;
         var alt=pool.filter(function(x){return x.u!==lastU;});
         if(alt.length)pool=alt;
         e=pool[Math.floor(Math.random()*pool.length)];
       }
-      lastU=e.u;lastEndGone=e.endGone;
+      lastU=e.u;lastEndGone=e.endGone;lastRole=e.role;
       if(lastEndGone){try{document.dispatchEvent(new CustomEvent('vg:walkoff'));}catch(ev0){}}
       return e;
     }
@@ -593,8 +606,8 @@
       var pool=window.__vgPool||[];
       var wons=[],woffs=[],k;
       for(k=0;k<pool.length;k++){
-        if(pool[k].u.indexOf('walkon')>=0)wons.push(pool[k].u);
-        else if(pool[k].u.indexOf('walkoff')>=0)woffs.push(pool[k].u);
+        if(pool[k].role==='walkon')wons.push(pool[k].u);
+        else if(pool[k].role==='walkoff')woffs.push(pool[k].u);
       }
       if(!wons.length||!woffs.length)return;
       busy=true;lastFire=now;
