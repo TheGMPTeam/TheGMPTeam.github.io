@@ -112,6 +112,56 @@
     setTimeout(dismiss,3200);
   })();
 
+  // Site-wide assistant mascot: circular port playing shuffled idle clips forever,
+  // double-buffered with crossfade so swaps have no dead gaps. Frames and sound are
+  // separate tracks (silent mp4 + m4a sprite) so a speech layer can drive audio later.
+  (function(){
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var host=document.getElementById('mascot');
+    if(!host){
+      host=document.createElement('div');host.id='mascot';host.setAttribute('aria-hidden','true');
+      var a=document.createElement('video');a.id='mvid1';
+      var b=document.createElement('video');b.id='mvid2';
+      a.muted=true;b.muted=true;a.playsInline=true;b.playsInline=true;
+      a.preload='auto';b.preload='auto';
+      host.appendChild(a);host.appendChild(b);
+      document.body.appendChild(host);
+    }
+    var IV=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
+    var IA=['/assets/status/idle1.m4a','/assets/status/idle2.m4a','/assets/status/idle3.m4a'];
+    var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
+    var q=[],pre=null,lastIdx=0,audioOn=false;
+    function refill(){q=[0,1,2];for(var i=q.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=q[i];q[i]=q[j];q[j]=t;}}
+    function blip(){if(!audioOn)return;try{var s=new Audio(IA[lastIdx]);s.volume=.85;var p=s.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
+    function ensurePre(){if(pre!==null)return;if(!q.length)refill();var i=q.pop();buf.muted=true;buf.src=IV[i];try{buf.load();}catch(e){}pre=i;}
+    function idleLoop(){
+      if(pre===null)ensurePre();
+      var i=pre;pre=null;lastIdx=i;
+      buf.muted=true;buf.style.opacity='0';
+      if(buf.currentSrc.indexOf(IV[i])<0){buf.src=IV[i];}
+      var pr=buf.play();if(pr&&pr.catch)pr.catch(function(){});
+      buf.addEventListener('playing',function on(){
+        buf.removeEventListener('playing',on);
+        buf.style.opacity='1';shown.style.opacity='0';
+        var t=shown;shown=buf;buf=t;
+        blip();
+        setTimeout(function(){try{buf.pause();}catch(e){}ensurePre();},450);
+      },{once:true});
+    }
+    function arm(){audioOn=true;}
+    document.addEventListener('click',arm,{once:true});
+    document.addEventListener('keydown',arm,{once:true});
+    refill();
+    var i0=q.pop();lastIdx=i0;shown.src=IV[i0];
+    try{shown.load();}catch(e){}
+    var p0=shown.play();if(p0&&p0.catch)p0.catch(function(){});
+    ensurePre();
+    setInterval(function(){
+      if(!shown.paused&&!shown.ended&&!shown.seeking)return;
+      idleLoop();
+    },1500);
+  })();
+
   // Full-page demo-reel background hook.
   // When real demo videos exist: drop the file into assets/brand/ and add its path to BG_VIDEOS.
   var BG_VIDEOS=[]; // e.g. ['/assets/brand/hero-reel.mp4']

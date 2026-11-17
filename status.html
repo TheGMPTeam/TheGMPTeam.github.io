@@ -7,56 +7,33 @@
 <meta name="description" content="Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=2">
+<link rel="stylesheet" href="/assets/site.css?v=3">
 <link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
+<script src="/assets/site.js?v=3" defer></script>
 <style>
-.hero{position:relative;z-index:20;text-align:center;color:#fff;padding:70px 0 46px;transition:opacity .7s ease,transform .7s ease}
-#vbox{position:relative;display:block;width:min(360px,72vw);aspect-ratio:480/864;margin:28px auto 0;border:1px solid rgba(0,217,255,.45);border-radius:34px;overflow:hidden;box-shadow:0 0 30px rgba(0,217,255,.22);background:#01030a}
-#vbox video{display:block;width:100%;height:100%;object-fit:cover;background:#01030a}
-#bgvid2{position:absolute;inset:0;opacity:0;pointer-events:none}
-#vbox.parked{position:fixed;top:88px;right:24px;width:190px;height:190px;aspect-ratio:1/1;margin:0;z-index:70;opacity:.88;border-radius:50%;box-shadow:0 0 26px rgba(0,217,255,.35);pointer-events:none;transform-origin:top left}
-#vbox.parked video{object-position:center 30%}
+.hero{position:relative;z-index:20;text-align:center;color:#fff;padding:96px 0 6px}
 .hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
 .hero-eyebrow{color:#7d90a8;letter-spacing:.26em;font-size:.66rem;text-transform:uppercase}
-.splash{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#01030a;cursor:pointer;transition:opacity .7s}
-.splash .hint{margin-top:40px;color:#00d9ff;letter-spacing:.3em;font-size:.68rem;text-transform:uppercase;animation:pulse 2.2s infinite}
-.sndoff{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:70;padding:10px 18px;border:1px solid #ffb347;color:#ffb347;letter-spacing:.22em;font-size:.66rem;text-transform:uppercase;background:rgba(1,3,10,.88);animation:pulse 1.6s infinite;cursor:pointer}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.splash .logo{font-family:'Orbitron',sans-serif;letter-spacing:.28em;font-size:1.7rem}
-.splash .logo b{color:#00d9ff;font-size:2.1rem}
-.splash .eyebrow{color:#00d9ff;letter-spacing:.32em;font-size:.72rem;text-transform:uppercase;margin-top:46px}
-.splash h1{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.18em;font-size:clamp(2.4rem,7vw,4.6rem);margin-top:34px;color:#fff}
-.splash .sub{color:#c9d6e8;font-size:.95rem;max-width:620px;margin-top:22px}
-.splash .sub b{color:var(--cyan)}
-.hero-scrim{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,rgba(1,3,10,.15),rgba(1,3,10,.85) 60%)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);margin-right:8px;vertical-align:middle;flex:0 0 auto}
 #pills .dot{width:12px;height:12px;margin:0 6px 12px 0}
-.hero-scrolled-x{display:none}
-.hero.scrolled{opacity:0;transform:translateY(-70px);pointer-events:none}
-#content{padding:86px 0 40px}
 .pills{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 24px}
-.pill{i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px;animation:pulse 2.2s infinite}
 .dot-on{background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
 .dot-ok{background:#3fe0a0;box-shadow:0 0 12px #3fe0a0}
 .dot-am{background:#ffb347;box-shadow:0 0 12px #ffb347}
 .dot-up{background:#3b8bff;box-shadow:0 0 12px #3b8bff}
 .dot-st{background:#5a6472;border-color:rgba(138,152,175,.5)}
-.span{display:inline-block;color:var(--muted);font-size:.82rem;letter-spacing:.1em}
 #stamp{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);letter-spacing:.06em}
 .hub-note{color:#ffb347;letter-spacing:.12em;font-size:.78rem;opacity:.9}
-main#simgrid{margin-top:54px}
+main#simgrid{margin-top:30px}
 .g{display:block;opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease;min-height:100vh;scroll-snap-align:start;padding:120px 6vw}
 .g.in{opacity:1;transform:none}
 html{scroll-snap-type:y proximity}
-#hero{scroll-snap-align:start}
 #hud{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:55;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(1,3,10,.82);border:1px solid rgba(0,217,255,.25);padding:10px 20px;opacity:0;transition:opacity .8s;pointer-events:none;backdrop-filter:blur(6px)}
 body.entered #hud{opacity:1}
-.sec{margin-top:46px}
 .g h2{display:flex;align-items:center;gap:14px;font-family:'Orbitron',sans-serif;font-size:1.4rem;letter-spacing:.16em;color:#00d9ff;margin-bottom:30px;text-shadow:0 0 18px rgba(0,217,255,.5)}
 .g h2 .idx{color:#2b3a55;font-size:1.1rem}
 .g h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(0,217,255,.55),transparent)}
-.sec h2{display:flex;align-items:center;gap:12px;font-size:1.05rem;letter-spacing:.12em;color:var(--cyan);margin-bottom:18px}
-.sec h2 .idx{color:#2b3a55;font-family:'Orbitron',sans-serif;font-size:.95rem}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));gap:16px}
 .node{position:relative;background:linear-gradient(165deg,rgba(11,18,32,.94),rgba(6,10,16,.88));border:1px solid var(--line);border-radius:12px;padding:18px 18px 15px;transition:transform .2s, border-color .2s, box-shadow .2s;cursor:default}
 .node:hover{transform:translateY(-4px);border-color:var(--line-hot);box-shadow:0 0 34px rgba(0,217,255,.16)}
@@ -66,7 +43,6 @@ body.entered #hud{opacity:1}
 .node .ph{display:inline-block;font-size:.64rem;letter-spacing:.1em;padding:3px 8px;border-radius:5px;font-weight:700;text-transform:uppercase}
 .ph-up{background:#3b8bff;color:#fff}
 .ph-te{background:#ffb347;color:#fff}
-.ph-te{color:#fff}
 .ph-id{background:#3fe0a0;color:#fff}
 .ph-su{background:#5aa9ff;color:#fff}
 .ph-st{background:#5a6472;color:#fff}
@@ -74,7 +50,6 @@ body.entered #hud{opacity:1}
 .node:hover .log{opacity:1}
 footer.site-footer{border-top:1px solid var(--line);padding:24px 24px;color:var(--muted);font-size:.75rem}
 footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.sim-tag{position:absolute;top:14px;right:18px;z-index:6;color:#ffb347;letter-spacing:.2em;font-size:.62rem;text-transform:uppercase;opacity:.9}
 </style>
 </head>
 <body>
@@ -85,50 +60,34 @@ footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wr
   </span>
 </div></nav>
 <div class="grid-bg"></div>
-<section class="hero" id="hero">
-  <div class="hero-wrap wrap">
-    <h1 class="hero-hd">FLEET STATUS</h1>
-    <p class="hero-eyebrow">SIMULATION LOOP &mdash; RECONSTRUCTION, NOT LIVE</p>
-    <div id="vbox">
-      <video id="bgvid" playsinline preload="auto">
-        <source src="/assets/status/topbg.mp4" type="video/mp4">
-      </video>
-      <video id="bgvid2" playsinline preload="auto"></video>
-    </div>
-  </div>
-  <div class="splash" id="splash">
-    <div class="logo">THEGMP<b>TEAM</b> STUDIOS</div>
-    <p class="eyebrow">FLEET CONTROL — SIMULATION LOOP</p>
-    <h1>FLEET STATUS</h1>
-    <p class="sub">Every node lights up as if <b>doing something</b>. <b>Reconstruction — not a live feed.</b></p>
-    <p class="hint">CLICK ANYWHERE TO INITIALIZE WITH AUDIO</p>
-  </div>
-</section>
+<header class="hero"><div class="wrap">
+  <h1 class="hero-hd">FLEET STATUS</h1>
+  <p class="hero-eyebrow">SIMULATION LOOP &mdash; RECONSTRUCTION, NOT LIVE</p>
+</div></header>
 <div id="hud">
   <div id="pills" class="pills"></div>
-  <div id="stamp" class="hub-note">connecting…</div>
+  <div id="stamp" class="hub-note">connecting&hellip;</div>
 </div>
 <main id="simgrid">
-  <div class="sndoff" id="sndoff" style="display:none">SOUND OFF — CLICK ANYWHERE FOR AUDIO</div>
   <div class="wrap">
     <div class="g show" data-grp="CORE">
-      <h2><span class="idx">◈</span>CORE — HARDWARE & QUEUES</h2>
+      <h2><span class="idx">&#9672;</span>CORE &mdash; HARDWARE &amp; QUEUES</h2>
       <div class="cards" id="cards-core"></div>
     </div>
     <div class="g" data-grp="MIND">
-      <h2><span class="idx">◈</span>MIND — INFERENCE & SWITCHING</h2>
+      <h2><span class="idx">&#9672;</span>MIND &mdash; INFERENCE &amp; SWITCHING</h2>
       <div class="cards" id="cards-mind"></div>
     </div>
     <div class="g" data-grp="CREATE">
-      <h2><span class="idx">◈</span>CREATE — RENDER & CONTENT</h2>
+      <h2><span class="idx">&#9672;</span>CREATE &mdash; RENDER &amp; CONTENT</h2>
       <div class="cards" id="cards-create"></div>
     </div>
     <div class="g" data-grp="VOICE">
-      <h2><span class="idx">◈</span>VOICE — INGEST & OUTPUT</h2>
+      <h2><span class="idx">&#9672;</span>VOICE &mdash; INGEST &amp; OUTPUT</h2>
       <div class="cards" id="cards-voice"></div>
     </div>
     <div class="g" data-grp="EDGE">
-      <h2><span class="idx">◈</span>EDGE — ROUTING & ACCESS</h2>
+      <h2><span class="idx">&#9672;</span>EDGE &mdash; ROUTING &amp; ACCESS</h2>
       <div class="cards" id="cards-edge"></div>
     </div>
   </div>
@@ -136,7 +95,7 @@ footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wr
 <footer class="site-footer">
   <div class="wrap">
     <span class="dot"></span>
-    <span>&copy; 2026 TheGMPTeam Studios — <b style="color:var(--cyan)">FLEET STATUS · SIMULATION LOOP</b> &middot; this build is reconstructed for review; nothing here is live</span>
+    <span>&copy; 2026 TheGMPTeam Studios &mdash; <b style="color:var(--cyan)">FLEET STATUS &middot; SIMULATION LOOP</b> &middot; this build is reconstructed for review; nothing here is live</span>
   </div>
 </footer>
 
@@ -186,29 +145,7 @@ const TX=[["SERVER CORE","base 309 workers"],["OLLAMA","7 models rolled"],["BEDR
   tick();
   setInterval(tick,1000);
 })();
-const splash=document.getElementById('splash'),v=document.getElementById('bgvid'),hero=document.getElementById('hero'),sndoff=document.getElementById('sndoff');
-let started=false,dismissed=false,soundOn=false;
-function unmute(){soundOn=true;v.muted=false;if(sndoff)sndoff.style.display='none';}
-function muteFallback(){v.muted=true;soundOn=false;if(sndoff)sndoff.style.display='block';}
-function dismiss(){if(dismissed)return;dismissed=true;splash.style.opacity='0';document.body.classList.add('entered');setTimeout(function(){splash.style.display='none';},700);}
-function start(sound){
-  if(started){if(sound)unmute();return;}
-  started=true;
-  if(sound){
-    v.muted=false;
-    const pr=v.play();
-    if(pr&&pr.catch)pr.catch(function(){muteFallback();v.play().catch(function(){});});
-    else unmute();
-  }else{
-    muteFallback();
-    v.play().catch(function(){});
-  }
-}
-function gesture(){dismiss();if(!started)start(true);else if(!soundOn)unmute();}
-splash.addEventListener('click',gesture);
-if(sndoff)sndoff.addEventListener('click',gesture);
-document.addEventListener('keydown',gesture);
-document.addEventListener('click',function(){if(started&&!soundOn)unmute();});
+document.body.classList.add('entered');
 const stages=[].slice.call(document.querySelectorAll('#simgrid .g'));
 const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.3});
 stages.forEach(function(s){io.observe(s);});
@@ -242,100 +179,8 @@ function tour(i){
 ['wheel','touchstart','mousedown'].forEach(function(ev){
   window.addEventListener(ev,function(){tourEnd();},{once:true,passive:true});
 });
-var idleMode=false;
-var idleV=['/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'];
-var idleA=['/assets/status/idle1.m4a','/assets/status/idle2.m4a','/assets/status/idle3.m4a'];
-var idleQueue=[];
-var idleNext=null;
-var lastSound=null;
-function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
-function refill(){idleQueue=shuffle([0,1,2]);}
-function blip(){
-  if(!idleA.length)return;
-  var i=Math.floor(Math.random()*idleA.length);
-  try{
-    var a=new Audio(idleA[i]);
-    a.volume=.85;
-    var p=a.play();
-    if(p&&p.catch)p.catch(function(){});
-    lastSound=a;
-  }catch(e){}
-}
-function parkVideo(){
-  var box=document.getElementById('vbox');
-  var r0=box.getBoundingClientRect();
-  document.body.appendChild(box);
-  box.classList.add('parked');
-  var r1=box.getBoundingClientRect();
-  if(r0.width>0&&r1.width>0){
-    box.style.transition='none';
-    box.style.transform='translate('+(r0.left-r1.left)+'px,'+(r0.top-r1.top)+'px) scale('+(r0.width/r1.width)+')';
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
-      box.style.transition='transform .9s cubic-bezier(.2,.7,.2,1)';
-      box.style.transform='translate(0px,0px) scale(1)';
-      setTimeout(function(){box.style.transition='opacity .35s ease';box.style.opacity='.92';},950);
-    });});
-  }
-}
-var shown=v,buf=document.getElementById('bgvid2');
-var pre=null;
-function ensurePre(){
-  if(pre!==null)return;
-  if(!idleQueue.length)refill();
-  var i=idleQueue.pop();
-  buf.muted=true;
-  buf.src=idleV[i];
-  try{buf.load();}catch(e){}
-  pre=i;
-}
-function idleLoop(){
-  if(!idleMode)return;
-  if(pre===null)ensurePre();
-  var i=pre;pre=null;
-  buf.muted=true;
-  buf.style.transition='opacity .35s ease';
-  shown.style.transition='opacity .35s ease';
-  if(buf.currentSrc.indexOf(idleV[i])<0){buf.src=idleV[i];}
-  var pr=buf.play();
-  if(pr&&pr.catch)pr.catch(function(){});
-  buf.addEventListener('playing',function on(){
-    buf.removeEventListener('playing',on);
-    buf.style.opacity='1';
-    shown.style.opacity='0';
-    var t=shown;shown=buf;buf=t;
-    setTimeout(function(){try{buf.pause();}catch(e){}ensurePre();},450);
-  },{once:true});
-  blip();
-}
-var idleTimer=null;
-function idleStart(){
-  if(idleTimer)return;
-  idleTimer=setInterval(function(){
-    if(!idleMode)return;
-    if(!shown.paused&&!shown.ended&&!shown.seeking)return;
-    idleLoop();
-  },1500);
-}
-v.addEventListener('ended',function(){
-  if(idleMode)return;
-  idleMode=true;
-  v.pause();
-  hero.classList.add('scrolled');
-  parkVideo();
-  tourOn=true;
-  setTimeout(function(){tour(0);},1100);
-  refill();
-  ensurePre();
-  idleStart();
-});
-document.addEventListener('click',function(){
-  if(!idleMode)return;
-  if(!shown.paused&&!shown.ended)return;
-  idleLoop();
-},true);
-window.addEventListener('scroll',function(){
-  if(window.scrollY>40)hero.classList.add('scrolled');
-},{passive:true});
+tourOn=true;
+setTimeout(function(){tour(0);},1300);
 </script>
 </body>
 </html>
