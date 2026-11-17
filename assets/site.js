@@ -579,7 +579,8 @@
       ev.stopPropagation();ev.preventDefault();
       if(!live())return;
       if(window.__vgForce)window.__vgForce(PULLU);
-      if(!window.__vgMuted){try{var cc=new Audio('/assets/sfx/chainclink.mp3');cc.volume=0.7;var cp=cc.play();if(cp&&cp.catch)cp.catch(function(){});}catch(ea){}}
+      if(window.__vgFx){window.__vgFx('/assets/sfx/chainclink.mp3',0.7);}
+      else if(!window.__vgMuted){try{var cc=new Audio('/assets/sfx/chainclink.mp3');cc.volume=0.7;var cp=cc.play();if(cp&&cp.catch)cp.catch(function(){});}catch(ea){}}
       chain.classList.remove('vg-tug');void chain.offsetWidth;chain.classList.add('vg-tug');
       host.classList.remove('vg-react');void host.offsetWidth;host.classList.add('vg-react');
       setTimeout(scrollOn,REDUCE?0:360);
@@ -623,10 +624,38 @@
   (function(){
     var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var lastFire=0,busy=false;
-    function poofSound(){
-      if(window.__vgMuted)return;
-      try{var a=new Audio('/assets/sfx/poof.mp3');a.volume=0.7;var p=a.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+    // SFX that fire WITHOUT a user gesture (portal opens on its own during
+    // rotation) are blocked by browser autoplay policy when played via new
+    // Audio(). Web Audio through a context unlocked by the user's first
+    // click/keydown works for the rest of the page's life. This is __vgFx.
+    var AC=null,FB={};
+    function ac(){
+      if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}
+      if(AC.state==='suspended'){try{AC.resume();}catch(e){}}
+      return AC;
     }
+    document.addEventListener('pointerdown',function(){ac();});
+    document.addEventListener('keydown',function(){ac();});
+    function bufp(u){
+      if(FB[u])return FB[u];
+      FB[u]=fetch(u).then(function(r){if(!r.ok)return null;return r.arrayBuffer();}).then(function(b){
+        var a=ac();return a?a.decodeAudioData(b):null;
+      }).catch(function(){return null;});
+      return FB[u];
+    }
+    window.__vgFx=function(u,vol){
+      if(window.__vgMuted)return;
+      var a=ac();
+      if(!a){try{var x=new Audio(u);x.volume=vol;var p=x.play();if(p&&p.catch)p.catch(function(){});}catch(e){}return;}
+      bufp(u).then(function(b){
+        if(!b)return;
+        var s=a.createBufferSource();s.buffer=b;
+        var g=a.createGain();g.gain.value=vol;
+        s.connect(g);g.connect(a.destination);
+        try{s.start();}catch(e){}
+      });
+    };
+    function poofSound(){window.__vgFx('/assets/sfx/poof.mp3',0.7);}
     function playIn(v,u,next,err){
       // Portal legs are ALWAYS silent: the walk splits carry music/ambient
       // beds from their source renders; only the poof sfx voices this event.
@@ -656,10 +685,8 @@
       P.appendChild(Object.assign(document.createElement('div'),{id:'vgpswirl'}));
       document.body.appendChild(P);
       requestAnimationFrame(function(){P.classList.add('open');});
-      if(!window.__vgMuted){
-        try{var w=new Audio('/assets/sfx/whoosh.mp3');w.volume=0.55;var wp=w.play();if(wp&&wp.catch)wp.catch(function(){});
-        setTimeout(function(){var i2=new Audio('/assets/sfx/ignite.mp3');i2.volume=0.6;var ip=i2.play();if(ip&&ip.catch)ip.catch(function(){});},280);}catch(es){}
-      }
+      window.__vgFx('/assets/sfx/whoosh.mp3',0.55);
+      setTimeout(function(){window.__vgFx('/assets/sfx/ignite.mp3',0.6);},280);
       function cleanup(){
         P.classList.add('gone');
         setTimeout(function(){if(P.parentNode)P.parentNode.removeChild(P);busy=false;announceDone();},450);
