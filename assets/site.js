@@ -129,11 +129,16 @@
       },280);
     }
     var WSRC=(ivv&&ivv.getAttribute('src'))||'/assets/status/welcome.mp4';
+    if(vgSet().skipWelcome){
+      // Skip mode: don't stall on media preloads the user opted out of.
+      open();
+    }else{
     [WSRC,'/assets/status/idle1.mp4','/assets/status/idle2.mp4','/assets/status/idle3.mp4'].forEach(function(u){
       var v=document.createElement('video');v.preload='auto';v.muted=true;
       v.addEventListener('loadeddata',prog);v.addEventListener('error',prog);
       v.src=u;
     });
+    }
     setTimeout(open,6000);
     s.addEventListener('click',function(){
       if(s.dataset.leaving){return;}
