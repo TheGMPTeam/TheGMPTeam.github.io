@@ -222,7 +222,7 @@
         iv.addEventListener('ended',finish);
         iv.addEventListener('click',function(){window.__vgMuted=!window.__vgMuted;iv.muted=window.__vgMuted;});
         var sk=intro.querySelector('.iskip');
-        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();var D=iv.duration||10.2;iv.currentTime=Math.min(D-0.05,iv.currentTime+3);});}
+        if(sk){sk.addEventListener('click',function(e){e.stopPropagation();e.preventDefault();var D=iv.duration||15.0;iv.currentTime=Math.min(D-0.05,iv.currentTime+3);});}
       },1150);
     });
   })();
@@ -300,7 +300,7 @@
         // SKIP is a saved preference: toggles skipping the welcome presentation.
         var st=vgSet();st.skipWelcome=!st.skipWelcome;vgSave(st);
         var i=document.getElementById('intro'),v=document.getElementById('iv');
-        if(i&&i.style.display!=='none'&&v&&!v.ended){v.currentTime=(v.duration||10.2)-0.05;}
+        if(i&&i.style.display!=='none'&&v&&!v.ended){v.currentTime=(v.duration||15.0)-0.05;}
       },
       stop:function(){
         var i=document.getElementById('intro'),v=i&&i.style.display!=='none'&&document.getElementById('iv');
