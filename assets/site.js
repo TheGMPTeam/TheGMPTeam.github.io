@@ -559,6 +559,19 @@
     var gear2=document.getElementById('vggear2');
     var links=document.getElementById('vglinks');
     var PITCH=23; // link height + margins, keeps the loop seamless
+    // v69: the chain is a LONG rig whose motion is synced to the port video:
+    // while any mascot clip is playing, links crawl and gears turn at a steady
+    // crawl rate (an accumulator, so clip switches never jump), and page
+    // scroll adds on top. Paused video (or no video) = chain rests.
+    var crawl=0,lastReal=0;
+    function playing(){
+      var mv=document.querySelectorAll('#mascot video'),k;
+      for(k=0;k<mv.length;k++){
+        var v=mv[k];
+        if(!v.paused&&!v.ended&&v.readyState>=2&&v.currentTime<(v.duration||0)-0.05)return v;
+      }
+      return null;
+    }
     function rig(){
       var mr=host.getBoundingClientRect();
       var pre=document.body.classList.contains('vg-pre')||(document.getElementById('splash')&&document.getElementById('splash').style.display!=='none')||(document.getElementById('intro')&&document.getElementById('intro').style.display!=='none');
@@ -567,12 +580,25 @@
       chain.style.left=Math.round(mr.left+mr.width/2-24)+'px';
       var y=window.pageYOffset||document.documentElement.scrollTop||0;
       if(REDUCE)return;
-      links.style.transform='translateY('+(y%PITCH)+'px)';
-      pull.style.transform='rotate('+(y*0.5)+'deg)';
-      gear2.style.transform='rotate('+(-y*1.0)+'deg)';
+      var pos=y+crawl;
+      links.style.transform='translateY('+(pos%PITCH)+'px)';
+      pull.style.transform='rotate('+(pos*0.5)+'deg)';
+      gear2.style.transform='rotate('+(-pos*1.0)+'deg)';
     }
     var rigQueued=false;
     document.addEventListener('vg:enter',function(){rig();});
+    if(!REDUCE){
+      (function tick(){
+        var now=performance.now();
+        if(lastReal){
+          var dt=(now-lastReal)/1000;
+          if(playing())crawl+=dt*PITCH*0.85;
+        }
+        lastReal=now;
+        rig();
+        requestAnimationFrame(tick);
+      })();
+    }
     window.addEventListener('scroll',function(){
       if(rigQueued)return;
       rigQueued=true;
