@@ -213,19 +213,20 @@ const stages=[].slice.call(document.querySelectorAll('#simgrid .g'));
 const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.3});
 stages.forEach(function(s){io.observe(s);});
 let tourOn=false;
-function tourSizing(on){
-  const vh=(window.innerHeight||document.documentElement.clientHeight)+'px';
-  stages.forEach(function(s){s.style.minHeight=on?vh:'';});
-}
 function tourEnd(){
   tourOn=false;
-  tourSizing(false);
+  const vh=(window.innerHeight||document.documentElement.clientHeight)+'px';
+  stages.forEach(function(s){s.style.display='';s.style.minHeight='';});
   document.documentElement.style.scrollSnapType='y proximity';
 }
 function tour(i){
   if(!tourOn){return;}
   if(i>=stages.length){tourEnd();return;}
-  tourSizing(true);
+  const vh=(window.innerHeight||document.documentElement.clientHeight)+'px';
+  stages.forEach(function(s,k){
+    if(k===i){s.style.display='block';s.style.minHeight=vh;}
+    else{s.style.display='none';s.style.minHeight='';}
+  });
   document.documentElement.style.scrollSnapType='y mandatory';
   var top=stages[i].offsetTop;
   window.scrollTo({top:top,behavior:'smooth'});
