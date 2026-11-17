@@ -246,3 +246,7 @@ body.has-bg-video .grid-bg{opacity:.45}
 #vgportal.smoke #vgpoof span:nth-child(8){left:50%;top:55%;animation-delay:.18s}
 @keyframes vgpuff{0%{transform:scale(.2);opacity:.95}70%{opacity:.5}100%{transform:scale(1.7);opacity:0}}
 @media (max-width:720px){#vgportal{width:150px;height:150px;left:12px;bottom:72px}}
+
+/* v46: empty-port attention pulse between the walk-off and the portal FX */
+#mascot.vg-pulse{animation:vgpulse 1.5s ease-in-out}
+@keyframes vgpulse{0%,100%{filter:none}30%{filter:brightness(1.8) drop-shadow(0 0 18px rgba(0,217,255,.8))}45%{filter:brightness(.9)}60%{filter:brightness(1.6) drop-shadow(0 0 14px rgba(0,217,255,.6))}}

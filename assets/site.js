@@ -280,6 +280,7 @@
     var mediaDead=false,probed=0,started=false;
     [shown,buf].forEach(function(x){x.addEventListener('error',function(){mediaDead=true;});});
     var pre=null,audioOn=false,lastEndGone=false,lastU='',lastRole='';
+    var paused=false,curEntry=null,exiting=false;
     var engineOn=!document.getElementById('splash');
     function maybeStart(){
       if(probed===SLOT.length&&!IV.length){mediaDead=true;return;}
@@ -316,15 +317,35 @@
         e=pool[Math.floor(Math.random()*pool.length)];
       }
       lastU=e.u;lastEndGone=e.endGone;lastRole=e.role;
-      if(lastEndGone){try{document.dispatchEvent(new CustomEvent('vg:walkoff'));}catch(ev0){}}
       return e;
     }
     function ensurePre(){if(pre!==null)return;var e=pick();if(!e)return;buf.muted=true;buf.src=e.u;try{buf.load();}catch(e2){}pre=e;}
+    function firstWalkon(){
+      var w=IV.filter(function(x){return x.role==='walkon';});
+      if(!w.length)return null;
+      return w[Math.floor(Math.random()*w.length)].u;
+    }
     function idleLoop(){
-      if(!IV.length)return;
+      if(!IV.length||paused)return;
+      // EXIT THEATER (v46, James): the walk-off clip just ENDED on stage.
+      // Stop rotation, pulse the empty port, run the page portal (walk-in ->
+      // walk-out inside it, then removed); when it's done, the corner port
+      // plays walk-in itself and the rotation resumes.
+      if(curEntry&&curEntry.endGone&&vgSet().portalFx!==false&&!exiting){
+        exiting=true;paused=true;curEntry=null;pre=null;
+        host.classList.add('vg-pulse');
+        setTimeout(function(){host.classList.remove('vg-pulse');},1500);
+        var enterU=firstWalkon();
+        document.addEventListener('vg:portal-done',function(){
+          exiting=false;paused=false;lastEndGone=false;
+          if(enterU){forceNext(enterU);}else{ensurePre();idleLoop();}
+        },{once:true});
+        try{document.dispatchEvent(new CustomEvent('vg:portal'));}catch(ev1){}
+        return;
+      }
       if(pre===null)ensurePre();
       if(pre===null)return;
-      var e=pre;pre=null;
+      var e=pre;pre=null;curEntry=e;
       buf.muted=true;buf.style.opacity='0';
       if(buf.currentSrc.indexOf(e.u)<0){buf.src=e.u;}
       var pr=buf.play();if(pr&&pr.catch)pr.catch(function(){});
@@ -343,6 +364,7 @@
     function startIdle(){
       if(!IV.length)return;
       var e0=pick();if(!e0)return;
+      curEntry=e0;
       try{shown.muted=!!window.__vgMuted;}catch(e){}
       shown.src=e0.u;
       try{shown.load();}catch(e){}
@@ -360,7 +382,7 @@
       maybeStart();
     }
     setInterval(function(){
-      if(mediaDead||!engineOn||!started||!IV.length){return;}
+      if(mediaDead||!engineOn||!started||!IV.length||paused){return;}
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
       idleLoop();
     },1500);
@@ -609,17 +631,18 @@
       v.onended=next;v.onerror=err;
       var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;var p2=v.play();if(p2&&p2.catch)p2.catch(function(){err();});});
     }
-    document.addEventListener('vg:walkoff',function(){
-      if(vgSet().portalFx===false)return; // submenu toggle: OFF kills the spectacle
+    function announceDone(){try{document.dispatchEvent(new CustomEvent('vg:portal-done'));}catch(e1){}}
+    document.addEventListener('vg:portal',function(){
+      if(vgSet().portalFx===false){announceDone();return;} // submenu toggle: OFF skips straight past
       var now=Date.now();
-      if(busy||REDUCE||now-lastFire<60000){return;}
+      if(busy||REDUCE||now-lastFire<60000){announceDone();return;}
       var pool=window.__vgPool||[];
       var wons=[],woffs=[],k;
       for(k=0;k<pool.length;k++){
         if(pool[k].role==='walkon')wons.push(pool[k].u);
         else if(pool[k].role==='walkoff')woffs.push(pool[k].u);
       }
-      if(!wons.length||!woffs.length)return;
+      if(!wons.length||!woffs.length){announceDone();return;}
       busy=true;lastFire=now;
       var P=document.createElement('div');P.id='vgportal';P.setAttribute('aria-hidden','true');
       var p1=document.createElement('video');p1.playsInline=true;p1.preload='auto';
@@ -631,7 +654,7 @@
       requestAnimationFrame(function(){P.classList.add('open');});
       function cleanup(){
         P.classList.add('gone');
-        setTimeout(function(){if(P.parentNode)P.parentNode.removeChild(P);busy=false;},450);
+        setTimeout(function(){if(P.parentNode)P.parentNode.removeChild(P);busy=false;announceDone();},450);
       }
       function smoke(){
         poofSound();
@@ -640,12 +663,12 @@
       }
       function leg2(){
         p1.style.opacity='0';
-        playIn(p2,wons[Math.floor(Math.random()*wons.length)],smoke,cleanup);
+        playIn(p2,woffs[Math.floor(Math.random()*woffs.length)],smoke,cleanup);
       }
-      // Opposite order per James: the walk-OFF split plays first (he walks out
-      // of the corner stage into this portal), then the walk-ON split (he
-      // arrives and settles here), then the puff clears him and the portal.
-      playIn(p1,woffs[Math.floor(Math.random()*woffs.length)],leg2,cleanup);
+      // v46 order per James: inside the portal he ENTERS first (walk-on),
+      // then walks OUT of the portal scene (walk-off); the puff clears the
+      // portal; the corner port then plays its own enter and rotation resumes.
+      playIn(p1,wons[Math.floor(Math.random()*wons.length)],leg2,cleanup);
     });
   })();
 
