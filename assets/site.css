@@ -148,3 +148,29 @@ body.has-bg-video .grid-bg{opacity:.45}
 #mascot video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;transition:opacity .35s ease;background:#01030a}
 #mascot video:nth-child(2){opacity:0}
 @media (max-width:720px){#mascot{width:120px;height:120px;top:84px;right:12px}}
+
+/* Products: tappable cards + spec-sheet modal */
+.card.pop{cursor:pointer;transition:border-color .25s,transform .25s,box-shadow .25s;position:relative}
+.card.pop:hover,.card.pop:focus{border-color:rgba(0,217,255,.55);transform:translateY(-4px);box-shadow:0 10px 34px rgba(0,217,255,.12)}
+.card.pop::after{content:"OPEN SPECS +";position:absolute;top:10px;right:12px;font-size:9px;letter-spacing:.25em;color:var(--cy);opacity:0;transition:opacity .25s}
+.card.pop:hover::after,.card.pop:focus::after{opacity:.85}
+#pmodal{position:fixed;inset:0;background:rgba(1,3,10,.85);backdrop-filter:blur(6px);z-index:120;display:none;align-items:center;justify-content:center;padding:4vw}
+#pmodal.on{display:flex;animation:pmIn .35s ease}
+@keyframes pmIn{from{opacity:0}to{opacity:1}}
+#pmbox{position:relative;width:min(980px,100%);max-height:88vh;overflow-y:auto;background:linear-gradient(160deg,#050b16,#03060d);border:1px solid rgba(0,217,255,.4);border-radius:12px;box-shadow:0 0 60px rgba(0,217,255,.18)}
+#pmx{position:absolute;top:10px;right:12px;z-index:2;background:none;border:1px solid var(--line);color:var(--cy);width:32px;height:32px;border-radius:8px;font-size:18px;cursor:pointer}
+#pmx:hover{border-color:var(--cy)}
+#pmmedia{background:#01030a}
+#pmmedia img,#pmmedia video{display:block;width:100%;max-height:46vh;object-fit:contain;background:#01030a}
+#pmmedia iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
+#pmtext{padding:22px 26px 28px}
+#pmt{font-family:Orbitron,sans-serif;font-size:22px;letter-spacing:.08em;color:#fff}
+#pmtag{color:var(--cy);font-size:11px;letter-spacing:.22em;margin:6px 0 12px}
+#pmblurb{color:#c9d7e6;font-size:14px;line-height:1.65;margin-bottom:14px}
+#pmspecs{list-style:none;padding:0;margin:0}
+#pmspecs li{color:#dfe9f5;font-size:13.5px;line-height:1.6;padding:7px 0;border-bottom:1px dashed rgba(0,217,255,.12)}
+#pmspecs li:last-child{border-bottom:0}
+.sarrow{color:var(--cy);margin-right:8px}
+#pmlink{display:none;margin-top:16px;color:var(--cy);font-size:12px;letter-spacing:.2em;text-decoration:none}
+#pmlink:hover{text-decoration:underline}
+@media (max-width:720px){#pmt{font-size:18px}#pmtext{padding:16px 16px 20px}}
