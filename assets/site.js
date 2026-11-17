@@ -649,6 +649,7 @@
       if(!a){try{var x=new Audio(u);x.volume=vol;var p=x.play();if(p&&p.catch)p.catch(function(){});}catch(e){}return;}
       bufp(u).then(function(b){
         if(!b)return;
+        window.__vgFxN=(window.__vgFxN||0)+1;
         var s=a.createBufferSource();s.buffer=b;
         var g=a.createGain();g.gain.value=vol;
         s.connect(g);g.connect(a.destination);
