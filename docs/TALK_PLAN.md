@@ -28,8 +28,12 @@ symbols, spelled-out brands (Vy-rus, V B V code), plain sentences.
   (exclusive audio source).
 - Prompt (node 156, per job via vg-say --emotion/--look): base talking prompt
   + SPEECH paragraph with the exact line as `<d>[English] line</d> (S1)` +
-  Delivery: <emotion> + GAZE sentence (left/right/center per table) +
-  affirmative anatomy lock (two arms/two legs, rigid skin knobs).
+  Delivery: <emotion> + LIVELINESS paragraph (nods, tilts, weight shifts,
+  mitten-hand gestures; points a mitten toward the side the topic sits on,
+  then returns gaze to camera; center shots hold eye contact and point at
+  viewer) + gaze sentence + affirmative anatomy lock (two arms/two legs,
+  rigid skin knobs). Liveliness spec per James 2026-11-18 — clips 1-10
+  predate it and get a re-render pass once the new spec proves out.
 - GPU: RTX 3060 only (policy 2026-11-17; 5060 Ti = Strata + nightly n8n).
 - Seeds: up to 6 attempts, fresh seed per attempt (seed lottery).
 
