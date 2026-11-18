@@ -1,0 +1,2 @@
+The rig is the workstation behind everything you are watching.
+The mascot clips render on its GPUs.

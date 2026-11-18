@@ -1,0 +1,1 @@
+Virus GPPT runs fully offline on your box. No cloud, no keys, no telemetry.

@@ -1,0 +1,1 @@
+Negzis is our agent mesh. One brain per machine. Shared memory. No sass.

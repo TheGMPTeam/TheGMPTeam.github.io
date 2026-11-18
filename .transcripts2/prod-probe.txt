@@ -1,0 +1,2 @@
+Every card probes for its own clip.
+Drop a video in the products folder and it auto-plays.

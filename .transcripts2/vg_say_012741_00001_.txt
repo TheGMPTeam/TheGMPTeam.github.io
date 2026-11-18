@@ -1,0 +1,2 @@
+Two graphics processors, one render queue.
+The mascot you are watching came out of this fleet.

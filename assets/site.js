@@ -33,6 +33,8 @@
     function stop(){
       var f=car.querySelector('.slide .thumb iframe');
       if(f) f.remove();
+      var v=car.querySelector('.slide .thumb video');
+      if(v){ try{ v.pause(); }catch(err){} v.remove(); }
       var b=car.querySelector('.slide .mute-btn');
       if(b) b.remove();
     }
@@ -75,7 +77,25 @@
       s.addEventListener('mouseenter',function(){
         if(slides[cur]!==s) return;
         var h=s.querySelector('.thumb');
-        if(!h||h.querySelector('iframe')) return;
+        if(!h||h.querySelector('iframe')||h.querySelector('video')) return;
+        if(s.dataset.local){
+          // local mp4 slide (outtakes): autoplay muted (browser policy), UNMUTE pill flips.
+          var v=document.createElement('video');
+          v.src=s.dataset.local; v.autoplay=true; v.muted=true; v.loop=true;
+          v.playsInline=true; v.preload='auto';
+          h.appendChild(v);
+          var bv=document.createElement('button');
+          bv.type='button'; bv.className='mute-btn'; bv.textContent='UNMUTE';
+          var m=true;
+          bv.addEventListener('click',function(ev){
+            ev.stopPropagation(); ev.preventDefault();
+            m=!m; v.muted=m;
+            bv.textContent=m?'UNMUTE':'MUTE';
+            bv.classList.toggle('on',!m);
+          });
+          h.appendChild(bv);
+          return;
+        }
         var f=document.createElement('iframe');
         f.src='https://www.youtube.com/embed/'+s.dataset.vid+'?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
         f.allow='autoplay; encrypted-media; picture-in-picture';
