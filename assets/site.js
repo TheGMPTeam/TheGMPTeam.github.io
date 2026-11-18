@@ -290,7 +290,7 @@
     SLOT.forEach(function(s){
       var u='/assets/status/'+s[0]+s[1]+'.mp4';
       var v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
-      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:s[0]==='walkoff',role:s[0]});maybeStart();});
+      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:s[0]==='walkoff',role:(s[0]==='action'&&s[1]===4)?'idle':s[0]});maybeStart();});
       v.addEventListener('error',function(){probed++;maybeStart();});
       v.src=u;
     });
@@ -755,6 +755,21 @@
       requestAnimationFrame(function(){rigQueued=false;rig(lastTug);});
     },{passive:true});
     rig(0);
+    // v76d (James 2026-11-19): action4 repurposed -- the lever throw now
+    // joins the idle rotation (role 'idle' at pool load), and whenever it
+    // plays the STAGE lights up: background brightness ramps up, holds a
+    // beat, then dims back to normal. The clunk lands with the lights.
+    var stageLit=false;
+    setInterval(function(){
+      if(stageLit||!live())return;
+      var v=playing();
+      if(!v||!/action4/.test(v.currentSrc||v.src||''))return;
+      stageLit=true;
+      document.body.classList.add('vg-stage');
+      if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
+      setTimeout(function(){document.body.classList.remove('vg-stage');},1700);
+      setTimeout(function(){stageLit=false;},4200);
+    },400);
     // Clicking the page chain also makes the mascot grab ITS chain: the
     // pull-chain action clip (action2) is forced as the very next port clip.
     var PULLU='/assets/status/action2.mp4';
@@ -784,7 +799,8 @@
       var now=Date.now();
       if(window.__leverT&&now-window.__leverT<90000)return;
       leverFired=true;window.__leverT=now;
-      if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
+      // v76d: the clunk SFX now rides the stage-light watcher (fires when
+      // the clip actually starts playing, rotation or force).
       window.__vgForce(LEVERU);
     }
     [].slice.call(document.querySelectorAll('.cta,.cards .card')).forEach(function(el){
@@ -802,7 +818,6 @@
       if(live()&&window.__vgForce){
         try{sessionStorage.removeItem('vgcta');}catch(e){}
         clearInterval(arrival);
-        if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
         window.__vgForce(LEVERU);
       }
     },1200);

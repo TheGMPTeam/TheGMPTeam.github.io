@@ -304,6 +304,13 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 .vgpupil.r{left:56%}
 .vgpupil.blink{height:2px}
 .vg-bright #vgchain{filter:brightness(2) contrast(1.08)}
+/* v76d: stage-light flash when the mascot throws its lever (action4).
+   Ramps up fast, holds ~1.7s, dims back with the slow default transition. */
+.grid-bg{transition:filter 1.8s ease}
+#mascot{transition:filter 1.8s ease}
+body.vg-stage .grid-bg{filter:brightness(2.4);transition:filter .45s ease}
+body.vg-stage #mascot{filter:brightness(1.35);transition:filter .45s ease}
+body.vg-stage #vgchain{filter:brightness(2.4) contrast(1.08) drop-shadow(0 0 14px rgba(0,217,255,.7));transition:filter .45s ease}
 .vg-spin{animation:vgspin 1.6s linear!important}
 @keyframes vgspin{to{transform:rotate(360deg)}}
 .vg-jolt{animation:vgjolt .5s}
