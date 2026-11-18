@@ -19,9 +19,12 @@ engine staging. NOTHING deploys without passing every gate below.
 1. Audio: whisper tiny F1 >= 0.6 AND every --require word verbatim in the
    transcript (guard fixed 2026-11-17; was dead code). Use --asr small for
    brand-word lines if tiny keeps mangling.
-2. Video: frames at 2s / mid / last -> vision check: mascot present every
-   frame, mouth animating, exactly 2 arms + 2 legs (watch headband stubs +
-   leg columns), hands clean, no ghosts/dupes, background stable.
+2. Video: frames at 2s / mid / last -> vision check: mascot identity matches
+   canon (GREEN VIRUS BLOB + headset w/ boom mic + blue eyes + blush + mitten
+   hands, dark blue/purple gradient + reflective floor — NOT a blocky Roblox
+   figure; welcome-home.mp4 is the identity reference), exactly 2 arms + 2
+   legs (virus spikes on the body are canon, not extra limbs), mouth
+   animating, no ghosts/dupes, background stable.
 3. Staging: gaze direction matches this table (head/body toward the stated
    side). Wrong gaze = fail, re-roll with same seed once then new seed.
 4. Deploy-process: ffmpeg -c:v copy -c:a aac 128k
