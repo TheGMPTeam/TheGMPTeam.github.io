@@ -788,8 +788,10 @@
     // v76h (James 2026-11-19): action5 = hype JUMPS, also in the idle
     // rotation. Each measured landing bumps the whole page content
     // (sections/header/footer only -- fixed mascot/chain stay anchored).
-    // Landings measured from the clip contact sheet: 1.25s, 3.75s, 5.25s.
-    var JBEATS=[1.25,3.75,5.25],jfire=[],jLastT=-1,bounceT=null;
+    // Landings measured frame-accurate at 10fps (v76i fix): big jumps land
+    // 1.05/3.45/4.85s, small hops land 1.65/4.05s. Each fire is offset
+    // -0.1s so the bounce animation's peak (20% of 500ms) hits the squish.
+    var JBEATS=[0.95,1.55,3.35,3.95,4.75],jfire=[],jLastT=-1,bounceT=null;
     setInterval(function(){
       if(!live())return;
       var v=playing();
