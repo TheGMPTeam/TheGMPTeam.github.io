@@ -571,9 +571,14 @@
     function talkClip(){return /videos/.test(location.pathname)?'/assets/status/welcome-videos.mp4':'/assets/status/welcome-home.mp4';}
     document.addEventListener('mouseover',function(e){
       if(hovOff())return;
-      var t=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
+      // v76b: hover resolves the NEAREST [data-talk] spot under the pointer.
+      // Before this, hovering a button inside a [data-tip] section always
+      // played the SECTION clip (or its 404 fallback) — the button's own
+      // data-talk only fired on click. Two handlers fought for one spot.
+      var sp=e.target&&e.target.closest?e.target.closest('[data-talk]'):null;
+      var t=sp||(e.target&&e.target.closest?e.target.closest('[data-tip]'):null);
       if(!t)return;
-      var txt=t.getAttribute('data-tip');
+      var txt=t.getAttribute('data-say')||t.getAttribute('data-tip');
       if(!txt||seen[txt])return;
       clearTimeout(hovT);
       hovT=setTimeout(function(){seen[txt]=1;speak(txt,true);var u=t.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u))window.__vgForce(talkClip());},1300);
