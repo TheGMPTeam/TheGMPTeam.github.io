@@ -7,9 +7,9 @@
 <meta name="description" content="Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=70a">
+<link rel="stylesheet" href="/assets/site.css?v=72a">
 <link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
-<script src="/assets/site.js?v=70a" defer></script>
+<script src="/assets/site.js?v=72a" defer></script>
 <style>
 .hero{position:relative;z-index:20;text-align:center;color:#fff;padding:96px 0 6px}
 .hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
@@ -188,6 +188,22 @@ function tour(i){
   window.addEventListener(ev,function(){tourEnd();},{once:true,passive:true});
 });
 tourOn=true;
+// v71: test control. status.html?tour=0 loads WITHOUT the auto tour so the
+// chain/scroll/video rig can be tested with manual scrolling only.
+// window.__vgTour.stop()/start() toggle the tour at any time.
+window.__vgTour={
+  stop:function(){if(tourOn){tourOn=false;}tourEnd();},
+  start:function(){if(tourOn)return;tourOn=true;window.__t={i:-1,on:true};
+    if(window.__vgLoop){window.__vgLoop('/assets/status/action2.mp4');}
+    tour(0);}
+};
+var NOTOUR=/[?&]tour=0/.test(location.search);
+if(NOTOUR){
+  tourOn=false;window.__t={i:-1,on:false,done:true};
+  stages.forEach(function(s){s.style.display='';s.style.minHeight='';});
+  document.documentElement.style.scrollSnapType='none';
+  document.getElementById('simgrid').classList.add('compact');
+}else{
 // v70: loop the pull-chain clip for the whole tour so the page chain/gears
 // tug beat-for-beat with the on-video pulls (site.js is deferred -- poll
 // until its loop engine exists; stop if the tour was already cancelled).
@@ -197,6 +213,7 @@ tourOn=true;
   setTimeout(armLoop,300);
 })();
 setTimeout(function(){tour(0);},1300);
+}
 </script>
 </body>
 </html>

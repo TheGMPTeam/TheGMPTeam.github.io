@@ -408,6 +408,9 @@
     setInterval(function(){
       if(mediaDead||!engineOn||!started||!IV.length||paused){return;}
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
+      // v71: during reverse-scrub we DELIBERATELY pause+seek; don't let the
+      // stall watchdog swap the clip out from under the scrub.
+      if(window.__vgRev)return;
       idleLoop();
     },1500);
 
@@ -565,62 +568,25 @@
       try{window.scrollTo({top:top,left:0,behavior:REDUCE?'auto':'smooth'});}catch(e){window.scrollTo(0,top);}
     }
     var chain=document.createElement('div');chain.id='vgchain';chain.setAttribute('aria-hidden','true');
-    // v70 (James 2026-11-17): REAL chain and REAL gears. The unicode gear
-    // glyphs and CSS dot-links are replaced by generated SVG: two gears with
-    // true 60/36 tooth counts whose PITCH CIRCLES ARE TANGENT (centers 72px
-    // apart, opposite spin, speed ratio = inverse tooth ratio), and a
-    // roller-chain link stack. The main gear's pitch circle (60 teeth,
-    // r=45px -> 282.7px circumference) defines the chain pitch: 4.71px per
-    // tooth, so 1px of chain travel = 1.27324deg of main-gear rotation and
-    // the teeth and the crawling links read as ONE machine.
-    var MAIN_T=60,MAIN_R=45,SEC_T=36,SEC_R=27,CX1=45,CY=57,CX2=CX1+MAIN_R+SEC_R;
-    function gearInner(n,rp){
-      // one tooth per angular pitch: flanks are straight lines between the
-      // dedendum (rp-1.8) and the addendum (rp+2.4); tip and root are arcs.
-      var ra=rp+2.4,rf=rp-1.8,pa=2*Math.PI/n,d='',k,c;
-      function pt(r,a){return (rp+r*Math.cos(a)).toFixed(1)+' '+(rp+r*Math.sin(a)).toFixed(1);}
-      for(k=0;k<n;k++){
-        c=k*pa;
-        d+=(k?'L':'M')+pt(rf,c-0.30*pa)+'L'+pt(ra,c-0.18*pa)+
-           'A'+ra+' '+ra+' 0 0 1 '+pt(ra,c+0.18*pa)+
-           'L'+pt(rf,c+0.30*pa)+
-           'A'+rf+' '+rf+' 0 0 1 '+pt(rf,c+pa-0.30*pa);
-      }
-      d+='Z';
-      var hub=rp*0.28,sp='';
-      for(k=0;k<4;k++){var a=k*Math.PI/4;
-        sp+='<line x1="'+(rp-hub*0.9*Math.cos(a)).toFixed(1)+'" y1="'+(rp-hub*0.9*Math.sin(a)).toFixed(1)+'" x2="'+(rp+hub*0.9*Math.cos(a)).toFixed(1)+'" y2="'+(rp+hub*0.9*Math.sin(a)).toFixed(1)+'" stroke="rgba(0,217,255,.4)" stroke-width="'+(rp*0.1).toFixed(1)+'"/>';}
-      return '<path d="'+d+'" fill="rgba(8,18,30,.92)" stroke="rgba(0,217,255,.85)" stroke-width="1.2"/>'+
-        '<circle cx="'+rp+'" cy="'+rp+'" r="'+(rp-5).toFixed(1)+'" fill="none" stroke="rgba(0,217,255,.25)" stroke-width="1"/>'+sp+
-        '<circle cx="'+rp+'" cy="'+rp+'" r="'+hub.toFixed(1)+'" fill="rgba(0,217,255,.18)" stroke="rgba(0,217,255,.8)" stroke-width="1.5"/>';
-    }
-    var lk='',LIX;
-    for(LIX=0;LIX<30;LIX++){
-      lk+='<svg class="vlink" viewBox="0 0 18 15" width="18" height="15">'+
-        '<path d="M6 4.2L12 4.2L12 10.8L6 10.8Z" fill="rgba(1,3,10,.8)" stroke="rgba(0,217,255,.85)" stroke-width="1.5"/>'+
-        '<circle cx="9" cy="4.2" r="3.4" fill="rgba(1,3,10,.8)" stroke="rgba(0,217,255,.85)" stroke-width="1.5"/>'+
-        '<circle cx="9" cy="10.8" r="3.4" fill="rgba(1,3,10,.8)" stroke="rgba(0,217,255,.85)" stroke-width="1.5"/></svg>';
-    }
-    chain.innerHTML='<div id="vgtrack"><div id="vglinks">'+lk+'</div></div>'+
-      '<svg id="vggears" viewBox="0 0 144 114" width="144" height="114">'+
-      '<g id="vgpull"><g transform="translate('+(CX1-MAIN_R)+','+(CY-MAIN_R)+')">'+gearInner(MAIN_T,MAIN_R)+'</g></g>'+
-      '<g id="vggear2"><g transform="translate('+(CX2-SEC_R)+','+(CY-SEC_R)+')">'+gearInner(SEC_T,SEC_R)+'</g></g>'+
-      '<g class="pitchring"><circle cx="'+CX1+'" cy="'+CY+'" r="'+MAIN_R+'" fill="none" stroke="rgba(0,217,255,.18)" stroke-width="1" stroke-dasharray="2 3"/>'+
-      '<circle cx="'+CX2+'" cy="'+CY+'" r="'+SEC_R+'" fill="none" stroke="rgba(0,217,255,.18)" stroke-width="1" stroke-dasharray="2 3"/></g></svg>';
-    // The port clips its children (circular overflow:hidden) -- a chain hanging
-    // below the host box was invisible there. It lives on <body> as a fixed
-    // element, anchored to the port rect every frame instead.
+    // v72 (James 2026-11-17): photo-real assets. The right-edge scroller is
+    // a seamless repeat-y photo chain (assets/chain.png); the corner
+    // machines are real photo gears flood-keyed out of stock sheets
+    // (assets/gear_*.png, transparent). Same physics as the drawn v71 rig:
+    // chain travel (scrollY + beat tug) drives background-position, and the
+    // gears rotate locked to that travel -- main photo gears (~116px on
+    // screen, r=58px) set the pitch, secondaries counter-rotate at the
+    // screen-radius ratio.
+    chain.innerHTML='<div id="vgtrack"></div>';
     document.body.appendChild(chain);
-    var pull=document.getElementById('vgpull');
-    var gear2=document.getElementById('vggear2');
-    var links=document.getElementById('vglinks');
-    var LP=17; // link box (15px + 1px padding) keeps the loop seamless
-    var DEG_PER_PX=360/(2*Math.PI*MAIN_R); // teeth-per-chain-pixel lock
-    // v69: the chain is a LONG rig whose motion is synced to the port video:
-    // while any mascot clip is playing, links crawl and gears turn at a steady
-    // crawl rate (an accumulator, so clip switches never jump), and page
-    // scroll adds on top. Paused video (or no video) = chain rests.
-    var crawl=0,lastReal=0;
+    document.body.insertAdjacentHTML('beforeend',
+      '<div class="vgsprocket t"><img class="p1" src="/assets/gear_main.png" alt=""><img class="p2" src="/assets/gear_dome.png" alt=""></div>'+
+      '<div class="vgsprocket b"><img class="p1" src="/assets/gear_bronze.png" alt=""><img class="p2" src="/assets/gear_small.png" alt=""></div>');
+    var gT=document.querySelector('.vgsprocket.t'),gB=document.querySelector('.vgsprocket.b');
+    var gT1=gT.querySelector('.p1'),gT2=gT.querySelector('.p2');
+    var gB1=gB.querySelector('.p1'),gB2=gB.querySelector('.p2');
+    var CH=64; // chain tile period on screen (background-size: 64px)
+    var lastTug=0;
+    var K=360/(2*Math.PI*58); // 1px of chain travel = K deg of main gear
     function playing(){
       var mv=document.querySelectorAll('#mascot video'),k;
       for(k=0;k<mv.length;k++){
@@ -630,18 +596,20 @@
       return null;
     }
     function rig(tug){
-      var mr=host.getBoundingClientRect();
+      lastTug=tug||0;
       var pre=document.body.classList.contains('vg-pre')||(document.getElementById('splash')&&document.getElementById('splash').style.display!=='none')||(document.getElementById('intro')&&document.getElementById('intro').style.display!=='none');
       chain.style.display=pre?'none':'';
-      chain.style.top=Math.round(mr.top+mr.height+4)+'px';
-      chain.style.left=Math.round(mr.left+mr.width/2-24)+'px';
-      var y=window.pageYOffset||document.documentElement.scrollTop||0;
+      gT.style.display=gB.style.display=pre?'none':'';
       if(REDUCE)return;
-      var pos=y+crawl+(tug||0);
-      links.style.transform='translateY('+(((pos%LP)+LP)%LP)+'px)';
-      var _a=pos*DEG_PER_PX; // chain pixels -> gear degrees (teeth lock)
-      pull.style.transform='rotate('+_a+'deg)';
-      gear2.style.transform='rotate('+(-_a*MAIN_T/SEC_T)+'deg)';
+      var y=window.pageYOffset||document.documentElement.scrollTop||0;
+      var pos=y+lastTug;
+      var m=((pos%CH)+CH)%CH;
+      chain.style.backgroundPosition='50% '+(-m)+'px'; // chain rides the page
+      var a=pos*K; // gears locked to chain travel
+      gT1.style.transform='rotate('+a+'deg)';
+      gT2.style.transform='rotate('+(-a*58/46)+'deg)';
+      gB1.style.transform='rotate('+a+'deg)';
+      gB2.style.transform='rotate('+(-a*58/40)+'deg)';
     }
     // v70 clip-sync: while the pull-chain action clip (action2.mp4) is the
     // live port clip, the page rig reproduces the ON-VIDEO chain pulls at the
@@ -696,27 +664,17 @@
       lastClipT=t;
       for(var k=0;k<CUES.length;k++){
         var d=t-CUES[k].t;
-        if(!FIRE[k]&&d>=0&&d<0.35){FIRE[k]=1;clink(CUES[k].v);}
+        if(!FIRE[k]&&d>=0&&d<0.5){FIRE[k]=1;clink(CUES[k].v);}
       }
       chain.classList.add('vg-sync');
       rig(tugAt(t));
     }
     var rigQueued=false;
-    document.addEventListener('vg:enter',function(){rig();});
+    document.addEventListener('vg:enter',function(){rig(0);});
     if(!REDUCE){
       // Interval-driven, not rAF: a single rAF chain dies silently in some
-      // environments and throttles hard in background tabs. 400ms steps +
-      // the CSS transition below stay smooth.
+      // environments and throttles hard in background tabs.
       setInterval(function(){
-        var now=performance.now();
-        if(lastReal){
-          var dt=(now-lastReal)/1000;
-          var v=playing();
-          // idle-rotation crawl: while any OTHER clip plays. During action2
-          // the beat-sync drives the rig instead (no stepped crawl on top).
-          if(v&&!/action2/.test(v.currentSrc||''))crawl+=dt*LP*0.85;
-        }
-        lastReal=now;
         if(syncT){return;}
         if(exitTug>0.4){rig(exitTug);exitTug*=0.55;return;} // settle after P4
         var sv=playing();
@@ -725,13 +683,67 @@
         }
         rig(0);
       },400);
+      // v71: SCROLL VELOCITY -> MASCOT VIDEO SPEED. Fast scroll spins the
+      // chain fast, so the clip plays fast (1x..3x). Scrolling UP runs the
+      // clip in reverse (negative playbackRate; detected -- Safari without
+      // support silently stays forward). At rest the clip settles back to 1x.
+      var NEG=null;
+      try{var _pv=document.createElement('video');_pv.playbackRate=-0.5;NEG=(_pv.playbackRate===-0.5);}catch(e){NEG=false;}
+      var lastY=window.pageYOffset,vel=0,lastS=1; // signed speed
+      window.__vgRev=false;
+      // The rate engine must keep control of the VISIBLE clip even while it
+      // is deliberately paused for reverse scrub, so don't use playing()
+      // (which rejects paused elements): pick the opacity-1 port video.
+      function activeClip(){
+        var mv=document.querySelectorAll('#mascot video'),k,cand=null,v2;
+        for(k=0;k<mv.length;k++){v2=mv[k];
+          if(v2.readyState>1&&!v2.ended&&(v2.style.opacity==='1'||(v2.style.opacity===''&&!v2.paused)))cand=v2;}
+        return cand;
+      }
+      ['mvid1','mvid2'].forEach(function(id){
+        var vv=document.getElementById(id);
+        if(vv)vv.addEventListener('playing',function(){try{vv.playbackRate=Math.abs(lastS);}catch(e){}});
+      });
+      setInterval(function(){
+        var y=window.pageYOffset;
+        var raw=(y-lastY)/0.1;lastY=y;
+        // instant spike up, smooth decay down: flicks read as fast video
+        vel=Math.abs(raw)>=Math.abs(vel)?raw:vel*0.82+raw*0.18;
+        var mag=1+Math.min(Math.abs(vel)/450,2);
+        if(mag<1.06)mag=1;
+        var sgn=vel<-30?-1:1;
+        var tgt=sgn*mag;
+        lastS+=(tgt-lastS)*0.2;
+        if(Math.abs(tgt-lastS)<0.05)lastS=tgt;
+        var v=activeClip();
+        if(!v){window.__vgRev=false;return;}
+        if(lastS<-0.3){
+          if(NEG){
+            window.__vgRev=false;
+            try{v.playbackRate=lastS;}catch(e){} // native reverse (Safari 18+)
+          }else{
+            // Chrome/Firefox have NO negative playbackRate -- true reverse
+            // scrub: pause playback, then seek backwards each tick at a rate
+            // proportional to scroll-up speed.
+            window.__vgRev=true;
+            try{ if(!v.paused)v.pause(); }catch(e){}
+            try{v.currentTime=Math.max(0,v.currentTime+lastS*0.1);}catch(e){}
+            if(v.currentTime<=0.02)lastS=1; // hit frame 0: stop rewinding
+          }
+        }else{
+          if(lastS<0)lastS=Math.abs(lastS); // cross zero cleanly
+          window.__vgRev=false;
+          try{v.playbackRate=Math.max(1,lastS);}catch(e){}
+          if(v.paused&&!v.ended){try{var _pp=v.play();if(_pp&&_pp.catch)_pp.catch(function(){});}catch(e){}}
+        }
+      },100);
     }
     window.addEventListener('scroll',function(){
       if(rigQueued)return;
       rigQueued=true;
-      requestAnimationFrame(function(){rigQueued=false;rig();});
+      requestAnimationFrame(function(){rigQueued=false;rig(lastTug);});
     },{passive:true});
-    rig();
+    rig(0);
     // Clicking the page chain also makes the mascot grab ITS chain: the
     // pull-chain action clip (action2) is forced as the very next port clip.
     var PULLU='/assets/status/action2.mp4';
@@ -778,16 +790,37 @@
         window.__vgForce(LEVERU);
       }
     },1200);
-    chain.addEventListener('click',function(ev){
-      ev.stopPropagation();ev.preventDefault();
-      if(!live())return;
+    // v71: the chain is the scrollbar replacement -- DRAG it to scroll the
+    // page. A tap (no drag) still asks the mascot for its pull-chain action.
+    function chainTap(){
       if(window.__vgForce)window.__vgForce(PULLU);
       if(window.__vgFx){window.__vgFx('/assets/sfx/chainclink.mp3',0.7);}
       else if(!window.__vgMuted){try{var cc=new Audio('/assets/sfx/chainclink.mp3');cc.volume=0.7;var cp=cc.play();if(cp&&cp.catch)cp.catch(function(){});}catch(ea){}}
       chain.classList.remove('vg-tug');void chain.offsetWidth;chain.classList.add('vg-tug');
       host.classList.remove('vg-react');void host.offsetWidth;host.classList.add('vg-react');
       setTimeout(scrollOn,REDUCE?0:360);
+    }
+    var drag=null;
+    chain.addEventListener('pointerdown',function(ev){
+      if(!live())return;
+      ev.preventDefault();
+      drag={y:ev.clientY,sc:window.pageYOffset,moved:false};
+      try{chain.setPointerCapture(ev.pointerId);}catch(e){}
     });
+    chain.addEventListener('pointermove',function(ev){
+      if(!drag)return;
+      var dy=ev.clientY-drag.y;
+      if(!drag.moved&&Math.abs(dy)>3)drag.moved=true;
+      if(!drag.moved)return;
+      var doc=document.documentElement;
+      var max=Math.max(0,(doc.scrollHeight||document.body.scrollHeight)-window.innerHeight);
+      try{window.scrollTo(0,Math.max(0,Math.min(max,drag.sc+dy)));}catch(e){}
+    });
+    chain.addEventListener('pointerup',function(ev){
+      if(drag&&!drag.moved&&live())chainTap();
+      drag=null;
+    });
+    chain.addEventListener('pointercancel',function(){drag=null;});
     // TEXT GLITCH-FIX event (v54): visible on-page text corrupts itself, the
     // mascot immediately plays the page-fix action clip, and the text repairs
     // WHILE the animation is still playing -- the mascot "fixes the browser".

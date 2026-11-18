@@ -199,8 +199,6 @@ body.has-bg-video .grid-bg{opacity:.45}
 @media(prefers-reduced-motion: reduce){.vg-react{animation:none}}
 
 /* v33: pull-chain gear + eye caret + look tilt + skip always above welcome */
-#vgchain{position:fixed;width:16px;display:flex;flex-direction:column;align-items:center;z-index:1201;cursor:pointer}
-#vgchain.vg-tug #vggears{filter:brightness(1.5)}
 #vgeye{position:fixed;width:3px;background:rgba(0,217,255,.85);box-shadow:0 0 8px rgba(0,217,255,.6);border-radius:2px;z-index:1250;opacity:0;pointer-events:none}
 #vgeye.on{opacity:1}
 #mascot video{transition:transform .8s ease}
@@ -210,26 +208,34 @@ body.has-bg-video .grid-bg{opacity:.45}
 @media (max-width:720px){}
 @media (prefers-reduced-motion: reduce){#vgeye{display:none}#mascot.vg-look-r video,#mascot.vg-look-l video{transform:none}}
 
-/* v70: real SVG chain + meshed gears. Main gear 60 teeth r=45, counter
-   gear 36 teeth r=27, centers 72 apart = tangent pitch circles, opposite
-   spin, ratio 60/36. Gear rotation is JS (inline transform); transform-box
-   view-box puts the spin origins on the gear centers in viewBox units.
-   During clip beat-sync the transitions tighten to .12s so tugs land on
-   the measured video beats instead of lagging a .5s crawl transition. */
-#vgchain{width:40px;cursor:pointer;filter:drop-shadow(0 0 6px rgba(0,217,255,.4));transform-origin:50% 0;animation:vgsway 3.6s ease-in-out infinite}
-@keyframes vgsway{0%,100%{transform:rotate(2deg)}50%{transform:rotate(-2.5deg)}}
-#vgchain::after{content:'PULL';position:absolute;left:-2px;top:-16px;font:bold 9px "Courier New",monospace;color:#00d9ff;text-shadow:0 0 8px rgba(0,217,255,.9);opacity:0;transition:opacity .25s;letter-spacing:1px}
+/* v71 (James 2026-11-17): the chain IS the scroller. Native scrollbars are
+   hidden; a full-height double-run chain sits on the right edge exactly where
+   the scrollbar was (draggable). Real gear pairs live BEHIND page content in
+   the top-right and bottom-right corners; the chain loop drives them and the
+   page scroll drives the chain. Scrollbars return + rig hides for
+   reduced-motion users. */
+html,body{scrollbar-width:none;-ms-overflow-style:none}
+::-webkit-scrollbar{width:0;height:0;display:none}
+@media(prefers-reduced-motion: reduce){
+  html,body{scrollbar-width:auto;-ms-overflow-style:auto}
+  ::-webkit-scrollbar{width:10px;height:10px;display:block}
+  #vgchain,.vgsprocket{display:none!important}
+}
+#vgchain{position:fixed;right:10px;top:0;height:100vh;width:64px;z-index:40;cursor:grab;touch-action:none;background:url('/assets/chain.png') repeat-y left top;background-size:64px 64px;filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 6px rgba(0,217,255,.35))}
+#vgchain:active{cursor:grabbing}
+#vgchain::after{content:'PULL';position:absolute;left:50%;transform:translateX(-50%);top:6px;font:bold 9px "Courier New",monospace;color:#00d9ff;text-shadow:0 0 8px rgba(0,217,255,.9);opacity:0;transition:opacity .25s;letter-spacing:1px}
 #vgchain:hover::after,#vgchain.vg-tug::after{opacity:.95}
-#vgtrack{width:20px;height:clamp(118px,38vh,380px);overflow:hidden;position:relative}
-#vglinks{transition:transform .45s linear}
-.vlink{display:block;padding:1px 0}
-#vggears{display:block;overflow:visible}
-#vgpull,#vggear2{transform-box:view-box;transition:transform .45s linear}
-#vgpull{transform-origin:45px 57px}
-#vggear2{transform-origin:117px 57px}
-#vgchain.vg-sync #vglinks,#vgchain.vg-sync #vgpull,#vgchain.vg-sync #vggear2{transition:transform .12s linear}
-#vgchain:hover #vggears{filter:brightness(1.5) drop-shadow(0 0 4px rgba(0,217,255,.6))}
-#vgchain.vg-tug{animation:none;transform:translateY(9px);transition:transform .18s}
+#vgtrack{position:absolute;inset:0;pointer-events:none}
+.vgsprocket{position:fixed;width:200px;height:158px;z-index:-2;opacity:.24;pointer-events:none;filter:drop-shadow(0 3px 12px rgba(0,0,0,.7)) saturate(.7) brightness(.92)}
+.vgsprocket.t{top:-10px;right:-14px}
+.vgsprocket.b{bottom:-10px;right:-14px}
+.vgsprocket img{position:absolute;transform-origin:50% 50%;transition:transform .3s linear;will-change:transform}
+.vgsprocket.t .p1{left:2px;top:8px;width:116px}
+.vgsprocket.t .p2{left:98px;top:36px;width:92px}
+.vgsprocket.b .p1{left:2px;top:12px;width:116px}
+.vgsprocket.b .p2{left:102px;top:40px;width:80px}
+#vgchain.vg-sync{filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 10px rgba(0,217,255,.5))}
+#vgchain.vg-tug{transform:translateY(9px);transition:transform .18s}
 
 /* v39: mid-page portal event + smoke puff */
 #vgportal{position:fixed;left:24px;bottom:96px;width:230px;height:230px;border-radius:50%;overflow:hidden;z-index:1160;border:1px solid rgba(0,217,255,.5);box-shadow:0 0 34px rgba(0,217,255,.5),0 0 90px rgba(0,217,255,.25);background:linear-gradient(180deg,#0a0d18,#01030a);transform:scale(0);transition:transform .5s cubic-bezier(.2,1.4,.3,1),opacity .45s}
@@ -296,7 +302,7 @@ body.has-bg-video .grid-bg{opacity:.45}
 .vgpupil.l{left:38%}
 .vgpupil.r{left:56%}
 .vgpupil.blink{height:2px}
-.vg-bright .vlink{filter:brightness(1.9)}
+.vg-bright #vgchain{filter:brightness(2) contrast(1.08)}
 .vg-spin{animation:vgspin 1.6s linear!important}
 @keyframes vgspin{to{transform:rotate(360deg)}}
 .vg-jolt{animation:vgjolt .5s}
