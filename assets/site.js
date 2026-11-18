@@ -665,15 +665,18 @@
     // screen-radius ratio.
     chain.innerHTML='<div id="vgtrack"></div>';
     document.body.appendChild(chain);
+    // v76l: James' updated gear train (4 meshed gears cut from one sheet at
+    // true mesh centers). Chain drives the medium gear; idlers counter-rotate
+    // at rim ratios; the large gear = med*58/97 via either idler path.
     document.body.insertAdjacentHTML('beforeend',
-      '<div class="vgsprocket t"><img class="p1" src="/assets/gear_main.png" alt=""><img class="p2" src="/assets/gear_dome.png" alt=""></div>'+
-      '<div class="vgsprocket b"><img class="p1" src="/assets/gear_bronze.png" alt=""><img class="p2" src="/assets/gear_small.png" alt=""></div>');
+      '<div class="vgsprocket t"><img class="gmed" src="/assets/gear2_med.png" alt=""><img class="gst" src="/assets/gear2_st.png" alt=""><img class="gsb" src="/assets/gear2_sb.png" alt=""><img class="glg" src="/assets/gear2_lg.png" alt=""></div>'+
+      '<div class="vgsprocket b"><img class="gmed" src="/assets/gear2_med.png" alt=""><img class="gst" src="/assets/gear2_st.png" alt=""><img class="gsb" src="/assets/gear2_sb.png" alt=""><img class="glg" src="/assets/gear2_lg.png" alt=""></div>');
     var gT=document.querySelector('.vgsprocket.t'),gB=document.querySelector('.vgsprocket.b');
-    var gT1=gT.querySelector('.p1'),gT2=gT.querySelector('.p2');
-    var gB1=gB.querySelector('.p1'),gB2=gB.querySelector('.p2');
+    var gT1=gT.querySelector('.gmed'),gT2=gT.querySelector('.gst'),gT3=gT.querySelector('.gsb'),gT4=gT.querySelector('.glg');
+    var gB1=gB.querySelector('.gmed'),gB2=gB.querySelector('.gst'),gB3=gB.querySelector('.gsb'),gB4=gB.querySelector('.glg');
     var CH=64; // chain tile period on screen (background-size: 64px)
     var lastTug=0;
-    var K=360/(2*Math.PI*58); // 1px of chain travel = K deg of main gear
+    var K=360/(2*Math.PI*58); // 1px of chain travel = K deg of med gear (r=58px)
     function playing(){
       var mv=document.querySelectorAll('#mascot video'),k;
       for(k=0;k<mv.length;k++){
@@ -692,11 +695,15 @@
       var pos=y+lastTug;
       var m=((pos%CH)+CH)%CH;
       chain.style.backgroundPosition='50% '+(-m)+'px'; // chain rides the page
-      var a=pos*K; // gears locked to chain travel
+      var a=pos*K; // gear train locked to chain travel (mesh ratios from sheet)
       gT1.style.transform='rotate('+a+'deg)';
-      gT2.style.transform='rotate('+(-a*58/46)+'deg)';
+      gT2.style.transform='rotate('+(-a*58/20)+'deg)';
+      gT3.style.transform='rotate('+(-a*58/40)+'deg)';
+      gT4.style.transform='rotate('+(a*58/97)+'deg)';
       gB1.style.transform='rotate('+a+'deg)';
-      gB2.style.transform='rotate('+(-a*58/40)+'deg)';
+      gB2.style.transform='rotate('+(-a*58/20)+'deg)';
+      gB3.style.transform='rotate('+(-a*58/40)+'deg)';
+      gB4.style.transform='rotate('+(a*58/97)+'deg)';
     }
     // v70 clip-sync: while the pull-chain action clip (action2.mp4) is the
     // live port clip, the page rig reproduces the ON-VIDEO chain pulls at the
