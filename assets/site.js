@@ -1,4 +1,6 @@
 (function(){
+  // v76m: outtakes page runs clean -- no mascot port, no chain/gear rig (James).
+  var CLEAN=document.body.hasAttribute('data-vgclean');
   // Smooth section reveal: children of .wrap inside <section>/<header> fade+rise on scroll-in.
   (function(){
     if(!('IntersectionObserver' in window))return;
@@ -68,6 +70,27 @@
       if(l) l.classList.toggle('hide',cur===0);
       if(r) r.classList.toggle('hide',cur===slides.length-1);
       stop();
+      // v76m (James): outtakes reel -- jointed clips autoplay UNMUTED and the
+      // carousel auto-advances when a clip ends. The splash click is the user
+      // gesture that unlocks audio; before it, fall back to muted.
+      if(CLEAN&&window.__vgEntered){
+        var cs=slides[cur];
+        if(cs&&cs.dataset.local){ playLocal(cs); }
+      }
+    }
+    function h_local(s){ return !!s.dataset.local; }
+    if(CLEAN){ var kick=setInterval(function(){ if(window.__vgEntered){ clearInterval(kick); render(); } },500); }
+    function playLocal(s){
+      var h=s.querySelector('.thumb');
+      if(!h||h.querySelector('video'))return;
+      var v=document.createElement('video');
+      v.src=s.dataset.local; v.autoplay=true; v.loop=false; v.playsInline=true; v.preload='auto';
+      v.muted=!window.__vgEntered;
+      h.appendChild(v);
+      try{ var p=v.play(); if(p&&p.catch)p.catch(function(){ v.muted=true; var p2=v.play(); if(p2&&p2.catch)p2.catch(function(){}); }); }catch(e){}
+      v.addEventListener('ended',function(){
+        setTimeout(function(){ if(slides[cur]===s) go(cur+1<slides.length?cur+1:0); },500);
+      });
     }
     function go(i){ cur=Math.max(0,Math.min(slides.length-1,i)); render(); }
     car.querySelectorAll('.car-arrow').forEach(function(a){
@@ -78,24 +101,7 @@
         if(slides[cur]!==s) return;
         var h=s.querySelector('.thumb');
         if(!h||h.querySelector('iframe')||h.querySelector('video')) return;
-        if(s.dataset.local){
-          // local mp4 slide (outtakes): autoplay muted (browser policy), UNMUTE pill flips.
-          var v=document.createElement('video');
-          v.src=s.dataset.local; v.autoplay=true; v.muted=true; v.loop=true;
-          v.playsInline=true; v.preload='auto';
-          h.appendChild(v);
-          var bv=document.createElement('button');
-          bv.type='button'; bv.className='mute-btn'; bv.textContent='UNMUTE';
-          var m=true;
-          bv.addEventListener('click',function(ev){
-            ev.stopPropagation(); ev.preventDefault();
-            m=!m; v.muted=m;
-            bv.textContent=m?'UNMUTE':'MUTE';
-            bv.classList.toggle('on',!m);
-          });
-          h.appendChild(bv);
-          return;
-        }
+        if(s.dataset.local){ return; } // v76m: local slides autoplay from render(), no hover needed
         var f=document.createElement('iframe');
         f.src='https://www.youtube.com/embed/'+s.dataset.vid+'?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1';
         f.allow='autoplay; encrypted-media; picture-in-picture';
@@ -267,6 +273,7 @@
   // double-buffered with crossfade so swaps have no dead gaps. Frames and sound are
   // separate tracks (silent mp4 + m4a sprite) so a speech layer can drive audio later.
   (function(){
+    if(CLEAN)return;
     if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var host=document.getElementById('mascot');
     if(!host){
