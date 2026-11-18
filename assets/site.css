@@ -191,9 +191,10 @@ body.has-bg-video .grid-bg{opacity:.45}
 @media (max-width:820px){.game-feature{grid-template-columns:1fr}}
 
 /* ---- Assistant bubble + mascot react (v32) ---- */
-#vgbubble{position:fixed;right:24px;top:292px;max-width:min(360px,58vw);background:rgba(2,7,12,.97);border:1px solid rgba(0,255,255,.55);box-shadow:0 0 22px rgba(0,255,255,.18),0 6px 24px rgba(0,0,0,.6);color:#eaf9ff;font:13.5px/1.65 'Courier New',monospace;padding:12px 15px;z-index:1200;opacity:0;transform:translateY(-8px);transition:opacity .3s,transform .3s;pointer-events:none;border-radius:8px;letter-spacing:.4px;text-shadow:0 0 8px rgba(0,217,255,.25)}
+#vgbubble{position:fixed;right:92px;top:296px;max-width:min(380px,58vw);background:linear-gradient(180deg,rgba(6,16,26,.985),rgba(3,9,16,.985));border:1px solid rgba(0,217,255,.55);border-left:3px solid #00d9ff;box-shadow:0 10px 34px rgba(0,0,0,.75),0 0 26px rgba(0,217,255,.16);color:#f2fbff;font:14px/1.7 'Courier New',monospace;padding:14px 17px;z-index:1200;opacity:0;transform:translateY(-8px);transition:opacity .3s,transform .3s;pointer-events:none;border-radius:10px;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.8)}
+#vgbubble::after{content:'';position:absolute;top:-8px;right:44px;border:8px solid transparent;border-bottom:8px solid rgba(0,217,255,.55);border-top:0}
 #vgbubble.on{opacity:1;transform:none}
-@media(max-width:720px){#vgbubble{right:12px;top:214px;max-width:64vw;font-size:12px}}
+@media(max-width:720px){#vgbubble{right:12px;top:218px;max-width:64vw;font-size:12.5px}}
 .vg-react{animation:vgr .6s ease}
 @keyframes vgr{30%{transform:scale(1.1)}60%{transform:scale(.97)}}
 @media(prefers-reduced-motion: reduce){.vg-react{animation:none}}

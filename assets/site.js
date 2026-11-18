@@ -454,14 +454,14 @@
       }
     };
     var MENU=document.createElement('div');MENU.id='vgmenu';
-    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="portal">PORTAL FX</div><div class="vgmi" data-a="hover">HOVER TALK</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
+    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="portal">PORTAL FX</div><div class="vgmi" data-a="hover">HOVER ACTIONS</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
     document.body.appendChild(MENU);
     function closeMenu(){MENU.style.display='none';}
     function openMenu(x,y){
       MENU.querySelector('[data-a="skip"]').textContent='SKIP WELCOME'+(vgSet().skipWelcome?' \u2713':'');
       MENU.querySelector('[data-a="mute"]').textContent=(window.__vgMuted?'UNMUTE':'MUTE')+(window.__vgMuted?' \u2713':'');
       MENU.querySelector('[data-a="portal"]').textContent='PORTAL FX'+(vgSet().portalFx===false?'':' \u2713');
-      MENU.querySelector('[data-a="hover"]').textContent='HOVER TALK'+(vgSet().hoverOff?'':' \u2713');
+      MENU.querySelector('[data-a="hover"]').textContent='HOVER ACTIONS'+(vgSet().hoverOff?'':' \u2713');
       MENU.style.display='block';
       var w=MENU.offsetWidth,h=MENU.offsetHeight;
       MENU.style.left=Math.min(x,window.innerWidth-w-8)+'px';
@@ -507,11 +507,16 @@
       var now=Date.now();
       if(!force&&now-lastSay<COOLDOWN)return;
       lastSay=now;
+      var m=document.getElementById('mascot');
+      if(m){m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}
+      // v75 (James): text bubbles ONLY while the mascot audio is muted.
+      // Unmuted he speaks with his voice; a bubble on top of voiced speech
+      // is noise. Hover/click still trigger the talking VIDEO animation --
+      // only the text layer is gated.
+      if(!bubAllowed())return;
       if(!bub){bub=document.createElement('div');bub.id='vgbubble';document.body.appendChild(bub);}
       clearTimeout(hideT);
       bub.classList.add('on');
-      var m=document.getElementById('mascot');
-      if(m){m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}
       if(REDUCE){bub.textContent=txt;}
       else{
         var k=0;(function tw(){if(k<txt.length){bub.textContent=txt.slice(0,++k);if(window.__vgEye)window.__vgEye(k,true);setTimeout(tw,16);}})();
@@ -542,6 +547,9 @@
     // who don't want hover actions get them OFF from the mascot's right-click
     // menu (HOVER TALK), persisted in the same vgset store as mute/skip.
     function hovOff(){try{return JSON.parse(localStorage.getItem('vgset')||'{}').hoverOff===true;}catch(e){return false;}}
+    // Bubble text shows only while mascot audio is muted (toggle state lives
+    // in vgset.muted and window.__vgMuted).
+    function bubAllowed(){try{if(window.__vgMuted)return true;return JSON.parse(localStorage.getItem('vgset')||'{}').muted===true;}catch(e){return !!window.__vgMuted;}}
     function talkClip(){return /videos/.test(location.pathname)?'/assets/status/welcome-videos.mp4':'/assets/status/welcome-home.mp4';}
     document.addEventListener('mouseover',function(e){
       if(hovOff())return;
