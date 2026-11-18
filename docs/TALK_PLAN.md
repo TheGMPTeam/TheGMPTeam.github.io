@@ -84,7 +84,7 @@ symbols, spelled-out brands (Vy-rus, V B V code), plain sentences.
 | 13 | prod-shorts | products Shorts card (col1) | Scene scripts here, renders there, and a human approves before anything ships. | calm, procedural | left | right of card |
 | 14 | prod-comfyui | products ComfyUI card (col3) | Two GPUs, one queue: the mascot you are watching came out of this fleet. | warm pride | RIGHT | left of card |
 | 15 | prod-fleet | products Fleet sim card (col2) | The Fleet sim is public. The real cockpit never leaves the LAN. | reassuring | left | right of card |
-| 16 | prod-virusgpt | products VirusGPT card (col1) | VirusGPT runs fully offline, on your box. No cloud, no keys, no telemetry. | confident, firm | left | right of card |
+| 16 | prod-virusgpt | products VirusGPT card (col1) | VirusGPT runs fully offline, on your box. No cloud, no keys, no telemetry. (TTS text: "Vy-rus Gee Pee Tee runs fully offline..." - letter-names respell, A/B winner 2026-11-19) | confident, firm | left | right of card |
 | 17 | prod-trains | products Train Game card (col3) | Steam era on Roblox. Seven beta worlds and a tycoon in the forge. | adventurous | RIGHT | left of card |
 | 18 | game-king | games King class section | The King class in this section was rendered in Blender. The same build rolls in-game. | reverent | left | right of section |
 | 19 | prod-blender | products Blender card (col1) | That locomotive was modeled in Blender and driven into Roblox over MCP. Wild, right? | delighted | left | right of card |
