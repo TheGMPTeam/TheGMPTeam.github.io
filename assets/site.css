@@ -316,6 +316,10 @@ body.vg-stage #vgstagelight{opacity:.5;transition:opacity .45s ease}
 #mascot{transition:filter 1.8s ease}
 body.vg-stage .grid-bg{filter:brightness(1.6);transition:filter .45s ease}
 body.vg-stage #mascot{filter:brightness(1.35);transition:filter .45s ease}
+/* v76h: page bump on each mascot jump landing (action5). Content moves,
+   fixed port/chain do not (transform on sections, not body). */
+body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgbounce .5s ease}
+@keyframes vgbounce{0%{transform:translateY(0)}20%{transform:translateY(10px)}50%{transform:translateY(-5px)}75%{transform:translateY(2px)}100%{transform:translateY(0)}}
 .vg-spin{animation:vgspin 1.6s linear!important}
 @keyframes vgspin{to{transform:rotate(360deg)}}
 .vg-jolt{animation:vgjolt .5s}

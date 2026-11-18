@@ -274,7 +274,7 @@
     //   walkoffN.mp4  exits stage            -- only from a present stage
     //   welcome-home.mp4 / welcome-videos.mp4 are NEVER probed into the pool:
     //   they belong to the enter presentation only.
-    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);for(i=1;i<=4;i++)SLOT.push(['action',i]);
+    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);for(i=1;i<=5;i++)SLOT.push(['action',i]);
     var IV=[],IA=[]; // entries: {u:URL, endGone:bool, role:'idle'|'walkon'|'walkoff'|'action'}
     window.__vgPool=IV;
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
@@ -290,7 +290,7 @@
     SLOT.forEach(function(s){
       var u='/assets/status/'+s[0]+s[1]+'.mp4';
       var v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
-      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:s[0]==='walkoff',role:(s[0]==='action'&&s[1]===4)?'idle':s[0]});maybeStart();});
+      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:s[0]==='walkoff',role:(s[0]==='action'&&(s[1]===4||s[1]===5))?'idle':s[0]});maybeStart();});
       v.addEventListener('error',function(){probed++;maybeStart();});
       v.src=u;
     });
@@ -320,9 +320,11 @@
         var pool;
         if(lastEndGone)pool=IV.filter(function(x){return x.role==='walkon';});
         else pool=IV.filter(function(x){return x.role==='idle'||x.role==='walkoff';});
-        // Actions (actionN) are NEVER random rotation clips (James v55): they
-        // join ONLY when an interaction triggers them -- text glitch-fix plays
-        // action1, chain pull plays action2 -- via __vgForce.
+        // Actions (actionN) join ONLY when an interaction triggers them --
+        // text glitch-fix plays action1, chain pull plays action2 -- via
+        // __vgForce. EXCEPTION (v76d/v76h, James): action4 (lever+stage
+        // lights) and action5 (hype jumps) load with role 'idle' and DO
+        // rotate; their FX watchers key off the playing clip.
         pool=pool.filter(function(x){for(var k=0;k<PAIRS.length;k++)if(x.u===PAIRS[k].b)return false;return true;});
         if(!pool.length)pool=IV;
         var alt=pool.filter(function(x){return x.u!==lastU;});
@@ -783,6 +785,28 @@
         setTimeout(function(){stageLit=false;},6400);
       }
     },250);
+    // v76h (James 2026-11-19): action5 = hype JUMPS, also in the idle
+    // rotation. Each measured landing bumps the whole page content
+    // (sections/header/footer only -- fixed mascot/chain stay anchored).
+    // Landings measured from the clip contact sheet: 1.25s, 3.75s, 5.25s.
+    var JBEATS=[1.25,3.75,5.25],jfire=[],jLastT=-1,bounceT=null;
+    setInterval(function(){
+      if(!live())return;
+      var v=playing();
+      if(!v||!/action5/.test(v.currentSrc||v.src||'')){jfire=[];jLastT=-1;return;}
+      var t=v.currentTime;
+      if(t<jLastT-0.5){jfire=[];}
+      jLastT=t;
+      for(var k=0;k<JBEATS.length;k++){
+        if(!jfire[k]&&t>=JBEATS[k]){
+          jfire[k]=1;
+          document.body.classList.add('vg-bounce');
+          if(bounceT)clearTimeout(bounceT);
+          bounceT=setTimeout(function(){document.body.classList.remove('vg-bounce');},520);
+          if(window.__vgFx)window.__vgFx('/assets/sfx/poof.mp3',0.45);
+        }
+      }
+    },120);
     // Clicking the page chain also makes the mascot grab ITS chain: the
     // pull-chain action clip (action2) is forced as the very next port clip.
     var PULLU='/assets/status/action2.mp4';
