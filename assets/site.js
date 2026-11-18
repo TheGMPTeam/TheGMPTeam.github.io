@@ -378,13 +378,19 @@
       if(!w.length)return null;
       return w[Math.floor(Math.random()*w.length)].u;
     }
-    function idleLoop(){
+    function idleLoop(watchdog){
       if(!IV.length||paused)return;
       // EXIT THEATER (v46, James): the walk-off clip just ENDED on stage.
       // Stop rotation, pulse the empty port, run the page portal (walk-in ->
       // walk-out inside it, then removed); when it's done, the corner port
       // plays walk-in itself and the rotation resumes.
-      if(curEntry&&curEntry.endGone&&vgSet().portalFx!==false&&!exiting){
+      // v76f (James 2026-11-19): portal fires ONLY at the rotation handoff
+      // pause (watchdog sees the clip actually ended). endGone is a static
+      // clip flag, so a hover-force during a walk-off used to launch the
+      // portal mid-clip -- "firing before the pause". A force over an ended
+      // walk-off just brings the mascot back; no portal that cycle.
+      if(curEntry&&curEntry.endGone&&!watchdog){curEntry=null;}
+      if(curEntry&&curEntry.endGone&&watchdog&&vgSet().portalFx!==false&&!exiting){
         exiting=true;paused=true;curEntry=null;pre=null;
         host.classList.add('vg-pulse');
         setTimeout(function(){host.classList.remove('vg-pulse');},1500);
@@ -441,7 +447,7 @@
       // scroll->video engine was removed in v73, but the seek-state check
       // stays harmless.
       if(window.__vgRev)return;
-      idleLoop();
+      idleLoop(true);
     },1500);
 
     // Playback controls for the portholes: click = mute toggle, right-click = menu.
