@@ -759,17 +759,24 @@
     // joins the idle rotation (role 'idle' at pool load), and whenever it
     // plays the STAGE lights up: background brightness ramps up, holds a
     // beat, then dims back to normal. The clunk lands with the lights.
-    var stageLit=false;
+    var stageLit=false, stageArmed=false;
+    (function(){ var d=document.createElement('div'); d.id='vgstagelight'; document.body.appendChild(d); })();
+    // action4 is 10.1s: reaches the lever ~2s, grabs ~4s, THROWS ~5s, presents
+    // to the end. Lights hit at clip-time 4.8s and hold through the present.
     setInterval(function(){
-      if(stageLit||!live())return;
+      if(!live())return;
       var v=playing();
-      if(!v||!/action4/.test(v.currentSrc||v.src||''))return;
-      stageLit=true;
-      document.body.classList.add('vg-stage');
-      if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
-      setTimeout(function(){document.body.classList.remove('vg-stage');},1700);
-      setTimeout(function(){stageLit=false;},4200);
-    },400);
+      var isA4=v&&/action4/.test(v.currentSrc||v.src||'');
+      if(isA4&&!stageArmed){stageArmed=true;return;}
+      if(!isA4){stageArmed=false;return;}
+      if(stageArmed&&!stageLit&&v.currentTime>=4.8){
+        stageLit=true;
+        document.body.classList.add('vg-stage');
+        if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
+        setTimeout(function(){document.body.classList.remove('vg-stage');},3400);
+        setTimeout(function(){stageLit=false;},6400);
+      }
+    },250);
     // Clicking the page chain also makes the mascot grab ITS chain: the
     // pull-chain action clip (action2) is forced as the very next port clip.
     var PULLU='/assets/status/action2.mp4';
