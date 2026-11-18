@@ -771,27 +771,49 @@
     (function(){ var d=document.createElement('div'); d.id='vgstagelight'; document.body.appendChild(d); })();
     // action4 is 10.1s: reaches the lever ~2s, grabs ~4s, THROWS ~5s, presents
     // to the end. Lights hit at clip-time 4.8s and hold through the present.
+    // v76j (James): full sound sequence synced to the throw -- whoosh on the
+    // swing windup (4.4), clunk on the lever hit (4.8), ignite + hum loop
+    // while the stage lights are up, hum cut when they dim. Poll tightened
+    // 250->120ms so the beat error is under one tenth of a second.
     setInterval(function(){
       if(!live())return;
       var v=playing();
       var isA4=v&&/action4/.test(v.currentSrc||v.src||'');
       if(isA4&&!stageArmed){stageArmed=true;return;}
       if(!isA4){stageArmed=false;return;}
-      if(stageArmed&&!stageLit&&v.currentTime>=4.8){
+      if(stageArmed&&!stageLit&&v.currentTime>=4.4){
         stageLit=true;
-        document.body.classList.add('vg-stage');
-        if(window.__vgFx)window.__vgFx('/assets/sfx/leverclunk.mp3',0.6);
-        setTimeout(function(){document.body.classList.remove('vg-stage');},3400);
+        if(window.__vgFx){
+          window.__vgFx('/assets/sfx/whoosh.mp3',0.5); // arm sweeps to the lever
+          setTimeout(function(){
+            document.body.classList.add('vg-stage');
+            window.__vgFx('/assets/sfx/leverclunk.mp3',0.7);
+            window.__vgFx('/assets/sfx/ignite.mp3',0.55);
+            if(window.__vgFxLoop)window.__vgFxLoop('/assets/sfx/hum.mp3',0.25);
+          },400);
+          setTimeout(function(){
+            document.body.classList.remove('vg-stage');
+            if(window.__vgFxStop)window.__vgFxStop();
+          },3800);
+        }else{
+          document.body.classList.add('vg-stage');
+          setTimeout(function(){document.body.classList.remove('vg-stage');},3400);
+        }
         setTimeout(function(){stageLit=false;},6400);
       }
-    },250);
+    },120);
     // v76h (James 2026-11-19): action5 = hype JUMPS, also in the idle
     // rotation. Each measured landing bumps the whole page content
     // (sections/header/footer only -- fixed mascot/chain stay anchored).
     // Landings measured frame-accurate at 10fps (v76i fix): big jumps land
     // 1.05/3.45/4.85s, small hops land 1.65/4.05s. Each fire is offset
     // -0.1s so the bounce animation's peak (20% of 500ms) hits the squish.
+    // v76j (James): sounds land on the EXACT squish frame (bounce keeps its
+    // -0.1 lead). Big landings get poof + a low leverclunk thud layer; hops
+    // get a soft poof. Whoosh on each big takeoff (measured airborne windows).
     var JBEATS=[0.95,1.55,3.35,3.95,4.75],jfire=[],jLastT=-1,bounceT=null;
+    var JTHUD=[[1.05,1],[1.65,0],[3.45,1],[4.05,0],[4.85,1]];
+    var JAIR=[[0.6,1],[2.8,1],[4.3,1]];
     setInterval(function(){
       if(!live())return;
       var v=playing();
@@ -799,13 +821,28 @@
       var t=v.currentTime;
       if(t<jLastT-0.5){jfire=[];}
       jLastT=t;
+      var fx=window.__vgFx;
       for(var k=0;k<JBEATS.length;k++){
         if(!jfire[k]&&t>=JBEATS[k]){
           jfire[k]=1;
           document.body.classList.add('vg-bounce');
           if(bounceT)clearTimeout(bounceT);
           bounceT=setTimeout(function(){document.body.classList.remove('vg-bounce');},520);
-          if(window.__vgFx)window.__vgFx('/assets/sfx/poof.mp3',0.45);
+        }
+      }
+      for(var m=0;m<JTHUD.length;m++){
+        if(!jfire[10+m]&&t>=JTHUD[m][0]){
+          jfire[10+m]=1;
+          if(fx){
+            fx('/assets/sfx/poof.mp3',JTHUD[m][1]?0.7:0.35);
+            if(JTHUD[m][1])fx('/assets/sfx/leverclunk.mp3',0.32); // thud layer
+          }
+        }
+      }
+      for(var n=0;n<JAIR.length;n++){
+        if(!jfire[20+n]&&t>=JAIR[n][0]){
+          jfire[20+n]=1;
+          if(fx)fx('/assets/sfx/whoosh.mp3',0.28);
         }
       }
     },120);
