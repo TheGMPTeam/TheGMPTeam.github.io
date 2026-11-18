@@ -1,0 +1,2 @@
+Nexus is our agent mesh.
+One brain per machine, shared memory, no SAS.
