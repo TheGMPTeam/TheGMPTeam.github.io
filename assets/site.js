@@ -408,8 +408,9 @@
     setInterval(function(){
       if(mediaDead||!engineOn||!started||!IV.length||paused){return;}
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
-      // v71: during reverse-scrub we DELIBERATELY pause+seek; don't let the
-      // stall watchdog swap the clip out from under the scrub.
+      // v71 watchdog guard kept for safety: __vgRev is never set since the
+      // scroll->video engine was removed in v73, but the seek-state check
+      // stays harmless.
       if(window.__vgRev)return;
       idleLoop();
     },1500);
@@ -683,60 +684,12 @@
         }
         rig(0);
       },400);
-      // v71: SCROLL VELOCITY -> MASCOT VIDEO SPEED. Fast scroll spins the
-      // chain fast, so the clip plays fast (1x..3x). Scrolling UP runs the
-      // clip in reverse (negative playbackRate; detected -- Safari without
-      // support silently stays forward). At rest the clip settles back to 1x.
-      var NEG=null;
-      try{var _pv=document.createElement('video');_pv.playbackRate=-0.5;NEG=(_pv.playbackRate===-0.5);}catch(e){NEG=false;}
-      var lastY=window.pageYOffset,vel=0,lastS=1; // signed speed
-      window.__vgRev=false;
-      // The rate engine must keep control of the VISIBLE clip even while it
-      // is deliberately paused for reverse scrub, so don't use playing()
-      // (which rejects paused elements): pick the opacity-1 port video.
-      function activeClip(){
-        var mv=document.querySelectorAll('#mascot video'),k,cand=null,v2;
-        for(k=0;k<mv.length;k++){v2=mv[k];
-          if(v2.readyState>1&&!v2.ended&&(v2.style.opacity==='1'||(v2.style.opacity===''&&!v2.paused)))cand=v2;}
-        return cand;
-      }
-      ['mvid1','mvid2'].forEach(function(id){
-        var vv=document.getElementById(id);
-        if(vv)vv.addEventListener('playing',function(){try{vv.playbackRate=Math.abs(lastS);}catch(e){}});
-      });
-      setInterval(function(){
-        var y=window.pageYOffset;
-        var raw=(y-lastY)/0.1;lastY=y;
-        // instant spike up, smooth decay down: flicks read as fast video
-        vel=Math.abs(raw)>=Math.abs(vel)?raw:vel*0.82+raw*0.18;
-        var mag=1+Math.min(Math.abs(vel)/450,2);
-        if(mag<1.06)mag=1;
-        var sgn=vel<-30?-1:1;
-        var tgt=sgn*mag;
-        lastS+=(tgt-lastS)*0.2;
-        if(Math.abs(tgt-lastS)<0.05)lastS=tgt;
-        var v=activeClip();
-        if(!v){window.__vgRev=false;return;}
-        if(lastS<-0.3){
-          if(NEG){
-            window.__vgRev=false;
-            try{v.playbackRate=lastS;}catch(e){} // native reverse (Safari 18+)
-          }else{
-            // Chrome/Firefox have NO negative playbackRate -- true reverse
-            // scrub: pause playback, then seek backwards each tick at a rate
-            // proportional to scroll-up speed.
-            window.__vgRev=true;
-            try{ if(!v.paused)v.pause(); }catch(e){}
-            try{v.currentTime=Math.max(0,v.currentTime+lastS*0.1);}catch(e){}
-            if(v.currentTime<=0.02)lastS=1; // hit frame 0: stop rewinding
-          }
-        }else{
-          if(lastS<0)lastS=Math.abs(lastS); // cross zero cleanly
-          window.__vgRev=false;
-          try{v.playbackRate=Math.max(1,lastS);}catch(e){}
-          if(v.paused&&!v.ended){try{var _pp=v.play();if(_pp&&_pp.catch)_pp.catch(function(){});}catch(e){}}
-        }
-      },100);
+      // v73 (James 2026-11-17): the VIDEO is no longer driven by scroll.
+      // Scrolling animates ONLY the gears/chain; mascot clips run at their
+      // natural 1x. The one video->machine link that remains is the beat
+      // tug: when action2 pulls its chain on-screen, the page gears tug too
+      // (syncTick above). The old scroll-velocity playbackRate/reverse-scrub
+      // engine is removed.
     }
     window.addEventListener('scroll',function(){
       if(rigQueued)return;
