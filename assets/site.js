@@ -774,8 +774,13 @@
     // beat (action4). Once per page load, 90s cooldown, never during intro/portal.
     var LEVERU='/assets/status/action4.mp4';
     var leverFired=false;
-    function ctaHover(){
+    function ctaHover(e){
       if(leverFired||!live()||REDUCE||!window.__vgForce)return;
+      // v76c: spots that carry their own talk clip get the CLIP, not the
+      // generic lever flourish (v65 predates per-spot data-talk; the two
+      // forces fought for one port and the lever shadowed the talk).
+      var spot=e&&e.target&&e.target.closest?e.target.closest('[data-talk]'):null;
+      if(spot)return;
       var now=Date.now();
       if(window.__leverT&&now-window.__leverT<90000)return;
       leverFired=true;window.__leverT=now;
