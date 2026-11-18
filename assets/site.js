@@ -294,6 +294,17 @@
       v.addEventListener('error',function(){probed++;maybeStart();});
       v.src=u;
     });
+    // v74: 'talk' clips -- the mascot addressing the viewer (open mouth,
+    // presenting gesture). Never random rotation (pick() only admits
+    // idle/walkon/walkoff roles); hover/click speech triggers them via
+    // __vgForce. welcome-home = generic talk beat, welcome-videos = the
+    // videos-page one.
+    ['/assets/status/welcome-home.mp4','/assets/status/welcome-videos.mp4'].forEach(function(u){
+      var v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
+      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:false,role:'talk'});});
+      v.addEventListener('error',function(){});
+      v.src=u;
+    });
     // Hard pairs: 'b' plays ONLY immediately after 'a', and 'a' always hands to 'b'.
     // Board->Houser retired 2026-11-17 when James pulled idle3 (Houser).
     var PAIRS=[];
@@ -443,13 +454,14 @@
       }
     };
     var MENU=document.createElement('div');MENU.id='vgmenu';
-    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="portal">PORTAL FX</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
+    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="portal">PORTAL FX</div><div class="vgmi" data-a="hover">HOVER TALK</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
     document.body.appendChild(MENU);
     function closeMenu(){MENU.style.display='none';}
     function openMenu(x,y){
       MENU.querySelector('[data-a="skip"]').textContent='SKIP WELCOME'+(vgSet().skipWelcome?' \u2713':'');
       MENU.querySelector('[data-a="mute"]').textContent=(window.__vgMuted?'UNMUTE':'MUTE')+(window.__vgMuted?' \u2713':'');
       MENU.querySelector('[data-a="portal"]').textContent='PORTAL FX'+(vgSet().portalFx===false?'':' \u2713');
+      MENU.querySelector('[data-a="hover"]').textContent='HOVER TALK'+(vgSet().hoverOff?'':' \u2713');
       MENU.style.display='block';
       var w=MENU.offsetWidth,h=MENU.offsetHeight;
       MENU.style.left=Math.min(x,window.innerWidth-w-8)+'px';
@@ -461,6 +473,7 @@
       var a=it.getAttribute('data-a');
       if(a==='skip')window.vgCtl.skip();
       else if(a==='portal'){var ps=vgSet();ps.portalFx=ps.portalFx===false;vgSave(ps);}
+      else if(a==='hover'){var hs=vgSet();hs.hoverOff=!(hs.hoverOff===true);vgSave(hs);}
       else if(a==='stop')window.vgCtl.stop();
       else if(a==='resume')window.vgCtl.resume();
       else window.vgCtl.mute();
@@ -523,19 +536,33 @@
       for(var i=0;i<els.length;i++)io.observe(els[i]);
     }
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ioTips);else ioTips();
+    // v74 (James): hovering a spot makes the mascot ACTUALLY speak about it --
+    // the presenting/talking clip joins on the port (welcome-videos on the
+    // videos page, welcome-home elsewhere) alongside the bubble text. Users
+    // who don't want hover actions get them OFF from the mascot's right-click
+    // menu (HOVER TALK), persisted in the same vgset store as mute/skip.
+    function hovOff(){try{return JSON.parse(localStorage.getItem('vgset')||'{}').hoverOff===true;}catch(e){return false;}}
+    function talkClip(){return /videos/.test(location.pathname)?'/assets/status/welcome-videos.mp4':'/assets/status/welcome-home.mp4';}
     document.addEventListener('mouseover',function(e){
+      if(hovOff())return;
       var t=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
       if(!t)return;
       var txt=t.getAttribute('data-tip');
       if(!txt||seen[txt])return;
       clearTimeout(hovT);
-      hovT=setTimeout(function(){seen[txt]=1;speak(txt);},1300);
+      hovT=setTimeout(function(){seen[txt]=1;speak(txt,true);if(window.__vgForce)window.__vgForce(talkClip());},1300);
+    });
+    // v74: leaving the spot cancels a pending hover talk -- a timer that
+    // fires after the pointer is gone reads as a random outburst.
+    document.addEventListener('mouseout',function(e){
+      var t=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
+      if(t)clearTimeout(hovT);
     });
     document.addEventListener('click',function(e){
       var t=e.target&&e.target.closest?e.target.closest('[data-say]'):null;
-      if(t){speak(t.getAttribute('data-say'));return;}
+      if(t){speak(t.getAttribute('data-say'),true);if(window.__vgForce)window.__vgForce(talkClip());return;}
       var c=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
-      if(c){var txt=c.getAttribute('data-tip');seen[txt]=1;speak(txt);}
+      if(c){var txt=c.getAttribute('data-tip');seen[txt]=1;speak(txt,true);if(window.__vgForce)window.__vgForce(talkClip());}
     });
     setInterval(function(){
       if(helpOffered>=2||Date.now()-lastAct<45000)return;
