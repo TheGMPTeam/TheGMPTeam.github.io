@@ -5,6 +5,24 @@ v76 (data-talk attrs). One clip per spot. Pipeline: vg-say (PocketTTS alba ref
 audio + MiniMax H3 r2v on the 3060, --default-device 0) -> QC -> deploy ->
 engine staging. NOTHING deploys without passing every gate below.
 
+## Truth audit (James 13780/13796: facts = live server + online, not page copy)
+VERIFIED TRUE: 9 product cards; rig specs (24 cores, 121 GB, 2 TB NVMe live —
+nvme1n1 alive, old dead-disk note stale); two GPUs one queue; pitch claim
+"word for word" (matches Roblox og:description); game published (updated
+2026-11-15, server 50); YouTube channel = 2 real demos (2026-11-16) + 13
+2024 archive; card clip-probe (products modal probes assets/products).
+FIXED FALSE: home-movements line (fabricated; no movements section) -> spot
+now carries home-rig line; prod-fleet "right now IS the sim" false on the
+card grid -> "The Fleet sim is public." Duplicate home-rig slug on CTA
+section -> home-cta.
+UNVERIFIABLE-PUBLIC: "seven beta worlds" (7 BETA- tags on site; beta places
+private, universe places API = 0 unauth). Kept as internal truth.
+NOTE: Roblox description advertises road/air/water as simulated; site LIVE
+NOW marks them IN DEVELOPMENT. Site is the conservative/honest version —
+Roblox marketing copy needs James's call.
+TTS text rule (James 13806): keep TTS input neutral plain English — no
+symbols, spelled-out brands (Vy-rus, V B V code), plain sentences.
+
 ## Generation spec (every clip)
 - Voice: PocketTTS `alba` (same as welcome/idle clips) -> mp3 -> ref_audios
   (exclusive audio source).
@@ -48,7 +66,7 @@ engine staging. NOTHING deploys without passing every gate below.
 | # | slug | page/spot | line (TTS) | emotion | look | anchor |
 |---|------|-----------|------------|---------|------|--------|
 | 1 | videos-reel | videos hero tip | Two real demos in the reel: VirusGPT and Command Center. Everything else is archive. | proud, informative | left | corner |
-| 2 | home-movements | index movements section | Four movements. Draft three was shorter. We kept the long one. | wry, amused | left | right of section |
+| 2 | home-cta | index CTA section | Explore the grid, or watch the demos. Everything you find here runs on hardware we own. | steady, inviting | left | right of section |
 | 3 | game-worlds | games worlds section | Seven beta worlds, one universe. Main world first. | steady, confident | left | right of section |
 | 4 | game-pitch | games pitch block | That pitch is word for word from the game page. | amused | left | right of block |
 | 5 | home-grid | index hero tip | This is the GMP grid. The little guy in the corner? Rendered on our own rig. | playful, welcoming | left | corner |
@@ -61,7 +79,7 @@ engine staging. NOTHING deploys without passing every gate below.
 | 12 | prod-nexus | products NEXUS card (col2) | NEXUS is our agent mesh: one brain per machine, shared memory, no SaaS. | crisp, technical | left | right of card |
 | 13 | prod-shorts | products Shorts card (col1) | Scene scripts here, renders there, and a human approves before anything ships. | calm, procedural | left | right of card |
 | 14 | prod-comfyui | products ComfyUI card (col3) | Two GPUs, one queue: the mascot you are watching came out of this fleet. | warm pride | RIGHT | left of card |
-| 15 | prod-fleet | products Fleet sim card (col2) | What you are looking at right now IS the sim. The real cockpit never leaves the LAN. | reassuring | left | right of card |
+| 15 | prod-fleet | products Fleet sim card (col2) | The Fleet sim is public. The real cockpit never leaves the LAN. | reassuring | left | right of card |
 | 16 | prod-virusgpt | products VirusGPT card (col1) | VirusGPT runs fully offline, on your box. No cloud, no keys, no telemetry. | confident, firm | left | right of card |
 | 17 | prod-trains | products Train Game card (col3) | Steam era on Roblox. Seven beta worlds and a tycoon in the forge. | adventurous | RIGHT | left of card |
 | 18 | game-king | games King class section | The King class in this section was rendered in Blender. The same build rolls in-game. | reverent | left | right of section |
