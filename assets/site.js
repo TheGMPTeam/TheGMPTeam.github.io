@@ -346,6 +346,24 @@
     // Retries until the clip is probed into the pool; unloop restores the
     // normal idle rotation.
     var LOOPU=null;
+    // v75.1: per-spot talk clips. Elements carry data-talk="/assets/talk/x.mp4";
+    // hovering/clicking that spot forces THAT clip instead of the generic
+    // welcome talk beat. Clips are probed into the pool at startup (role=talk,
+    // never random rotation); missing files simply stay out and the generic
+    // clip is the fallback, so the site can be wired before renders land.
+    function registerTalk(u){
+      if(!u||has(u))return;
+      var v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;
+      v.addEventListener('loadeddata',function(){IV.push({u:u,endGone:false,role:'talk'});});
+      v.addEventListener('error',function(){});
+      v.src=u;
+    }
+    window.__vgRegisterTalk=registerTalk;
+    function scanTalkSpots(){
+      var els=document.querySelectorAll('[data-talk]'),k;
+      for(k=0;k<els.length;k++)registerTalk(els[k].getAttribute('data-talk'));
+    }
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scanTalkSpots);else scanTalkSpots();
     window.__vgLoop=function(u){
       LOOPU=u;var tries=0;
       var iv=setInterval(function(){
@@ -558,7 +576,7 @@
       var txt=t.getAttribute('data-tip');
       if(!txt||seen[txt])return;
       clearTimeout(hovT);
-      hovT=setTimeout(function(){seen[txt]=1;speak(txt,true);if(window.__vgForce)window.__vgForce(talkClip());},1300);
+      hovT=setTimeout(function(){seen[txt]=1;speak(txt,true);var u=t.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u))window.__vgForce(talkClip());},1300);
     });
     // v74: leaving the spot cancels a pending hover talk -- a timer that
     // fires after the pointer is gone reads as a random outburst.
@@ -568,9 +586,9 @@
     });
     document.addEventListener('click',function(e){
       var t=e.target&&e.target.closest?e.target.closest('[data-say]'):null;
-      if(t){speak(t.getAttribute('data-say'),true);if(window.__vgForce)window.__vgForce(talkClip());return;}
+      if(t){speak(t.getAttribute('data-say'),true);var u1=t.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u1))window.__vgForce(talkClip());return;}
       var c=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
-      if(c){var txt=c.getAttribute('data-tip');seen[txt]=1;speak(txt,true);if(window.__vgForce)window.__vgForce(talkClip());}
+      if(c){var txt=c.getAttribute('data-tip');seen[txt]=1;speak(txt,true);var u2=c.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u2))window.__vgForce(talkClip());}
     });
     setInterval(function(){
       if(helpOffered>=2||Date.now()-lastAct<45000)return;
