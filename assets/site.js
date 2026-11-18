@@ -899,7 +899,9 @@
       var chars=orig.split('');
       var cand=[],ci;
       for(ci=0;ci<chars.length;ci++){if(chars[ci]!==' '&&chars[ci]!=='\n')cand.push(ci);}
-      var nd=Math.min(cand.length,2+Math.floor(Math.random()*4));
+      // v76g (James 2026-11-19): MORE letters loosen before the fix lands --
+      // was 2-5; now ~22% of the text (floor 6, cap 14).
+      var nd=Math.max(6,Math.min(cand.length,Math.floor(cand.length*0.22),14));
       var dropped=[];
       for(ci=0;ci<nd&&cand.length;ci++){
         var at=Math.floor(Math.random()*cand.length);
@@ -938,7 +940,7 @@
       // last ones land just as the clip ends.
       var th=[],j0;
       for(j0=0;j0<dropped.length;j0++){
-        th.push(dropped.length===1?0.55:0.35+0.5*(j0/(dropped.length-1)));
+        th.push(dropped.length===1?0.55:0.25+0.65*(j0/(dropped.length-1)));
       }
       var fixed=0,t0=Date.now();
       function mendLetter(j){
