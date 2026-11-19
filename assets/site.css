@@ -47,6 +47,8 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
 @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
 .car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:720px;margin:0 auto;overflow:visible}
+/* v83: outtakes carousel smaller (scoped to #ot-car so videos.html keeps 720px) */
+#ot-car{max-width:480px}
 .slides{display:contents}
 .slide{position:absolute;inset:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel2);
   transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .55s;will-change:transform;
