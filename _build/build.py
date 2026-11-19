@@ -8,7 +8,7 @@ OUT = "." if (len(sys.argv)>1 and sys.argv[1]=="--root") else "_build/dist"
 PAGES=["index.html","products.html","games.html","videos.html","status.html","outtakes.html"]
 LINKS=[("/","HOME"),("/products.html","PRODUCTS"),("/games.html","GAMES"),
        ("/status.html","STATUS"),("/videos.html","VIDEOS"),("/outtakes.html","OUTTAKES")]
-CSSV="99"; JSV="98"
+CSSV="100"; JSV="98"
 
 cfg=json.load(open("_build/config.json"))
 head=open("_partials/head.html").read()
@@ -22,6 +22,7 @@ def r_head(p):
     c=cfg[p]; s=head.replace("{{TITLE}}",c["title"]).replace("{{DESC}}",c["desc"])
     s=s.replace("{{SCRIPT}}", f'<script src="/assets/site.js?v={JSV}" defer></script>')
     s=s.replace("{{EXTRA_HEAD}}", ("\n"+c["extra_head"]) if c["extra_head"] else "")
+    s=s.replace("{{CSSV}}",CSSV)
     return s
 def r_nav(p):
     c=cfg[p]; return nav.replace("{{LOGOMARK}}",c["logomark"]).replace("{{NAVLINKS}}",navlinks(c["active"]))
