@@ -94,12 +94,10 @@ body[data-vgclean] .back{margin-top:8px;align-self:center;text-align:center;max-
 body[data-vgclean] nav{background:rgba(6,10,16,.62)}
 /* v107 (James): outtakes gears were z-index:-1 and buried under the full-bleed
    bg + the near-opaque ::before scrim (z:0) -> invisible. Raise the side-panel
-   gears into the right gutter above the scrim. Also move the footer UP to the
-   top (between nav and carousel) and lift it above the scrim so it reads. */
+   gears into the right gutter above the scrim. Footer stays at the bottom but is
+   lifted in LAYERS (z-index) above the scrim so it reads. */
 body[data-vgclean] .vgsprocket{z-index:1}
-body[data-vgclean] nav{order:-1}
-body[data-vgclean] footer{order:0;position:relative;z-index:2}
-body[data-vgclean] section{order:1}
+body[data-vgclean] footer{position:relative;z-index:2}
 body[data-vgclean] .slide .meta{background:rgba(8,12,18,.90)}
 body[data-vgclean] .slide .d{color:#eef4ff}
 /* v91: outtakes clip controls -- bigger + opaque so they're unmistakable */
