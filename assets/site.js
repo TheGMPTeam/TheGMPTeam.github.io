@@ -7,11 +7,15 @@
     if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var els=document.querySelectorAll('section .wrap > *, header.hero .wrap > *');
     if(!els.length)return;
-    Array.prototype.forEach.call(els,function(el){el.classList.add('rv');});
     var io=new IntersectionObserver(function(es){
       es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}});
     },{threshold:.12,rootMargin:'0px 0px -6% 0px'});
-    Array.prototype.forEach.call(els,function(el){io.observe(el);});
+    Array.prototype.forEach.call(els,function(el){
+      el.classList.add('rv');
+      var r=el.getBoundingClientRect();
+      if(r.top<window.innerHeight*0.92&&r.bottom>0){el.classList.add('on');}
+      else{io.observe(el);}
+    });
   })();
 
   // Porthole user settings (per browser, all pages): { skipWelcome, muted }
@@ -135,6 +139,18 @@
     car.querySelectorAll('.car-arrow').forEach(function(a){
       a.addEventListener('click',function(e){ e.stopPropagation(); go(cur+(a.dataset.dir==='next'?1:-1)); });
     });
+    // v112 (James): scroll-wheel over the carousel steps next/prev one slide per
+    // gesture and suppresses page scroll while the pointer is over it. Debounced
+    // so a single wheel notch never skips more than one slide.
+    var wheelLock=0;
+    car.addEventListener('wheel',function(e){
+      if(!e.deltaY) return;
+      e.preventDefault();
+      var now=Date.now();
+      if(now-wheelLock<320) return;
+      wheelLock=now;
+      go(cur+(e.deltaY>0?1:-1));
+    },{passive:false});
     slides.forEach(function(s){
       s.addEventListener('mouseenter',function(){
         if(CLEAN) return; // v85: no hover-to-play on outtakes (clips autoplay)
