@@ -80,6 +80,15 @@
     }
     function h_local(s){ return !!s.dataset.local; }
     if(CLEAN){ var kick=setInterval(function(){ if(window.__vgEntered){ clearInterval(kick); render(); } },500); }
+    // v84 (James): clips must be UNMUTED. A cross-page nav click can't carry
+    // Chrome's audio permission, so the FIRST click on this page (the tab link,
+    // a slide, anywhere) unlocks audio: unmutes the live clip and every later one.
+    function unlockAudio(){
+      if(window.__vgAudio)return; window.__vgAudio=true;
+      var v=car.querySelector('.slide.current .thumb video')||car.querySelector('.slide .thumb video');
+      if(v){ try{ v.muted=false; if(v.paused){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); } }catch(e){} }
+    }
+    if(CLEAN){ ['click','keydown','touchstart'].forEach(function(ev){ document.addEventListener(ev,unlockAudio,{once:true,passive:true}); }); }
     function playLocal(s){
       var h=s.querySelector('.thumb');
       if(!h||h.querySelector('video'))return;
