@@ -47,8 +47,10 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
 @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
 .car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:720px;margin:0 auto;overflow:visible}
-/* v83: outtakes carousel smaller (scoped to #ot-car so videos.html keeps 720px) */
-#ot-car{max-width:480px}
+/* v87: outtakes carousel is portrait (clips are 480x864, ~5:9). Height-driven to fill the
+   vertical space; thumb fills the taller slide; at matching aspect, cover shows the full frame. */
+#ot-car{aspect-ratio:5/9;height:min(82vh,820px);width:auto;max-width:92vw;margin:0 auto}
+#ot-car .thumb{aspect-ratio:auto;height:100%}
 .slides{display:contents}
 .slide{position:absolute;inset:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel2);
   transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .55s;will-change:transform;
@@ -68,6 +70,24 @@ body[data-vgclean] nav .links a:hover{color:var(--muted)}
 /* v86: outtakes full-bleed background image; hide the grid pattern */
 body[data-vgclean]{background:url('/assets/outtakes-bg.jpg') center/cover no-repeat fixed}
 body[data-vgclean] .grid-bg{display:none}
+/* v88: outtakes palette harmonized to the bg photo (slate/teal) + readability scrim.
+   Photo mean-lum ~70 with neon to 200, so light text needs a dark veil + shadow to stay legible. */
+body[data-vgclean]{
+  --text:#eef4ff; --muted:#c2cfe0;
+  --cyan:#3fc7e8; --blue:#2c708e;
+  --line:rgba(97,146,160,.30); --line-hot:rgba(63,199,232,.55);
+}
+body[data-vgclean]::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(6,10,16,.74),rgba(6,10,16,.5) 42%,rgba(6,10,16,.80))}
+body[data-vgclean] section{position:relative;z-index:1}
+body[data-vgclean] nav{background:rgba(6,10,16,.62)}
+body[data-vgclean] .slide .meta{background:rgba(8,12,18,.74)}
+body[data-vgclean] .slide{border-color:rgba(97,146,160,.5)}
+body[data-vgclean] #ot-car{filter:drop-shadow(0 22px 40px rgba(0,0,0,.55))}
+body[data-vgclean] h2,body[data-vgclean] .sub,body[data-vgclean] .back,
+body[data-vgclean] .logo,body[data-vgclean] nav .links a,
+body[data-vgclean] .slide .t,body[data-vgclean] .slide .d{
+  text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 14px rgba(0,0,0,.55)}
 .car-arrow.left{left:14px}
 .car-arrow.right{right:14px}
 .car-arrow.hide{visibility:hidden}
