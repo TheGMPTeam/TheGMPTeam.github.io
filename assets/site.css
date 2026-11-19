@@ -377,29 +377,28 @@ body.vg-entered #vgpanel{animation:vgPanelIn .65s cubic-bezier(.2,.7,.2,1) .1s f
    Slow breathing pulse + irregular crackle + rotating arc streaks. Inside #vgen
    (z:1, within the #vgpanel stacking context) so it slides in with the panel and
    auto-hides on data-vgclean pages (outtakes hide #vgen). */
-#vgencore{position:absolute;left:50%;top:calc(50% + 140px);transform:translate(-50%,-50%);
+#vgencore{position:absolute;left:50%;top:calc(50% + 170px);transform:translate(-50%,-50%);
   width:120px;height:120px;border-radius:50%;pointer-events:none;mix-blend-mode:screen;
   background:radial-gradient(circle at center,#ffffff 0%,#dffaff 10%,rgba(0,217,255,.98) 24%,rgba(0,150,255,.6) 48%,rgba(0,110,255,0) 74%);
   box-shadow:0 0 22px 6px rgba(0,217,255,.55),0 0 52px 14px rgba(0,150,255,.28);
   animation:vgCorePulse 2.2s ease-in-out infinite,vgCoreFlick .42s linear infinite,vgCoreFlick2 .53s ease-in-out infinite}
-#vgencore::before,#vgencore::after{content:'';position:absolute;left:50%;top:50%;border-radius:50%;
-  transform:translate(-50%,-50%) rotate(0);pointer-events:none;mix-blend-mode:screen}
-#vgencore::before{width:132%;height:132%;opacity:.85;filter:blur(.3px);
-  background:repeating-conic-gradient(from 0deg, rgba(0,217,255,0) 0 3deg, rgba(200,245,255,.95) 3deg 4deg, rgba(0,217,255,0) 4deg 7deg);
-  -webkit-mask:radial-gradient(circle at center, transparent 15%, #000 23% 44%, transparent 58%);
-          mask:radial-gradient(circle at center, transparent 15%, #000 23% 44%, transparent 58%);
-  animation:vgArc .85s linear infinite}
-#vgencore::after{width:116%;height:116%;opacity:.6;filter:blur(.2px);
-  background:repeating-conic-gradient(from 15deg, rgba(255,255,255,0) 0 9deg, #fff 9deg 10deg, rgba(120,230,255,.85) 10deg 11deg, rgba(255,255,255,0) 11deg 17deg);
-  -webkit-mask:radial-gradient(circle at center, transparent 13%, #000 21% 40%, transparent 54%);
-          mask:radial-gradient(circle at center, transparent 13%, #000 21% 40%, transparent 54%);
-  animation:vgArc 1.35s linear infinite reverse}
+#vgencore::before,#vgencore::after{content:'';position:absolute;left:50%;top:50%;pointer-events:none;mix-blend-mode:screen}
+#vgencore::before{width:3px;height:3px;margin:-1.5px;border-radius:50%;background:#fff;
+  filter:drop-shadow(0 0 5px rgba(0,217,255,.95)) drop-shadow(0 0 2px #fff);
+  box-shadow:-46px -34px 2px 0 #fff,38px -50px 2px 0 #bfefff,60px -12px 2px 0 #fff,-58px -8px 2px 0 #cdefff,-34px 40px 2px 0 #fff,44px 36px 2px 0 #bfefff,12px -62px 2px 0 #fff,-16px 58px 2px 0 #cdefff,70px 22px 1px 0 #fff,-70px 18px 1px 0 #bfefff,22px 64px 1px 0 #fff,-26px -60px 1px 0 #fff,56px -40px 1px 0 #cdefff,-50px 44px 1px 0 #fff,64px -28px 1px 0 #fff,-12px -44px 1px 0 #bfefff,30px 54px 1px 0 #fff,-64px -30px 1px 0 #fff;
+  animation:vgTwinkle .55s steps(1,end) infinite}
+#vgencore::after{width:96px;height:2px;border-radius:2px;transform-origin:left center;
+  background:linear-gradient(90deg,transparent,#bfefff 55%,#fff);
+  filter:drop-shadow(0 0 5px rgba(0,217,255,.9));
+  transform:translate(-50%,-50%) rotate(-35deg) scaleX(0);opacity:0;
+  animation:vgShoot 3.2s ease-in infinite}
 @keyframes vgCorePulse{0%,100%{transform:translate(-50%,-50%) scale(.94);box-shadow:0 0 18px 5px rgba(0,217,255,.5),0 0 46px 12px rgba(0,150,255,.24)}
   44%{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 0 26px 8px rgba(0,217,255,.6),0 0 60px 18px rgba(0,150,255,.3)}
   70%{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 28px 9px rgba(150,110,255,.5),0 0 64px 20px rgba(0,150,255,.26)}}
 @keyframes vgCoreFlick{0%,100%{opacity:1}46%{opacity:.74}49%{opacity:1}52%{opacity:.62}55%{opacity:1}77%{opacity:.84}79%{opacity:1}}
 @keyframes vgCoreFlick2{0%,100%{filter:brightness(1.1)}44%{filter:brightness(1.65)}47%{filter:brightness(1.2)}61%{filter:brightness(1.85)}64%{filter:brightness(1.25)}}
-@keyframes vgArc{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes vgTwinkle{0%{opacity:1}22%{opacity:.25}40%{opacity:1}58%{opacity:.35}74%{opacity:1}88%{opacity:.45}100%{opacity:1}}
+@keyframes vgShoot{0%{transform:translate(-50%,-50%) rotate(-35deg) scaleX(0);opacity:0}6%{opacity:1}20%{transform:translate(-50%,-50%) rotate(-35deg) scaleX(1);opacity:1}28%{opacity:0}100%{transform:translate(-50%,-50%) rotate(-35deg) scaleX(1);opacity:0}}
 @media (max-width:720px){#vgencore{width:80px;height:80px}}
 @media (prefers-reduced-motion: reduce){#vgen,#vgchain,.vgsprocket,#vgen img,#vgpanel,#vgencore,#vgencore::before,#vgencore::after{animation:none}}
 /* v98 (James 2026-11-19): split the layout into 2 columns -- main content lives
