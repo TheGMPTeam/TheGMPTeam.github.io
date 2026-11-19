@@ -6,8 +6,8 @@
   --amber:#ffb347; --violet:#8b5cf6;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1.65;overflow-x:clip}
+html{scroll-behavior:smooth;overscroll-behavior:none}
+body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1.65;overflow-x:clip;overscroll-behavior:none}
 .grid-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;background:
   radial-gradient(ellipse 80% 50% at 50% -10%, rgba(8,123,255,.16), transparent 60%),
   radial-gradient(ellipse 60% 40% at 85% 110%, rgba(0,217,255,.07), transparent 60%),
