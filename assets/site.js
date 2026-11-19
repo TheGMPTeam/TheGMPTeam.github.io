@@ -68,9 +68,9 @@
           var mag=Math.abs(off);
           if(mag<=2){
             var sgn=off>0?1:-1;
-            // v115 (James): no gaps -- pull side cards in so they overlap/abut
-            // the center card (was 108/168, which left empty background between).
-            var x=mag===1?86:150, z=mag===1?-140:-300, rot=mag===1?12:20;
+            // v117 (James): narrower carousel + tighter side offset so the whole
+            // coverflow fits the left column (flanking cards not cropped).
+            var x=mag===1?62:118, z=mag===1?-140:-300, rot=mag===1?12:20;
             s.style.transform='translate3d('+(sgn*x)+'%,0,'+z+'px) rotateY('+(sgn*rot)+'deg)';
             s.style.opacity=mag===1?'0.9':'0.55';
           } else {
