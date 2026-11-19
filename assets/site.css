@@ -21,7 +21,7 @@ nav .wrap{display:flex;align-items:center;gap:26px;height:62px}
 nav .links{margin-left:auto;display:flex;gap:22px}
 nav .links a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:.08em}
 nav .links a:hover,nav .links a.on{color:var(--cyan)}
-header.hero{padding:110px 0 80px;text-align:center}
+header.hero{padding:110px 0 80px;text-align:center;position:relative;z-index:2}
 .eyebrow{color:var(--blue);letter-spacing:.35em;font-size:.75rem;text-transform:uppercase}
 h1{font-family:'Orbitron',sans-serif;font-size:clamp(2rem,6vw,3.6rem);font-weight:800;margin:18px 0;
   background:linear-gradient(180deg,#fff 20%,var(--blue) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -224,14 +224,14 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
   ::-webkit-scrollbar{width:10px;height:10px;display:block}
   #vgchain,.vgsprocket{display:none!important}
 }
-#vgchain{position:fixed;right:10px;top:0;height:100vh;width:64px;z-index:40;cursor:grab;touch-action:none;background:url('/assets/chain.png') repeat-y left top;background-size:64px 64px;filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 6px rgba(0,217,255,.35))}
+#vgchain{position:fixed;right:10px;top:0;height:100vh;width:64px;z-index:1;cursor:grab;touch-action:none;background:url('/assets/chain.png') repeat-y left top;background-size:64px 64px;filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 6px rgba(0,217,255,.35))}
 #vgchain:active{cursor:grabbing}
 #vgchain::after{content:'PULL';position:absolute;left:50%;transform:translateX(-50%);top:6px;font:bold 9px "Courier New",monospace;color:#00d9ff;text-shadow:0 0 8px rgba(0,217,255,.9);opacity:0;transition:opacity .25s;letter-spacing:1px}
 #vgchain:hover::after,#vgchain.vg-tug::after{opacity:.95}
 #vgtrack{position:absolute;inset:0;pointer-events:none}
-.vgsprocket{position:fixed;z-index:-2;opacity:.55;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.85))}
+.vgsprocket{position:fixed;z-index:-1;opacity:.55;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.85))}
 .vgsprocket.t{top:-6px;right:-18px;width:191px;height:172px}
-.vgsprocket.b{bottom:-6px;right:-18px;width:340px;height:198px}
+.vgsprocket.b{bottom:91px;right:-61px;width:340px;height:198px;transform:rotate(90deg)}
 .vgsprocket img{position:absolute;transform-origin:50% 50%;transition:transform .3s linear;will-change:transform}
 /* v79: top/bottom swapped. Top = 3-gear (bronze->small->ref1), bottom = 5-gear
    cluster (main->dome->small->ref3->ref2). Tangent-meshed; each meshed neighbour
