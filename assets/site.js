@@ -212,10 +212,10 @@
   // (the click gesture is what unlocks audio for the reel).
   (function(){
     var s=document.getElementById('splash');
-    if(!s){window.__vgEntered=true;return;}
+    if(!s){window.__vgEntered=true;document.body.classList.add('vg-entered');return;}
     // Corner port stays invisible until the welcome presentation lands in it.
     document.body.classList.add('vg-pre');
-    document.addEventListener('vg:enter',function(){document.body.classList.remove('vg-pre');});
+    document.addEventListener('vg:enter',function(){document.body.classList.remove('vg-pre');document.body.classList.add('vg-entered');});
     var hint=s.querySelector('.splash-hint');
     if(hint){hint.textContent='LOADING SYSTEM...';}
     var ready=0,opened=false;
