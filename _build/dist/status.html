@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet Status — TheGMPTeam Studios</title>
+<meta name="description" content="Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css?v=99">
+<link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
+<script src="/assets/site.js?v=98" defer></script>
+<style>
+.hero{position:relative;z-index:20;text-align:center;color:#fff;padding:96px 0 6px}
+.hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
+.hero-eyebrow{color:#7d90a8;letter-spacing:.26em;font-size:.66rem;text-transform:uppercase}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);margin-right:8px;vertical-align:middle;flex:0 0 auto}
+#pills .dot{width:12px;height:12px;margin:0 6px 12px 0}
+.pills{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 24px}
+.dot-on{background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.dot-ok{background:#3fe0a0;box-shadow:0 0 12px #3fe0a0}
+.dot-am{background:#ffb347;box-shadow:0 0 12px #ffb347}
+.dot-up{background:#3b8bff;box-shadow:0 0 12px #3b8bff}
+.dot-st{background:#5a6472;border-color:rgba(138,152,175,.5)}
+#stamp{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);letter-spacing:.06em}
+.hub-note{color:#ffb347;letter-spacing:.12em;font-size:.78rem;opacity:.9}
+main#simgrid{margin-top:30px}
+.g{display:block;opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease;min-height:100vh;scroll-snap-align:start;padding:120px 6vw}
+/* After the auto-tour: sections pack closer together for the compact fleet view */
+#simgrid.compact .g{padding:36px 6vw;min-height:0;scroll-snap-align:none}
+#simgrid.compact{transition:all .5s}
+.g.in{opacity:1;transform:none}
+html{scroll-snap-type:y proximity}
+#hud{display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(1,3,10,.82);border:1px solid rgba(0,217,255,.25);padding:10px 20px;margin:26px auto 0;max-width:1100px;border-radius:10px;backdrop-filter:blur(6px)}
+.g h2{display:flex;align-items:center;gap:14px;font-family:'Orbitron',sans-serif;font-size:1.4rem;letter-spacing:.16em;color:#00d9ff;margin-bottom:30px;text-shadow:0 0 18px rgba(0,217,255,.5)}
+.g h2 .idx{color:#2b3a55;font-size:1.1rem}
+.g h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(0,217,255,.55),transparent)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));gap:16px}
+.node{position:relative;background:linear-gradient(165deg,rgba(11,18,32,.94),rgba(6,10,16,.88));border:1px solid var(--line);border-radius:12px;padding:18px 18px 15px;transition:transform .2s, border-color .2s, box-shadow .2s;cursor:default}
+.node:hover{transform:translateY(-4px);border-color:var(--line-hot);box-shadow:0 0 34px rgba(0,217,255,.16)}
+.node .top{display:flex;align-items:center;gap:12px}
+.node .grp{font-size:.68rem;letter-spacing:.16em;color:var(--violet);text-transform:uppercase}
+.node h3{font-family:'Orbitron',sans-serif;font-size:.92rem;margin-bottom:8px;color:#fff;letter-spacing:.04em}
+.node .ph{display:inline-block;font-size:.64rem;letter-spacing:.1em;padding:3px 8px;border-radius:5px;font-weight:700;text-transform:uppercase}
+.ph-up{background:#3b8bff;color:#fff}
+.ph-te{background:#ffb347;color:#fff}
+.ph-id{background:#3fe0a0;color:#fff}
+.ph-su{background:#5aa9ff;color:#fff}
+.ph-st{background:#5a6472;color:#fff}
+.node .log{font-size:.78rem;color:var(--muted);line-height:1.5;min-height:22px;transition:opacity .5s}
+.node:hover .log{opacity:1}
+footer.site-footer{border-top:1px solid var(--line);padding:24px 24px;color:var(--muted);font-size:.75rem}
+footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="/"><img class="logo-mark" src="/assets/brand/logo-128.jpg" alt="">THEGMPTeam STUDIOS</a>
+  <span class="links">
+    <a href="/">HOME</a><a href="/products.html">PRODUCTS</a><a href="/games.html">GAMES</a><a class="on" href="/status.html">STATUS</a><a href="/videos.html">VIDEOS</a><a href="/outtakes.html">OUTTAKES</a>
+  </span>
+</div></nav>
+<div class="grid-bg"></div>
+<header class="hero"><div class="wrap">
+  <h1 class="hero-hd">FLEET STATUS</h1>
+  <p class="hero-eyebrow">SIMULATION LOOP &mdash; RECONSTRUCTION, NOT LIVE</p>
+</div></header>
+<div id="hud">
+  <div id="pills" class="pills"></div>
+  <div id="stamp" class="hub-note">connecting&hellip;</div>
+</div>
+<main id="simgrid">
+  <div class="wrap">
+    <div class="g show" data-grp="CORE">
+      <h2><span class="idx">&#9672;</span>CORE &mdash; HARDWARE &amp; QUEUES</h2>
+      <div class="cards" id="cards-core"></div>
+    </div>
+    <div class="g" data-grp="MIND">
+      <h2><span class="idx">&#9672;</span>MIND &mdash; INFERENCE &amp; SWITCHING</h2>
+      <div class="cards" id="cards-mind"></div>
+    </div>
+    <div class="g" data-grp="CREATE">
+      <h2><span class="idx">&#9672;</span>CREATE &mdash; RENDER &amp; CONTENT</h2>
+      <div class="cards" id="cards-create"></div>
+    </div>
+    <div class="g" data-grp="VOICE">
+      <h2><span class="idx">&#9672;</span>VOICE &mdash; INGEST &amp; OUTPUT</h2>
+      <div class="cards" id="cards-voice"></div>
+    </div>
+    <div class="g" data-grp="EDGE">
+      <h2><span class="idx">&#9672;</span>EDGE &mdash; ROUTING &amp; ACCESS</h2>
+      <div class="cards" id="cards-edge"></div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="dot"></span>
+    <span>&copy; 2026 TheGMPTeam Studios &mdash; <b style="color:var(--cyan)">FLEET STATUS &middot; SIMULATION LOOP</b> &middot; this build is reconstructed for review; nothing here is live</span>
+  </div>
+  <span style="font-size:11px;opacity:.55">Chain imagery: Vecteezy asset 45838195.</span>
+  </footer>
+
+<script>
+const NODES=[{g:"CORE",n:"SERVER CORE",p:"su",t:"cold boot — workers joining"}, {g:"CORE",n:"N8N ENGINE",p:"up",t:"workflows queued · 147 active"}, {g:"CORE",n:"BEDROCK VAULT",p:"id",t:"index 412 · searchable"}, {g:"CORE",n:"REDIS QUEUE",p:"up",t:"draining · 217 jobs in flight"}, {g:"CORE",n:"MAC NODE",p:"id",t:"director heartbeat 02s"}, {g:"MIND",n:"OLLAMA",p:"up",t:"7 models · 33 tok/s"}, {g:"MIND",n:"STRATA ENGINE",p:"id",t:"qwen3.8-flash serving"}, {g:"MIND",n:"LLM EVAL",p:"te",t:"benchmark sweep v2"}, {g:"MIND",n:"GPU SWITCH",p:"up",t:"rtx 5060 ti online"}, {g:"MIND",n:"VIRUSGPT CORE",p:"up",t:"stt → thought → speak"}, {g:"CREATE",n:"COMFYUI RENDER",p:"id",t:"prompts queued 07"}, {g:"CREATE",n:"FFMPEG FORGE",p:"up",t:"4k export round 02"}, {g:"CREATE",n:"BLENDER FORGE",p:"su",t:"scene load 014 of 014"}, {g:"CREATE",n:"SEARXNG",p:"id",t:"anon search active"}, {g:"CREATE",n:"LIVE BROWSER",p:"su",t:"CDP harness warming"}, {g:"VOICE",n:"WHISPER EARS",p:"up",t:"nemo-1.6 · low latency"}, {g:"VOICE",n:"PARAKEET EARS",p:"id",t:"auto speech recognition"}, {g:"VOICE",n:"POCKETTTS VOICE",p:"up",t:"voice bank 05 live"}, {g:"EDGE",n:"CADDY GATE",p:"id",t:"lan + live endpoints routed"}, {g:"EDGE",n:"N8N TABLE UI",p:"up",t:"the production command center"}];
+const TAG={su:"STARTING UP",te:"TUNING",id:"IDEAL",up:"ACTIVE",st:"STOPPED"};
+const TX=[["SERVER CORE","base 309 workers"],["OLLAMA","7 models rolled"],["BEDROCK VAULT","index stable"],["MAC NODE","02s heartbeat"],["N8N ENGINE","queue draining"],["LPFORGE","codec moving"],["BLENDER FORGE","export prime"],["COMFYUI","prompt 07 queued"],["GPU SWITCH","driver confirmed"],["VIRUSGPT CORE","voice loop"],["PARAKEET EARS","asr hot"],["POCKETTTS","seed #0092"]];
+(function(){
+  const pills=document.getElementById('pills'),stamp=document.getElementById('stamp');
+  const cnt={up:0,te:0,id:0,su:0,st:0};
+  NODES.forEach(function(n){cnt[n.p]++;});
+  const card={};
+  NODES.forEach(function(n,i){
+    const d=document.createElement('div');d.className='node';d.dataset.i=i;card[i]=d;
+    d.innerHTML='<div class="top"><span class="grp">'+n.g.toUpperCase()+'</span><span class="ph ph-'+n.p+'">'+TAG[n.p]+'</span></div><h3>'+n.n+'</h3><div class="log">'+n.t+'</div>';
+    document.getElementById('cards-'+n.g.toLowerCase()).appendChild(d);
+  });
+  function paint(i){
+    const n=NODES[i],d=card[i];
+    d.querySelector('.ph').textContent=TAG[n.p];
+    d.querySelector('.ph').className='ph ph-'+n.p;
+  }
+  NODES.forEach(function(n,i){
+    card[i].addEventListener('click',function(){
+      const j=Math.floor(Math.random()*TX.length);
+      card[i].querySelector('.log').textContent=TX[j][0]+' > '+n.n+': '+TX[j][1];
+    });
+  });
+  const order=['up','id','te','su','st'];
+  function tick(){
+    for(let k=0;k<3;k++){
+      const i=Math.floor(Math.random()*NODES.length),n=NODES[i];
+      let nxt;do{nxt=order[Math.floor(Math.random()*order.length)];}while(nxt===n.p);
+      cnt[n.p]--;n.p=nxt;cnt[nxt]++;paint(i);
+      if(Math.random()<.5){
+        const j=Math.floor(Math.random()*TX.length);
+        card[i].querySelector('.log').textContent=TX[j][1];
+      }
+    }
+    let s='';
+    const dot={up:'ok',id:'on',te:'am',su:'up',st:'st'};
+    for(const k of order){s+='<i class="dot dot-'+dot[k]+'"></i><span style="color:#7d90a8;font-size:.72rem;margin-right:14px;letter-spacing:.12em">'+TAG[k]+' <b style="color:#cfe4f7">'+cnt[k]+'</b></span>';}
+    pills.innerHTML=s;
+    const d=new Date();
+    stamp.textContent='SYS TIME '+d.toISOString().slice(11,19)+'Z  ·  LOOP ACTIVE  ·  SIMULATION';
+  }
+  tick();
+  setInterval(tick,1000);
+})();
+document.body.classList.add('entered');
+const stages=[].slice.call(document.querySelectorAll('#simgrid .g'));
+const io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.3});
+stages.forEach(function(s){io.observe(s);});
+let tourOn=false;
+window.__t={i:-1,on:false};
+window.__errs=[];
+window.addEventListener('error',function(e){if(window.__errs.length<12){window.__errs.push(String(e.message).slice(0,120));}});
+function tourEnd(){
+  tourOn=false;window.__t={i:-1,on:false,done:true};
+  // v70: the tour was looping the pull-chain clip to keep the page rig
+  // beat-synced with the on-video pulls -- stop looping, resume rotation.
+  if(window.__vgUnloop){window.__vgUnloop();}
+  stages.forEach(function(s){s.style.display='';s.style.minHeight='';});
+  document.documentElement.style.scrollSnapType='none';
+  // Pack the sections together, then glide back to the top.
+  document.getElementById('simgrid').classList.add('compact');
+  setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'});},300);
+}
+function tour(i){
+  if(!tourOn){return;}
+  if(i>=stages.length){tourEnd();return;}
+  window.__t={i:i,on:true};
+  const vh=(window.innerHeight||document.documentElement.clientHeight)+'px';
+  stages.forEach(function(s,k){
+    if(k===i){s.style.display='block';s.style.minHeight=vh;}
+    else{s.style.display='none';s.style.minHeight='';}
+  });
+  var hud=document.getElementById('hud');
+  var off=(hud?12:12);
+  var top=Math.max(0,stages[i].offsetTop-off);
+  window.scrollTo({top:top,behavior:i===0?'smooth':'auto'});
+  setTimeout(function(){
+    if(tourOn&&Math.abs(window.scrollY-top)>4)window.scrollTo({top:top,behavior:'auto'});
+  },700);
+  setTimeout(function(){tour(i+1);},4600);
+}
+['wheel','touchstart','mousedown'].forEach(function(ev){
+  window.addEventListener(ev,function(){tourEnd();},{once:true,passive:true});
+});
+tourOn=true;
+// v71: test control. status.html?tour=0 loads WITHOUT the auto tour so the
+// chain/scroll/video rig can be tested with manual scrolling only.
+// window.__vgTour.stop()/start() toggle the tour at any time.
+window.__vgTour={
+  stop:function(){if(tourOn){tourOn=false;}tourEnd();},
+  start:function(){if(tourOn)return;tourOn=true;window.__t={i:-1,on:true};
+    if(window.__vgLoop){window.__vgLoop('/assets/status/action2.mp4');}
+    tour(0);}
+};
+var NOTOUR=/[?&]tour=0/.test(location.search);
+if(NOTOUR){
+  tourOn=false;window.__t={i:-1,on:false,done:true};
+  stages.forEach(function(s){s.style.display='';s.style.minHeight='';});
+  document.documentElement.style.scrollSnapType='none';
+  document.getElementById('simgrid').classList.add('compact');
+}else{
+// v70: loop the pull-chain clip for the whole tour so the page chain/gears
+// tug beat-for-beat with the on-video pulls (site.js is deferred -- poll
+// until its loop engine exists; stop if the tour was already cancelled).
+(function armLoop(){
+  if(!tourOn)return;
+  if(window.__vgLoop){window.__vgLoop('/assets/status/action2.mp4');return;}
+  setTimeout(armLoop,300);
+})();
+setTimeout(function(){tour(0);},1300);
+}
+</script>
+<div id="vgchain" aria-hidden="true"><div id="vgtrack"></div></div>
+<div id="vgrigframe" aria-hidden="true"></div>
+<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png?v=95" alt=""><img class="p2" src="/assets/gear_small.png?v=96" alt=""><img class="p3" src="/assets/gear_ref1.png?v=95" alt=""></div>
+<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=96" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>
+</body>
+</html>

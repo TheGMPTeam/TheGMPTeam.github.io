@@ -701,7 +701,7 @@
       var top=nx?(nx.offsetTop-70):0;
       try{window.scrollTo({top:top,left:0,behavior:REDUCE?'auto':'smooth'});}catch(e){window.scrollTo(0,top);}
     }
-    var chain=document.createElement('div');chain.id='vgchain';chain.setAttribute('aria-hidden','true');
+    var chain=document.getElementById('vgchain');
     // v72 (James 2026-11-17): photo-real assets. The right-edge scroller is
     // a seamless repeat-y photo chain (assets/chain.png); the corner
     // machines are real photo gears flood-keyed out of stock sheets
@@ -710,17 +710,15 @@
     // gears rotate locked to that travel -- main photo gears (~116px on
     // screen, r=58px) set the pitch, secondaries counter-rotate at the
     // screen-radius ratio.
-    chain.innerHTML='<div id="vgtrack"></div>';
-    document.body.appendChild(chain);
+    // v99: the rig markup (chain + frame + sprockets) now lives in the shared
+    // partial _partials/sidepanel.html, rendered into every page at build time.
+    // site.js only wires the existing in-page elements below.
     // v77: clean photo-real gears (pre-v76l assets), tangent-meshed. Top corner =
     // v79: top/bottom swapped. Top = 3-gear (bronze -> small -> ref1); bottom =
     // 5-gear meshed cluster (main -> dome -> small -> ref3 -> ref2). Chain drives
     // the big gear; each meshed neighbour counter-rotates at the inverse rim ratio.
-    document.body.insertAdjacentHTML('beforeend',
-      '<div id="vgrigframe" aria-hidden="true"></div>'+
-      '<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png?v=95" alt=""><img class="p2" src="/assets/gear_small.png?v=96" alt=""><img class="p3" src="/assets/gear_ref1.png?v=95" alt=""></div>'+
-      '<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=96" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>');
     var gT=document.querySelector('.vgsprocket.t'),gB=document.querySelector('.vgsprocket.b');
+    if(!chain||!gT||!gB)return; // rig markup comes from the shared partial; skip wiring if absent
     var gT1=gT.querySelector('.p1'),gT2=gT.querySelector('.p2'),gT3=gT.querySelector('.p3');
     var gB1=gB.querySelector('.p1'),gB2=gB.querySelector('.p2'),gB3=gB.querySelector('.p3'),gB4=gB.querySelector('.p4'),gB5=gB.querySelector('.p5');
     var CH=64; // chain tile period on screen (background-size: 64px)
