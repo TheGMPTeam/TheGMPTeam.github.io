@@ -52,11 +52,11 @@
           var mag=Math.abs(off);
           if(mag<=2){
             var sgn=off>0?1:-1;
-            // ring depth chosen so the rotated inner edge stays BEHIND the center plane:
-            // edgeZ = z + (W/2)*sin(rot) < 0  ->  -240+~180=-60, -420+~254=-166
-            var x=mag===1?46:82, z=mag===1?-240:-420, rot=mag===1?30:45;
+            // v92: spread the coverflow wider + face neighbors more forward so the side
+            // cards are clearly visible beside the center clip (was x46/82, rot30/45, op.55/.3).
+            var x=mag===1?74:122, z=mag===1?-150:-320, rot=mag===1?16:24;
             s.style.transform='translate3d('+(sgn*x)+'%,0,'+z+'px) rotateY('+(sgn*rot)+'deg)';
-            s.style.opacity=mag===1?'0.55':'0.3';
+            s.style.opacity=mag===1?'0.85':'0.5';
           } else {
             var sgn2=off>0?1:-1;
             s.style.transform='translate3d('+(sgn2*120)+'%,0,-400px) rotateY('+(sgn2*55)+'deg)';
