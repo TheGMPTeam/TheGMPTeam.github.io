@@ -49,7 +49,7 @@ h2 .idx{color:var(--blue);margin-right:12px}
    .dot (green, for its status pills) at equal specificity and later in the head. */
 footer .dot{background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
 @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
-.car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:720px;margin:0 auto;overflow:visible}
+.car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:540px;margin:0 auto;overflow:visible}
 /* v87: outtakes carousel is portrait (clips are 480x864, ~5:9). Height-driven to fill the
    vertical space; thumb fills the taller slide; at matching aspect, cover shows the full frame. */
 #ot-car{aspect-ratio:5/9;height:auto;flex:1 1 auto;min-height:0;max-width:92vw;max-height:100%;margin:8px auto;align-self:center}
