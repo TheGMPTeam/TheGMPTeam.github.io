@@ -717,8 +717,8 @@
     // 5-gear meshed cluster (main -> dome -> small -> ref3 -> ref2). Chain drives
     // the big gear; each meshed neighbour counter-rotates at the inverse rim ratio.
     document.body.insertAdjacentHTML('beforeend',
-      '<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png?v=95" alt=""><img class="p2" src="/assets/gear_small.png?v=95" alt=""><img class="p3" src="/assets/gear_ref1.png?v=95" alt=""></div>'+
-      '<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=95" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>');
+      '<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png?v=95" alt=""><img class="p2" src="/assets/gear_small.png?v=96" alt=""><img class="p3" src="/assets/gear_ref1.png?v=95" alt=""></div>'+
+      '<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=96" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>');
     var gT=document.querySelector('.vgsprocket.t'),gB=document.querySelector('.vgsprocket.b');
     var gT1=gT.querySelector('.p1'),gT2=gT.querySelector('.p2'),gT3=gT.querySelector('.p3');
     var gB1=gB.querySelector('.p1'),gB2=gB.querySelector('.p2'),gB3=gB.querySelector('.p3'),gB4=gB.querySelector('.p4'),gB5=gB.querySelector('.p5');
