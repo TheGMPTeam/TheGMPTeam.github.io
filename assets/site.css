@@ -94,6 +94,18 @@ body[data-vgclean] .back{margin-top:8px;align-self:center;text-align:center;max-
 body[data-vgclean] nav{background:rgba(6,10,16,.62)}
 body[data-vgclean] .slide .meta{background:rgba(8,12,18,.90)}
 body[data-vgclean] .slide .d{color:#eef4ff}
+/* v90: outtakes clip controls -- play/pause, seek with buffered load bar, time, mute */
+.vctrl{position:absolute;left:0;right:0;bottom:0;z-index:130;display:flex;align-items:center;gap:10px;
+  padding:8px 12px;background:rgba(6,10,16,.86);border-top:1px solid var(--line);font-family:inherit}
+.vc-play,.vc-mute{cursor:pointer;background:transparent;border:1px solid var(--line-hot);color:var(--cyan);
+  border-radius:6px;padding:5px 9px;font-family:inherit;font-size:.58rem;letter-spacing:.12em}
+.vc-play:hover,.vc-mute:hover{background:rgba(63,199,232,.12)}
+.vc-mute.on{color:var(--text);border-color:var(--line)}
+.vc-seek{position:relative;flex:1;height:8px;border-radius:5px;background:rgba(97,146,160,.25);cursor:pointer;overflow:hidden;touch-action:none}
+.vc-buf{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(97,146,160,.5)}
+.vc-prog{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--cyan)}
+.vc-time{color:var(--text);white-space:nowrap;font-size:.58rem;letter-spacing:.06em}
+body[data-vgclean] .slide .meta{bottom:38px}
 body[data-vgclean] .slide{border-color:rgba(97,146,160,.5)}
 body[data-vgclean] #ot-car{filter:drop-shadow(0 22px 40px rgba(0,0,0,.55))}
 body[data-vgclean] h2,body[data-vgclean] .sub,body[data-vgclean] .back,
