@@ -1334,13 +1334,22 @@
   })();
 })();
 
-// v149 (James): full-body walker stride sync. The #vgwalk element travels
-// left->right via CSS (vgWalkAcross). Reset the walk clip to frame 0 at each
-// crossing so the stride phase restarts in step with the travel.
+// v150 (James): full-body walker — one crossing, no loop. Travel duration is
+// locked to the clip's real duration so the robot reaches the far side exactly
+// when the clip ends, then movement stops (animation-play-state paused on ended).
 (function(){
   var w=document.getElementById('vgwalk'); if(!w) return;
   var v=w.querySelector('video'); if(!v) return;
-  v.loop=true; v.muted=true;
-  try{ var pr=v.play(); if(pr&&pr.catch)pr.catch(function(){}); }catch(e){}
-  w.addEventListener('animationiteration', function(){ try{ v.currentTime=0; }catch(e){} });
+  v.loop=false; v.muted=true;
+  function start(){
+    var d=v.duration;
+    if(!isFinite(d)||d<=0){ setTimeout(start,200); return; }
+    w.style.animation='none'; void w.offsetWidth;   // restart cleanly
+    w.style.animation='';                            // back to CSS (run once, forwards)
+    w.style.animationDuration=d+'s';                 // travel == clip length
+    w.style.animationPlayState='running';
+    try{ var p=v.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
+  }
+  if(v.readyState>=1) start(); else v.addEventListener('loadedmetadata', start);
+  v.addEventListener('ended', function(){ w.style.animationPlayState='paused'; });
 })();
