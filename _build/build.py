@@ -29,7 +29,8 @@ def r_nav(p):
 def r_foot(p):
     c=cfg[p]
     credit='\n  <span style="font-size:11px;opacity:.55">Chain imagery: Vecteezy asset 45838195.</span>' if c["credit"] else ""
-    return foot.replace("{{CREDITLINE}}",credit)
+    note=c.get("note","")
+    return foot.replace("{{CREDITLINE}}",credit).replace("{{NOTE}}",note)
 
 os.makedirs(OUT,exist_ok=True)
 for p in PAGES:
