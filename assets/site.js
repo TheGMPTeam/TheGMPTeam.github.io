@@ -107,6 +107,7 @@
     });
     slides.forEach(function(s){
       s.addEventListener('mouseenter',function(){
+        if(CLEAN) return; // v85: no hover-to-play on outtakes (clips autoplay)
         if(slides[cur]!==s) return;
         var h=s.querySelector('.thumb');
         if(!h||h.querySelector('iframe')||h.querySelector('video')) return;
@@ -130,7 +131,7 @@
         h.appendChild(b);
       });
     });
-    car.addEventListener('mouseleave',stop);
+    if(!CLEAN) car.addEventListener('mouseleave',stop); // v85: no hover-stop on outtakes
     // touch swipe
     var tx=null;
     car.addEventListener('touchstart',function(e){ tx=e.touches[0].clientX; },{passive:true});

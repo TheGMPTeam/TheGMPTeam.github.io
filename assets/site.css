@@ -62,6 +62,9 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .car-arrow{position:absolute;top:42%;transform:translateY(-50%);z-index:200;width:46px;height:46px;border-radius:50%;
   background:rgba(8,11,18,.78);border:1px solid var(--line);color:var(--cyan);font-size:1.3rem;line-height:1;cursor:pointer;transition:.2s}
 .car-arrow:hover{border-color:var(--line-hot);box-shadow:0 0 18px rgba(0,217,255,.25)}
+/* v85: outtakes (data-vgclean) — remove hover effects */
+body[data-vgclean] .car-arrow:hover{border-color:var(--line);box-shadow:none}
+body[data-vgclean] nav .links a:hover{color:var(--muted)}
 .car-arrow.left{left:14px}
 .car-arrow.right{right:14px}
 .car-arrow.hide{visibility:hidden}
