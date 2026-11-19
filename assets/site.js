@@ -1333,3 +1333,14 @@
     tryNext();
   })();
 })();
+
+// v149 (James): full-body walker stride sync. The #vgwalk element travels
+// left->right via CSS (vgWalkAcross). Reset the walk clip to frame 0 at each
+// crossing so the stride phase restarts in step with the travel.
+(function(){
+  var w=document.getElementById('vgwalk'); if(!w) return;
+  var v=w.querySelector('video'); if(!v) return;
+  v.loop=true; v.muted=true;
+  try{ var pr=v.play(); if(pr&&pr.catch)pr.catch(function(){}); }catch(e){}
+  w.addEventListener('animationiteration', function(){ try{ v.currentTime=0; }catch(e){} });
+})();
