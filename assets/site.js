@@ -1335,10 +1335,13 @@
 })();
 
 // v151 (James): full-body walker — crossing driven off the video's own clock.
-// The element is parked off-screen LEFT (CSS transform). On load we start the
-// clip (no autoplay/loop) and, each animation frame, set the horizontal
-// position proportional to video.currentTime/duration. When the clip ends the
-// robot stops at the far side. Walk cycle and travel share one clock => in step.
+// The element is parked off-screen LEFT (CSS transform). We start the clip
+// (no autoplay/loop) and, each animation frame, set the horizontal position
+// proportional to video.currentTime/duration. When the clip ends the robot
+// stops at the far side. Walk cycle and travel share one clock => in step.
+// v152 (James): do NOT load or start until AFTER the splash/enter screen.
+// preload=none on the tag; begin() fires on the vg:enter event (or immediately
+// on inner pages, which have no splash and are already entered).
 (function(){
   var w=document.getElementById('vgwalk'); if(!w) return;
   var v=w.querySelector('video'); if(!v) return;
@@ -1349,15 +1352,17 @@
     var d=v.duration||0, t=(d>0)?Math.min(1, v.currentTime/d):0, a=to();
     w.style.transform='translateX('+(FROM+(a-FROM)*t)+'px)';
   }
-  function tick(){ pos(); if(!v.ended && !v.paused && !v.ended) requestAnimationFrame(tick); }
+  function tick(){ pos(); if(!v.ended && !v.paused) requestAnimationFrame(tick); }
   var started=false;
-  function start(){
+  function begin(){
     if(started) return; started=true;
+    v.load();                 // preload=none: fetch only now, after enter
     pos();
     try{ var p=v.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
     requestAnimationFrame(tick);
   }
-  if(v.readyState>=2) start(); else v.addEventListener('loadedmetadata', start);
+  if(window.__vgEntered) begin();
+  else document.addEventListener('vg:enter', begin, {once:true});
   v.addEventListener('ended', function(){ pos(); });
   window.addEventListener('resize', pos);
 })();
