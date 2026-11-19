@@ -503,4 +503,4 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
    splash; on vg:enter site.js loads it and walks it rightward from here. */
 #vgwalk{position:fixed;bottom:14px;left:0;width:190px;z-index:40;pointer-events:none;
   transform:translateX(12px)}
-#vgwalk video{width:100%;height:auto;display:block}
+#vgwalk img{width:100%;height:auto;display:block}

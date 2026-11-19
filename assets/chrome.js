@@ -48,11 +48,10 @@
     + '</div></footer>';
 
   // v147 (James test): standalone full-body mascot walker clip, walks in place.
-  // v151: no autoplay/loop — site.js starts it and drives the crossing off the
-  // video's own clock so the walk and the travel can never desync.
-  // v152 (James): preload=none — the clip must not load or start until AFTER the
-  // splash/enter screen (site.js starts it on the vg:enter event).
-  var WALK = '<div id="vgwalk" aria-hidden="true"><video muted playsinline preload="none" src="/assets/mascot/walk_side.webm?v=147"></video></div>';
+  // v156 (James): TRUE ALPHA — the clip is now an animated WebP (RGBA, per-frame
+  // background removed) shown as an <img>, so there is no near-black box. src is
+  // deferred via data-src and set by site.js only after the splash/enter.
+  var WALK = '<div id="vgwalk" aria-hidden="true"><img id="vgwalkimg" alt="" data-src="/assets/mascot/walk_alpha.webp?v=156"></div>';
 
   var b = document.body;
   b.insertAdjacentHTML("afterbegin", NAV);

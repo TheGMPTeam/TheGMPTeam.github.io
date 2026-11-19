@@ -1334,43 +1334,31 @@
   })();
 })();
 
-// v151 (James): full-body walker — crossing driven off the video's own clock.
-// The element is parked off-screen LEFT (CSS transform). We start the clip
-// (no autoplay/loop) and, each animation frame, set the horizontal position
-// proportional to video.currentTime/duration. When the clip ends the robot
-// stops at the far side. Walk cycle and travel share one clock => in step.
-// v152 (James): do NOT load or start until AFTER the splash/enter screen.
-// preload=none on the tag; begin() fires on the vg:enter event (or immediately
-// on inner pages, which have no splash and are already entered).
+// v156 (James): full-body walker is now an animated WebP <img> (true alpha).
+// Crossing is driven off a wall-clock timer (the <img> has no currentTime): on
+// vg:enter we set the deferred src (so it loads only after the splash) and
+// animate the horizontal position over the clip's nominal duration. The clip
+// opens by turning to the side, so travel is held until WSTART, then advances
+// to the right and stops at the end (webp loop=1 plays once, holds last frame).
 (function(){
   var w=document.getElementById('vgwalk'); if(!w) return;
-  var v=w.querySelector('video'); if(!v) return;
-  v.loop=false; v.muted=true;
-  var FROM=12;   // left edge, IN VIEW (v153) — not parked off-screen
-  var WSTART=1.5; // v155 (James): the clip opens by turning to the side; walking
-                  // begins ~1.5s in (profile + stride by ~1.75s). Hold the robot
-                  // parked at the left until the walk starts, then travel.
+  var img=document.getElementById('vgwalkimg'); if(!img) return;
+  var FROM=12, WSTART=1500, DUR=5208;   // ms; 124 frames @ 42ms; walk starts ~1.5s
+  var started=false, lastEl=0;
   function to(){ return window.innerWidth - 250; }   // stop short of the gen rail
-  function pos(){
-    var d=v.duration||0;
-    var t=(d>WSTART)?Math.min(1, Math.max(0, v.currentTime-WSTART)/(d-WSTART)):0;
-    var a=to();
+  function setPos(el){
+    var t=(el>WSTART)?Math.min(1,(el-WSTART)/(DUR-WSTART)):0, a=to();
     w.style.transform='translateX('+(FROM+(a-FROM)*t)+'px)';
   }
-  function tick(){ pos(); if(!v.ended && !v.paused) requestAnimationFrame(tick); }
-  var started=false;
   function begin(){
     if(started) return; started=true;
-    v.load();                 // preload=none: fetch only now, after enter
-    pos();                    // stay parked at the left until it's actually walking
-    try{ var p=v.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
-    // v154 (James): don't start the horizontal movement until the clip is
-    // actually rendering frames (the 'playing' event) — i.e. once the walk has
-    // begun — so the robot never slides before its legs start stepping.
-    v.addEventListener('playing', function(){ requestAnimationFrame(tick); }, {once:true});
+    setPos(0);
+    img.src=img.dataset.src;            // load only now, after enter
+    var t0=performance.now();
+    (function loop(){ lastEl=performance.now()-t0; setPos(lastEl);
+      if(lastEl<DUR) requestAnimationFrame(loop); else setPos(DUR); })();
   }
   if(window.__vgEntered) begin();
   else document.addEventListener('vg:enter', begin, {once:true});
-  v.addEventListener('ended', function(){ pos(); });
-  window.addEventListener('resize', pos);
+  window.addEventListener('resize', function(){ if(started) setPos(lastEl); });
 })();
