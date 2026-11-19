@@ -73,8 +73,8 @@
       });
       dots.forEach(function(d,i){ d.classList.toggle('on',i===cur); });
       var l=car.querySelector('.car-arrow.left'), r=car.querySelector('.car-arrow.right');
-      if(l) l.classList.toggle('hide',cur===0);
-      if(r) r.classList.toggle('hide',cur===slides.length-1);
+      if(l) l.classList.remove('hide');
+      if(r) r.classList.remove('hide');
       stop();
       // v76m (James): outtakes reel -- jointed clips autoplay UNMUTED and the
       // carousel auto-advances when a clip ends. The splash click is the user
@@ -135,7 +135,7 @@
         setTimeout(function(){ if(slides[cur]===s) go(cur+1<slides.length?cur+1:0); },500);
       });
     }
-    function go(i){ cur=Math.max(0,Math.min(slides.length-1,i)); render(); }
+    function go(i){ var n=slides.length; if(!n)return; cur=((i%n)+n)%n; render(); }
     car.querySelectorAll('.car-arrow').forEach(function(a){
       a.addEventListener('click',function(e){ e.stopPropagation(); go(cur+(a.dataset.dir==='next'?1:-1)); });
     });
