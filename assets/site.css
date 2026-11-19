@@ -495,6 +495,6 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
 .vg-sway-off{animation:none!important}
 
 /* v147 (James test): full-body mascot walker, walks in place on the page */
-#vgwalk{position:fixed;right:272px;bottom:14px;width:190px;z-index:40;pointer-events:none;
-  filter:drop-shadow(0 0 18px rgba(0,255,150,.18))}
+/* v148: no glow filter, no box — clean; transparency comes from the clip itself */
+#vgwalk{position:fixed;right:272px;bottom:14px;width:190px;z-index:40;pointer-events:none}
 #vgwalk video{width:100%;height:auto;display:block}
