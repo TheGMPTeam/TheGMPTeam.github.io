@@ -45,6 +45,9 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .status{display:inline-flex;gap:12px;align-items:center;margin-top:26px;padding:9px 18px;border:1px solid var(--line);
   border-radius:999px;font-size:.7rem;letter-spacing:.12em;color:var(--muted);background:rgba(16,24,39,.6)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
+/* footer dot must stay amber even on status.html, whose inline CSS redefines
+   .dot (green, for its status pills) at equal specificity and later in the head. */
+footer .dot{background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
 @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
 .car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:720px;margin:0 auto;overflow:visible}
 /* v87: outtakes carousel is portrait (clips are 480x864, ~5:9). Height-driven to fill the
