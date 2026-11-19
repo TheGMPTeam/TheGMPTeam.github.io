@@ -274,7 +274,7 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 @media(prefers-reduced-motion: reduce){
   html,body{scrollbar-width:auto;-ms-overflow-style:auto}
   ::-webkit-scrollbar{width:10px;height:10px;display:block}
-  #vgchain,.vgsprocket{display:none!important}
+  #vgchain,.vgsprocket,#vgrigframe{display:none!important}
 }
 #vgchain{position:fixed;right:10px;top:0;height:100vh;width:64px;z-index:1;cursor:grab;touch-action:none;background:url('/assets/chain.png') repeat-y left top;background-size:64px 64px;filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 6px rgba(0,217,255,.35))}
 #vgchain:active{cursor:grabbing}
@@ -298,6 +298,16 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 .vgsprocket.b .p5{left:240px;top:84px;width:100px}
 #vgchain.vg-sync{filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 10px rgba(0,217,255,.5))}
 #vgchain.vg-tug{transform:translateY(9px);transition:transform .18s}
+/* v97 (James 2026-11-19): cyberpunk HUD frame around the right-edge chain+gear
+   side panel. Neon cyan inner rail + scan tint + L-corner brackets. Decorative,
+   pointer-events:none, sits behind the chain (z1) and above the gears (z-1). */
+#vgrigframe{position:fixed;right:0;top:0;height:100vh;width:250px;z-index:0;pointer-events:none;
+ border:1px solid rgba(0,217,255,.18);border-right:none;border-left:1px solid rgba(0,217,255,.45);
+ background:linear-gradient(90deg,rgba(0,217,255,0) 0%,rgba(0,217,255,.02) 55%,rgba(0,217,255,.06) 100%),repeating-linear-gradient(0deg,rgba(0,217,255,.03) 0 1px,rgba(0,0,0,0) 1px 6px);
+ box-shadow:inset -18px 0 55px rgba(0,217,255,.06),inset 1px 0 0 rgba(0,217,255,.5)}
+#vgrigframe::before{content:'';position:absolute;left:-2px;top:10px;width:24px;height:24px;border-left:2px solid #00d9ff;border-top:2px solid #00d9ff;box-shadow:0 0 9px rgba(0,217,255,.75)}
+#vgrigframe::after{content:'';position:absolute;left:-2px;bottom:10px;width:24px;height:24px;border-left:2px solid #00d9ff;border-bottom:2px solid #00d9ff;box-shadow:0 0 9px rgba(0,217,255,.75)}
+@media (max-width:720px){#vgrigframe{width:150px}}
 
 /* v39: mid-page portal event + smoke puff */
 #vgportal{position:fixed;left:24px;bottom:96px;width:230px;height:230px;border-radius:50%;overflow:hidden;z-index:1160;border:1px solid rgba(0,217,255,.5);box-shadow:0 0 34px rgba(0,217,255,.5),0 0 90px rgba(0,217,255,.25);background:linear-gradient(180deg,#0a0d18,#01030a);transform:scale(0);transition:transform .5s cubic-bezier(.2,1.4,.3,1),opacity .45s}
