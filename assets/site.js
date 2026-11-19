@@ -1347,9 +1347,14 @@
   var v=w.querySelector('video'); if(!v) return;
   v.loop=false; v.muted=true;
   var FROM=12;   // left edge, IN VIEW (v153) — not parked off-screen
+  var WSTART=1.5; // v155 (James): the clip opens by turning to the side; walking
+                  // begins ~1.5s in (profile + stride by ~1.75s). Hold the robot
+                  // parked at the left until the walk starts, then travel.
   function to(){ return window.innerWidth - 250; }   // stop short of the gen rail
   function pos(){
-    var d=v.duration||0, t=(d>0)?Math.min(1, v.currentTime/d):0, a=to();
+    var d=v.duration||0;
+    var t=(d>WSTART)?Math.min(1, Math.max(0, v.currentTime-WSTART)/(d-WSTART)):0;
+    var a=to();
     w.style.transform='translateX('+(FROM+(a-FROM)*t)+'px)';
   }
   function tick(){ pos(); if(!v.ended && !v.paused) requestAnimationFrame(tick); }
