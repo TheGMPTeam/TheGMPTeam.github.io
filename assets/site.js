@@ -25,17 +25,27 @@
   // 3D perspective coverflow: active video dead-center, neighbors angled back on Z.
   // Hover on the current slide injects a muted autoplaying YouTube embed; removed on leave/slide change.
   document.querySelectorAll('.car').forEach(function(car){
+    var logical=Array.prototype.slice.call(car.querySelectorAll('.slide'));
+    var L=logical.length;
+    // v114 (James): no gaps -- if fewer than 3 slides, clone them so a card
+    // always sits on BOTH sides of the current one (duplicate the neighbor).
+    var slidesEl=car.querySelector('.slides')||car;
+    if(L>0 && L<3){
+      var need=3-L;
+      for(var c=0;c<need;c++){ logical.forEach(function(s){ var cl=s.cloneNode(true); cl.dataset.clone='1'; slidesEl.appendChild(cl); }); }
+    }
     var slides=Array.prototype.slice.call(car.querySelectorAll('.slide'));
+    var N=slides.length;
     var dotsWrap=document.querySelector('.dots[data-car="'+car.id+'"]');
     var cur=0;
-    slides.forEach(function(s,i){
+    for(var k=0;k<L;k++){
       var b=document.createElement('button');
       b.className='dot-i'; b.type='button';
-      b.setAttribute('aria-label','go to video '+(i+1));
-      b.addEventListener('click',function(){ go(i); });
+      b.setAttribute('aria-label','go to video '+(k+1));
+      (function(idx){ b.addEventListener('click',function(){ go(idx); }); })(k);
       if(dotsWrap) dotsWrap.appendChild(b);
-      var th=s.querySelector('.thumb'); if(th&&s.dataset.local){ th.style.backgroundImage="url('"+s.dataset.local.replace(/\.mp4$/,'_thumb.jpg')+"')"; }
-    });
+      var th=slides[k].querySelector('.thumb'); if(th&&slides[k].dataset.local){ th.style.backgroundImage="url('"+slides[k].dataset.local.replace(/\.mp4$/,'_thumb.jpg')+"')"; }
+    }
     var dots=dotsWrap?Array.prototype.slice.call(dotsWrap.children):[];
     function stop(){
       var f=car.querySelector('.slide .thumb iframe');
@@ -50,6 +60,7 @@
     function render(){
       slides.forEach(function(s,i){
         var off=i-cur;
+        if(off>N/2) off-=N; else if(off<-N/2) off+=N;
         if(off===0){
           s.style.transform='translate3d(0,0,0)';
           s.style.opacity='1';
@@ -71,7 +82,7 @@
         s.style.pointerEvents=off===0?'auto':'none';
         s.classList.toggle('current',off===0);
       });
-      dots.forEach(function(d,i){ d.classList.toggle('on',i===cur); });
+      dots.forEach(function(d,i){ d.classList.toggle('on',(i%L)===(cur%L)); });
       var l=car.querySelector('.car-arrow.left'), r=car.querySelector('.car-arrow.right');
       if(l) l.classList.remove('hide');
       if(r) r.classList.remove('hide');
@@ -132,7 +143,7 @@
       buildControls(s, v);
       try{ var p=v.play(); if(p&&p.catch)p.catch(function(){ v.muted=true; var p2=v.play(); if(p2&&p2.catch)p2.catch(function(){}); }); }catch(e){}
       v.addEventListener('ended',function(){
-        setTimeout(function(){ if(slides[cur]===s) go(cur+1<slides.length?cur+1:0); },500);
+        setTimeout(function(){ if(slides[cur]===s) go(cur+1); },500);
       });
     }
     function go(i){ var n=slides.length; if(!n)return; cur=((i%n)+n)%n; render(); }
