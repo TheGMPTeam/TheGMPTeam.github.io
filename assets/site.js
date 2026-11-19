@@ -673,16 +673,15 @@
     chain.innerHTML='<div id="vgtrack"></div>';
     document.body.appendChild(chain);
     // v77: clean photo-real gears (pre-v76l assets), tangent-meshed. Top corner =
-    // v78: photo-real gears + user's keyed gear refs. Top = 5-gear meshed cluster
-    // (main -> dome -> small -> ref3 -> ref2); bottom = 3-gear (bronze -> small ->
-    // ref1). Chain drives the big gear; each meshed neighbour counter-rotates at
-    // the inverse rim ratio. Scroll down = forward.
+    // v79: top/bottom swapped. Top = 3-gear (bronze -> small -> ref1); bottom =
+    // 5-gear meshed cluster (main -> dome -> small -> ref3 -> ref2). Chain drives
+    // the big gear; each meshed neighbour counter-rotates at the inverse rim ratio.
     document.body.insertAdjacentHTML('beforeend',
-      '<div class="vgsprocket t"><img class="p1" src="/assets/gear_main.png" alt=""><img class="p2" src="/assets/gear_dome.png" alt=""><img class="p3" src="/assets/gear_small.png" alt=""><img class="p4" src="/assets/gear_ref3.png" alt=""><img class="p5" src="/assets/gear_ref2.png" alt=""></div>'+
-      '<div class="vgsprocket b"><img class="p1" src="/assets/gear_bronze.png" alt=""><img class="p2" src="/assets/gear_small.png" alt=""><img class="p3" src="/assets/gear_ref1.png" alt=""></div>');
+      '<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png" alt=""><img class="p2" src="/assets/gear_small.png" alt=""><img class="p3" src="/assets/gear_ref1.png" alt=""></div>'+
+      '<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png" alt=""><img class="p2" src="/assets/gear_dome.png" alt=""><img class="p3" src="/assets/gear_small.png" alt=""><img class="p4" src="/assets/gear_ref3.png" alt=""><img class="p5" src="/assets/gear_ref2.png" alt=""></div>');
     var gT=document.querySelector('.vgsprocket.t'),gB=document.querySelector('.vgsprocket.b');
-    var gT1=gT.querySelector('.p1'),gT2=gT.querySelector('.p2'),gT3=gT.querySelector('.p3'),gT4=gT.querySelector('.p4'),gT5=gT.querySelector('.p5');
-    var gB1=gB.querySelector('.p1'),gB2=gB.querySelector('.p2'),gB3=gB.querySelector('.p3');
+    var gT1=gT.querySelector('.p1'),gT2=gT.querySelector('.p2'),gT3=gT.querySelector('.p3');
+    var gB1=gB.querySelector('.p1'),gB2=gB.querySelector('.p2'),gB3=gB.querySelector('.p3'),gB4=gB.querySelector('.p4'),gB5=gB.querySelector('.p5');
     var CH=64; // chain tile period on screen (background-size: 64px)
     var lastTug=0;
     var K=360/(2*Math.PI*58); // 1px of chain travel = K deg of main gear (r=58px)
@@ -705,14 +704,14 @@
       var m=((pos%CH)+CH)%CH;
       chain.style.backgroundPosition='50% '+(-m)+'px'; // chain rides the page
       var a=pos*K; // gears locked to chain travel; meshed gears counter-rotate
-      gT1.style.transform='rotate('+a+'deg)';
-      gT2.style.transform='rotate('+(-a*1.2609)+'deg)';  // dome meshes main
-      gT3.style.transform='rotate('+( a*1.4500)+'deg)';  // small meshes dome
-      gT4.style.transform='rotate('+(-a*1.0545)+'deg)';  // ref3 meshes small
-      gT5.style.transform='rotate('+( a*1.1600)+'deg)';  // ref2 meshes ref3
-      gB1.style.transform='rotate('+a+'deg)';
-      gB2.style.transform='rotate('+(-a*1.4500)+'deg)';  // small meshes bronze
-      gB3.style.transform='rotate('+( a*1.8125)+'deg)';  // ref1 meshes small
+      gT1.style.transform='rotate('+a+'deg)';            // bronze (top)
+      gT2.style.transform='rotate('+(-a*1.4500)+'deg)';  // small meshes bronze
+      gT3.style.transform='rotate('+( a*1.8125)+'deg)';  // ref1 meshes small
+      gB1.style.transform='rotate('+a+'deg)';            // main (bottom)
+      gB2.style.transform='rotate('+(-a*1.2609)+'deg)';  // dome meshes main
+      gB3.style.transform='rotate('+( a*1.4500)+'deg)';  // small meshes dome
+      gB4.style.transform='rotate('+(-a*1.0545)+'deg)';  // ref3 meshes small
+      gB5.style.transform='rotate('+( a*1.1600)+'deg)';  // ref2 meshes ref3
     }
     // v70 clip-sync: while the pull-chain action clip (action2.mp4) is the
     // live port clip, the page rig reproduces the ON-VIDEO chain pulls at the

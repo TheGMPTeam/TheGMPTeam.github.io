@@ -230,20 +230,20 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 #vgchain:hover::after,#vgchain.vg-tug::after{opacity:.95}
 #vgtrack{position:absolute;inset:0;pointer-events:none}
 .vgsprocket{position:fixed;z-index:-2;opacity:.55;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.85))}
-.vgsprocket.t{top:-6px;right:-18px;width:340px;height:198px}
-.vgsprocket.b{bottom:-6px;right:-18px;width:191px;height:172px}
+.vgsprocket.t{top:-6px;right:-18px;width:191px;height:172px}
+.vgsprocket.b{bottom:-6px;right:-18px;width:340px;height:198px}
 .vgsprocket img{position:absolute;transform-origin:50% 50%;transition:transform .3s linear;will-change:transform}
-/* v78: photo-real gears + user's keyed gear refs, tangent-meshed. Top = 5-gear
-   cluster (main->dome->small->ref3->ref2), bottom = 3-gear (bronze->small->ref1).
-   Each meshed neighbour counter-rotates at the inverse rim ratio. */
-.vgsprocket.t .p1{left:0px;top:82px;width:116px}
-.vgsprocket.t .p2{left:74px;top:16px;width:92px}
-.vgsprocket.t .p3{left:131px;top:86px;width:80px}
-.vgsprocket.t .p4{left:173px;top:0px;width:110px}
-.vgsprocket.t .p5{left:240px;top:84px;width:100px}
-.vgsprocket.b .p1{left:0px;top:56px;width:116px}
-.vgsprocket.b .p2{left:76px;top:0px;width:80px}
-.vgsprocket.b .p3{left:127px;top:61px;width:64px}
+/* v79: top/bottom swapped. Top = 3-gear (bronze->small->ref1), bottom = 5-gear
+   cluster (main->dome->small->ref3->ref2). Tangent-meshed; each meshed neighbour
+   counter-rotates at the inverse rim ratio. */
+.vgsprocket.t .p1{left:0px;top:56px;width:116px}
+.vgsprocket.t .p2{left:76px;top:0px;width:80px}
+.vgsprocket.t .p3{left:127px;top:61px;width:64px}
+.vgsprocket.b .p1{left:0px;top:82px;width:116px}
+.vgsprocket.b .p2{left:74px;top:16px;width:92px}
+.vgsprocket.b .p3{left:131px;top:86px;width:80px}
+.vgsprocket.b .p4{left:173px;top:0px;width:110px}
+.vgsprocket.b .p5{left:240px;top:84px;width:100px}
 #vgchain.vg-sync{filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 10px rgba(0,217,255,.5))}
 #vgchain.vg-tug{transform:translateY(9px);transition:transform .18s}
 
