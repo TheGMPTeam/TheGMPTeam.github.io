@@ -328,7 +328,7 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
    cleanly because the raster pieces are organic machine parts, not flat bars.
    Full-height conduit rails run the FULL height on BOTH edges; caps sit flush
    top/bottom; brackets sit flush at the four corners. */
-.vgen-rail{top:66px;height:calc(100vh - 132px);width:40px;object-fit:cover;object-position:center}
+.vgen-rail{top:66px;height:calc(100vh - 70px);width:40px;object-fit:cover;object-position:center}
 .vgen-rail.left{left:6px}
 .vgen-rail.right{right:6px;transform:scaleX(-1)}
 /* v126 (James): keep the frame full-height (full to window); move ONLY the top
@@ -341,13 +341,14 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 .vgen-bolt.tr{top:64px;right:4px;transform:scaleX(-1)}
 .vgen-bolt.bl{bottom:4px;left:4px;transform:scaleY(-1)}
 .vgen-bolt.br{bottom:4px;right:4px;transform:scale(-1,-1)}
-/* v127 (James): projector beam -- the top cap reads as projecting/holding the
-   mascot. A cyan cone fans up from a glow pool at the cap, IN FRONT of the
-   mascot (sibling of #vgpanel so it clears the mascot's z:60). Fades in with the
-   panel on vg-entered; subtle shimmer while on. */
-#vgenbeam{position:fixed;right:0;top:0;width:250px;height:100vh;z-index:61;pointer-events:none;opacity:0}
-#vgenbeam::before{content:'';position:absolute;left:50%;top:104px;transform:translateX(-50%);width:262px;height:190px;background:linear-gradient(to top, rgba(0,217,255,.85), rgba(0,217,255,.42) 55%, rgba(0,217,255,.1) 86%, rgba(0,217,255,0));clip-path:polygon(35% 100%,65% 100%,99% 0,1% 0);filter:blur(2px);mix-blend-mode:screen;animation:vgBeamShim 2.4s ease-in-out infinite}
-#vgenbeam::after{content:'';position:absolute;left:50%;top:280px;transform:translateX(-50%);width:150px;height:40px;border-radius:50%;background:radial-gradient(ellipse at center, rgba(0,217,255,.95), rgba(0,217,255,0) 72%);filter:blur(5px);animation:vgBeamShim 2.4s ease-in-out infinite}
+/* v127/v128 (James): projector beam -- the cap's glowing LENS projects the
+   mascot. A cyan cone rises from the lens (cap center ~y352) up behind the
+   mascot, with the mascot circle kept ON TOP (beam z:55 < mascot z:60). Sibling
+   of #vgpanel so it clears the panel's z:1 stacking context; fades in on
+   vg-entered; shimmer while on. */
+#vgenbeam{position:fixed;right:0;top:0;width:250px;height:100vh;z-index:55;pointer-events:none;opacity:0}
+#vgenbeam::before{content:'';position:absolute;left:50%;top:112px;transform:translateX(-50%);width:262px;height:245px;background:linear-gradient(to top, rgba(0,217,255,.85), rgba(0,217,255,.42) 55%, rgba(0,217,255,.1) 86%, rgba(0,217,255,0));clip-path:polygon(35% 100%,65% 100%,99% 0,1% 0);filter:blur(2px);mix-blend-mode:screen;animation:vgBeamShim 2.4s ease-in-out infinite}
+#vgenbeam::after{content:'';position:absolute;left:50%;top:330px;transform:translateX(-50%);width:150px;height:40px;border-radius:50%;background:radial-gradient(ellipse at center, rgba(0,217,255,.95), rgba(0,217,255,0) 72%);filter:blur(5px);animation:vgBeamShim 2.4s ease-in-out infinite}
 @keyframes vgBeamShim{0%,100%{opacity:.6}50%{opacity:1}}
 @keyframes vgBeamIn{from{opacity:0}to{opacity:1}}
 body.vg-entered #vgenbeam{animation:vgBeamIn .6s ease .15s forwards}
