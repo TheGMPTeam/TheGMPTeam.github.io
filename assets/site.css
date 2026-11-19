@@ -496,15 +496,10 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
 
 /* v147 (James test): full-body mascot walker, walks in place on the page */
 /* v148: no glow filter, no box — clean; transparency comes from the clip itself */
-/* v149 (James): walker enters off-screen LEFT and walks rightward across the
-   content area (stopping short of the generator rail).
-   v150 (James): NO loop — one crossing per clip. The travel duration is set by
-   site.js to the video's real duration and the walk stops when the clip ends
-   (animation runs once, fill forwards; play-state paused until the clip starts). */
+/* v151 (James): the crossing is driven by site.js off the video's own clock
+   (rAF synced to currentTime), so it can't desync. Element starts parked
+   off-screen LEFT via the initial transform below; JS moves it right as the
+   clip plays and it stops when the clip ends. */
 #vgwalk{position:fixed;bottom:14px;left:0;width:190px;z-index:40;pointer-events:none;
-  animation:vgWalkAcross 5.24s linear 1 forwards; animation-play-state:paused}
+  transform:translateX(-220px)}
 #vgwalk video{width:100%;height:auto;display:block}
-@keyframes vgWalkAcross{
-  from{transform:translateX(-220px)}
-  to{transform:translateX(calc(100vw - 250px))}
-}

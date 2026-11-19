@@ -1334,22 +1334,30 @@
   })();
 })();
 
-// v150 (James): full-body walker — one crossing, no loop. Travel duration is
-// locked to the clip's real duration so the robot reaches the far side exactly
-// when the clip ends, then movement stops (animation-play-state paused on ended).
+// v151 (James): full-body walker — crossing driven off the video's own clock.
+// The element is parked off-screen LEFT (CSS transform). On load we start the
+// clip (no autoplay/loop) and, each animation frame, set the horizontal
+// position proportional to video.currentTime/duration. When the clip ends the
+// robot stops at the far side. Walk cycle and travel share one clock => in step.
 (function(){
   var w=document.getElementById('vgwalk'); if(!w) return;
   var v=w.querySelector('video'); if(!v) return;
   v.loop=false; v.muted=true;
-  function start(){
-    var d=v.duration;
-    if(!isFinite(d)||d<=0){ setTimeout(start,200); return; }
-    w.style.animation='none'; void w.offsetWidth;   // restart cleanly
-    w.style.animation='';                            // back to CSS (run once, forwards)
-    w.style.animationDuration=d+'s';                 // travel == clip length
-    w.style.animationPlayState='running';
-    try{ var p=v.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
+  var FROM=-220;
+  function to(){ return window.innerWidth - 250; }   // stop short of the gen rail
+  function pos(){
+    var d=v.duration||0, t=(d>0)?Math.min(1, v.currentTime/d):0, a=to();
+    w.style.transform='translateX('+(FROM+(a-FROM)*t)+'px)';
   }
-  if(v.readyState>=1) start(); else v.addEventListener('loadedmetadata', start);
-  v.addEventListener('ended', function(){ w.style.animationPlayState='paused'; });
+  function tick(){ pos(); if(!v.ended && !v.paused && !v.ended) requestAnimationFrame(tick); }
+  var started=false;
+  function start(){
+    if(started) return; started=true;
+    pos();
+    try{ var p=v.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
+    requestAnimationFrame(tick);
+  }
+  if(v.readyState>=2) start(); else v.addEventListener('loadedmetadata', start);
+  v.addEventListener('ended', function(){ pos(); });
+  window.addEventListener('resize', pos);
 })();

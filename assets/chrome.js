@@ -48,7 +48,9 @@
     + '</div></footer>';
 
   // v147 (James test): standalone full-body mascot walker clip, walks in place.
-  var WALK = '<div id="vgwalk" aria-hidden="true"><video autoplay loop muted playsinline preload="auto" src="/assets/mascot/walk_side.webm?v=147"></video></div>';
+  // v151: no autoplay/loop — site.js starts it and drives the crossing off the
+  // video's own clock so the walk and the travel can never desync.
+  var WALK = '<div id="vgwalk" aria-hidden="true"><video muted playsinline preload="auto" src="/assets/mascot/walk_side.webm?v=147"></video></div>';
 
   var b = document.body;
   b.insertAdjacentHTML("afterbegin", NAV);
