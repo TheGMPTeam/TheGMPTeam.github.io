@@ -49,7 +49,7 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:720px;margin:0 auto;overflow:visible}
 /* v87: outtakes carousel is portrait (clips are 480x864, ~5:9). Height-driven to fill the
    vertical space; thumb fills the taller slide; at matching aspect, cover shows the full frame. */
-#ot-car{aspect-ratio:5/9;height:min(82vh,820px);width:auto;max-width:92vw;margin:0 auto}
+#ot-car{aspect-ratio:5/9;height:auto;flex:1 1 auto;min-height:0;max-width:92vw;max-height:100%;margin:8px auto;align-self:center}
 #ot-car .thumb{aspect-ratio:auto;height:100%}
 .slides{display:contents}
 .slide{position:absolute;inset:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel2);
@@ -73,21 +73,33 @@ body[data-vgclean] .grid-bg{display:none}
 /* v88: outtakes palette harmonized to the bg photo (slate/teal) + readability scrim.
    Photo mean-lum ~70 with neon to 200, so light text needs a dark veil + shadow to stay legible. */
 body[data-vgclean]{
-  --text:#eef4ff; --muted:#c2cfe0;
+  --text:#f3f7ff; --muted:#d3ddea;
   --cyan:#3fc7e8; --blue:#2c708e;
   --line:rgba(97,146,160,.30); --line-hot:rgba(63,199,232,.55);
 }
 body[data-vgclean]::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(6,10,16,.74),rgba(6,10,16,.5) 42%,rgba(6,10,16,.80))}
-body[data-vgclean] section{position:relative;z-index:1}
+  background:linear-gradient(180deg,rgba(6,10,16,.88),rgba(6,10,16,.74) 45%,rgba(6,10,16,.92))}
+/* v89: fit the whole outtakes layout to the viewport (fill the view, don't grow the page).
+   body is a 100dvh flex column: nav + section(flex:1) + footer, so nothing scrolls or clips. */
+body[data-vgclean]{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+body[data-vgclean] nav{position:static;flex:0 0 auto}
+body[data-vgclean] section{position:relative;z-index:1;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:16px 0 12px}
+body[data-vgclean] section .wrap{flex:1;display:flex;flex-direction:column;min-height:0}
+body[data-vgclean] footer{flex:0 0 auto;margin-top:0;padding:14px 0;background:rgba(6,10,16,.84)}
+body[data-vgclean] footer a{color:var(--cyan)}
+body[data-vgclean] h2{margin-bottom:12px;font-size:1.15rem;font-weight:700;color:#f2f8ff;align-self:flex-start;display:inline-block;background:rgba(6,10,16,.85);padding:8px 16px;border-radius:8px;border-left:3px solid var(--cyan)}
+body[data-vgclean] h2 .idx{color:var(--cyan)}
+body[data-vgclean] .dots{margin-top:10px}
+body[data-vgclean] .back{margin-top:8px;align-self:center;text-align:center;max-width:760px;background:rgba(6,10,16,.82);padding:10px 16px;border-radius:8px;color:var(--text)}
 body[data-vgclean] nav{background:rgba(6,10,16,.62)}
-body[data-vgclean] .slide .meta{background:rgba(8,12,18,.74)}
+body[data-vgclean] .slide .meta{background:rgba(8,12,18,.90)}
+body[data-vgclean] .slide .d{color:#eef4ff}
 body[data-vgclean] .slide{border-color:rgba(97,146,160,.5)}
 body[data-vgclean] #ot-car{filter:drop-shadow(0 22px 40px rgba(0,0,0,.55))}
 body[data-vgclean] h2,body[data-vgclean] .sub,body[data-vgclean] .back,
 body[data-vgclean] .logo,body[data-vgclean] nav .links a,
 body[data-vgclean] .slide .t,body[data-vgclean] .slide .d{
-  text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 14px rgba(0,0,0,.55)}
+  text-shadow:0 2px 6px rgba(0,0,0,.92),0 0 18px rgba(0,0,0,.7)}
 .car-arrow.left{left:14px}
 .car-arrow.right{right:14px}
 .car-arrow.hide{visibility:hidden}
