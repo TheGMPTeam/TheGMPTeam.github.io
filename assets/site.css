@@ -310,13 +310,8 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 /* v97 (James 2026-11-19): cyberpunk HUD frame around the right-edge chain+gear
    side panel. Neon cyan inner rail + scan tint + L-corner brackets. Decorative,
    pointer-events:none, sits behind the chain (z1) and above the gears (z-1). */
-#vgrigframe{position:fixed;right:0;top:0;height:100vh;width:250px;z-index:0;pointer-events:none;
- border:1px solid rgba(0,217,255,.18);border-right:none;border-left:1px solid rgba(0,217,255,.45);
- background:linear-gradient(90deg,rgba(0,217,255,0) 0%,rgba(0,217,255,.02) 55%,rgba(0,217,255,.06) 100%),repeating-linear-gradient(0deg,rgba(0,217,255,.03) 0 1px,rgba(0,0,0,0) 1px 6px);
- box-shadow:inset -18px 0 55px rgba(0,217,255,.06),inset 1px 0 0 rgba(0,217,255,.5)}
-#vgrigframe::before{content:'';position:absolute;left:-2px;top:10px;width:24px;height:24px;border-left:2px solid #00d9ff;border-top:2px solid #00d9ff;box-shadow:0 0 9px rgba(0,217,255,.75)}
-#vgrigframe::after{content:'';position:absolute;left:-2px;bottom:10px;width:24px;height:24px;border-left:2px solid #00d9ff;border-bottom:2px solid #00d9ff;box-shadow:0 0 9px rgba(0,217,255,.75)}
-@media (max-width:720px){#vgrigframe{width:150px}}
+/* v121 (James): the old CSS #vgrigframe border (neon rail + scan tint + L-corner
+   brackets) is REMOVED -- the generated raster pieces are now the only border. */
 
 /* v110 (James): cyberpunk energy-generator module framing the side panel.
    Built in scalable CSS/SVG (not raster) so the conduits stretch to 100vh
@@ -351,7 +346,15 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 #vgen{animation:vgFrameIn .55s cubic-bezier(.2,.7,.2,1) .12s both}
 #vgchain{animation:vgChainIn .55s cubic-bezier(.2,.7,.2,1) .05s both}
 .vgsprocket{animation:vgGearIn .6s ease .32s both}
-@media (prefers-reduced-motion: reduce){#vgen,#vgchain,.vgsprocket{animation:none}}
+/* v121 (James): light pulsing glow on the gen pieces. Filter-only so the caps'
+   translateX and rails/brackets' scale transforms stay intact. Staggered delays
+   make the housing read as living circuitry. */
+@keyframes vgGlow{0%,100%{filter:drop-shadow(0 3px 8px rgba(0,0,0,.55)) brightness(1)}50%{filter:drop-shadow(0 0 15px rgba(0,217,255,.6)) brightness(1.16)}}
+#vgen img{animation:vgGlow 3.4s ease-in-out infinite}
+#vgen .vgen-rail.right{animation-delay:.4s}
+#vgen .vgen-cap.bot{animation-delay:.8s}
+#vgen .vgen-bolt.tr{animation-delay:.5s}#vgen .vgen-bolt.bl{animation-delay:.9s}#vgen .vgen-bolt.br{animation-delay:1.3s}
+@media (prefers-reduced-motion: reduce){#vgen,#vgchain,.vgsprocket,#vgen img{animation:none}}
 /* v98 (James 2026-11-19): split the layout into 2 columns -- main content lives
    in a left column, the chain+gear side panel is its own right column. The
    gutter equals the panel width (250px) so the neon rail is the column divider.

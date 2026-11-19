@@ -28,7 +28,6 @@
     + '</div></nav>';
 
   var SIDE = '<div id="vgchain" aria-hidden="true"><div id="vgtrack"></div></div>'
-    + '<div id="vgrigframe" aria-hidden="true"></div>'
     + '<div id="vgen" aria-hidden="true">'
     + '<img class="vgen-cap top" src="/assets/gen/topcap.png" alt="">'
     + '<img class="vgen-rail left" src="/assets/gen/conduit.png" alt="">'
