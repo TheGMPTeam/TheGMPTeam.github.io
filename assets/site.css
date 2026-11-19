@@ -311,8 +311,8 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 /* v98 (James 2026-11-19): split the layout into 2 columns -- main content lives
    in a left column, the chain+gear side panel is its own right column. The
    gutter equals the panel width (250px) so the neon rail is the column divider.
-   Desktop only; CLEAN mode (outtakes) stays full-bleed. */
-@media (min-width:901px){ body:not([data-vgclean]){padding-right:250px} .wrap{max-width:1000px} nav{margin-right:-250px} nav .wrap{max-width:1080px} }
+   Desktop only; applies to ALL pages incl outtakes (panel sits beside content). */
+@media (min-width:901px){ body{padding-right:250px} .wrap{max-width:1000px} nav{margin-right:-250px} nav .wrap{max-width:1080px} }
 
 /* v39: mid-page portal event + smoke puff */
 #vgportal{position:fixed;left:24px;bottom:96px;width:230px;height:230px;border-radius:50%;overflow:hidden;z-index:1160;border:1px solid rgba(0,217,255,.5);box-shadow:0 0 34px rgba(0,217,255,.5),0 0 90px rgba(0,217,255,.25);background:linear-gradient(180deg,#0a0d18,#01030a);transform:scale(0);transition:transform .5s cubic-bezier(.2,1.4,.3,1),opacity .45s}
