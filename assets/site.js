@@ -1346,7 +1346,7 @@
   var w=document.getElementById('vgwalk'); if(!w) return;
   var v=w.querySelector('video'); if(!v) return;
   v.loop=false; v.muted=true;
-  var FROM=-220;
+  var FROM=12;   // left edge, IN VIEW (v153) — not parked off-screen
   function to(){ return window.innerWidth - 250; }   // stop short of the gen rail
   function pos(){
     var d=v.duration||0, t=(d>0)?Math.min(1, v.currentTime/d):0, a=to();
