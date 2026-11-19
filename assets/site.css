@@ -65,6 +65,9 @@ h2 .idx{color:var(--blue);margin-right:12px}
 /* v85: outtakes (data-vgclean) — remove hover effects */
 body[data-vgclean] .car-arrow:hover{border-color:var(--line);box-shadow:none}
 body[data-vgclean] nav .links a:hover{color:var(--muted)}
+/* v86: outtakes full-bleed background image; hide the grid pattern */
+body[data-vgclean]{background:url('/assets/outtakes-bg.jpg') center/cover no-repeat fixed}
+body[data-vgclean] .grid-bg{display:none}
 .car-arrow.left{left:14px}
 .car-arrow.right{right:14px}
 .car-arrow.hide{visibility:hidden}
