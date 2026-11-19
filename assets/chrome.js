@@ -27,7 +27,7 @@
     + '<span class="links">' + links + '</span>'
     + '</div></nav>';
 
-  var SIDE = '<div id="vgchain" aria-hidden="true"><div id="vgtrack"></div></div>'
+  var SIDE = '<div id="vgpanel" aria-hidden="true">' + '<div id="vgchain" aria-hidden="true"><div id="vgtrack"></div></div>'
     + '<div id="vgen" aria-hidden="true">'
     + '<img class="vgen-cap top" src="/assets/gen/topcap.png" alt="">'
     + '<img class="vgen-rail left" src="/assets/gen/conduit.png" alt="">'
@@ -36,7 +36,7 @@
     + '<img class="vgen-bolt tl" src="/assets/gen/bracket.png" alt=""><img class="vgen-bolt tr" src="/assets/gen/bracket.png" alt=""><img class="vgen-bolt bl" src="/assets/gen/bracket.png" alt=""><img class="vgen-bolt br" src="/assets/gen/bracket.png" alt="">'
     + '</div>'
     + '<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png?v=95" alt=""><img class="p2" src="/assets/gear_small.png?v=96" alt=""><img class="p3" src="/assets/gear_ref1.png?v=95" alt=""></div>'
-    + '<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=96" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>';
+    + '<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=96" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>' + '</div>';
 
   var note = "";
   var FOOT = '<footer><div class="wrap">'
