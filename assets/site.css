@@ -327,15 +327,20 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
    generator pieces (topcap / botcap / conduit rail / corner brackets) instead
    of CSS-drawn shapes. */
 #vgen img{position:absolute;filter:drop-shadow(0 3px 8px rgba(0,0,0,.55))}
-.vgen-cap.top{top:64px;left:50%;transform:translateX(-50%);width:196px}
-.vgen-cap.bot{bottom:6px;left:50%;transform:translateX(-50%);width:196px}
-.vgen-rail{left:14px;top:150px;bottom:150px;width:44px;object-fit:cover;object-position:center}
-.vgen-bolt{width:52px}
-.vgen-bolt.tl{top:70px;left:6px}
-.vgen-bolt.tr{top:70px;right:6px;transform:scaleX(-1)}
-.vgen-bolt.bl{bottom:8px;left:6px;transform:scaleY(-1)}
-.vgen-bolt.br{bottom:8px;right:6px;transform:scale(-1,-1)}
-@media (max-width:720px){#vgen{width:150px}.vgen-cap.top,.vgen-cap.bot{width:116px}.vgen-rail{width:30px}.vgen-bolt{width:36px}}
+/* v119 (James): build the border -- a closed housing frame. Full-height conduit
+   rails run the FULL height on BOTH the left and right edges (the vertical
+   border); caps sit flush top/bottom; brackets sit flush at the four corners. */
+.vgen-rail{top:66px;height:calc(100vh - 132px);width:40px;object-fit:cover;object-position:center}
+.vgen-rail.left{left:6px}
+.vgen-rail.right{right:6px;transform:scaleX(-1)}
+.vgen-cap.top{top:66px;left:50%;transform:translateX(-50%);width:176px}
+.vgen-cap.bot{bottom:6px;left:50%;transform:translateX(-50%);width:176px}
+.vgen-bolt{width:46px}
+.vgen-bolt.tl{top:64px;left:4px}
+.vgen-bolt.tr{top:64px;right:4px;transform:scaleX(-1)}
+.vgen-bolt.bl{bottom:4px;left:4px;transform:scaleY(-1)}
+.vgen-bolt.br{bottom:4px;right:4px;transform:scale(-1,-1)}
+@media (max-width:720px){#vgen{width:150px}.vgen-cap.top,.vgen-cap.bot{width:112px}.vgen-rail{width:28px}.vgen-bolt{width:34px}}
 /* v98 (James 2026-11-19): split the layout into 2 columns -- main content lives
    in a left column, the chain+gear side panel is its own right column. The
    gutter equals the panel width (250px) so the neon rail is the column divider.
