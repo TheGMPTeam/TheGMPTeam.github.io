@@ -29,6 +29,12 @@
 
   var SIDE = '<div id="vgchain" aria-hidden="true"><div id="vgtrack"></div></div>'
     + '<div id="vgrigframe" aria-hidden="true"></div>'
+    + '<div id="vgen" aria-hidden="true">'
+    + '<div class="vgen-cap top"><span class="vgen-nubs"></span></div>'
+    + '<div class="vgen-conduit"><i></i></div>'
+    + '<div class="vgen-cap bot"><span class="vgen-nubs"></span></div>'
+    + '<div class="vgen-bolt tl"></div><div class="vgen-bolt tr"></div><div class="vgen-bolt bl"></div><div class="vgen-bolt br"></div>'
+    + '</div>'
     + '<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png?v=95" alt=""><img class="p2" src="/assets/gear_small.png?v=96" alt=""><img class="p3" src="/assets/gear_ref1.png?v=95" alt=""></div>'
     + '<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=96" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>';
 

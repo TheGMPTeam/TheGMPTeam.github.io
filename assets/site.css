@@ -283,7 +283,7 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 @media(prefers-reduced-motion: reduce){
   html,body{scrollbar-width:auto;-ms-overflow-style:auto}
   ::-webkit-scrollbar{width:10px;height:10px;display:block}
-  #vgchain,.vgsprocket,#vgrigframe{display:none!important}
+  #vgchain,.vgsprocket,#vgrigframe,#vgen{display:none!important}
 }
 #vgchain{position:fixed;right:10px;top:0;height:100vh;width:18px;z-index:1;cursor:grab;touch-action:none;background:url('/assets/chain.png?v=100') repeat-y left top;background-size:18px 50px;filter:brightness(1.45) contrast(1.08) drop-shadow(0 0 6px rgba(0,217,255,.35))}
 #vgchain:active{cursor:grabbing}
@@ -317,6 +317,43 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 #vgrigframe::before{content:'';position:absolute;left:-2px;top:10px;width:24px;height:24px;border-left:2px solid #00d9ff;border-top:2px solid #00d9ff;box-shadow:0 0 9px rgba(0,217,255,.75)}
 #vgrigframe::after{content:'';position:absolute;left:-2px;bottom:10px;width:24px;height:24px;border-left:2px solid #00d9ff;border-bottom:2px solid #00d9ff;box-shadow:0 0 9px rgba(0,217,255,.75)}
 @media (max-width:720px){#vgrigframe{width:150px}}
+
+/* v110 (James): cyberpunk energy-generator module framing the side panel.
+   Built in scalable CSS/SVG (not raster) so the conduits stretch to 100vh
+   without blurring. The gears read as the turbine, the chain as the drive
+   belt, the caps as the machine housing, the conduit as the power bus. */
+#vgen{position:fixed;right:0;top:0;width:250px;height:100vh;z-index:1;pointer-events:none}
+.vgen-cap{position:absolute;left:0;right:0;height:72px;
+  background:linear-gradient(180deg,#1a2331,#0b1119 58%,#070b12);
+  border:1px solid rgba(0,217,255,.35);
+  box-shadow:inset 0 0 22px rgba(0,217,255,.14),0 0 16px rgba(0,217,255,.22)}
+.vgen-cap.top{top:72px;border-top:none}
+.vgen-cap.bot{bottom:0;border-bottom:none}
+.vgen-cap::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border-radius:50%;border:2px solid rgba(0,217,255,.55);
+  background:radial-gradient(circle,rgba(0,217,255,.20),rgba(2,8,14,.9) 72%);
+  box-shadow:0 0 14px rgba(0,217,255,.6),inset 0 0 12px rgba(0,217,255,.5)}
+.vgen-cap::after{content:'';position:absolute;left:50%;top:50%;width:44px;height:44px;border-radius:50%;
+  transform:translate(-50%,-50%);
+  border-top:2px solid #00d9ff;border-right:2px solid transparent;border-bottom:2px solid rgba(0,217,255,.4);border-left:2px solid transparent;
+  animation:vgenspin 3.2s linear infinite;filter:drop-shadow(0 0 6px #00d9ff)}
+.vgen-nubs{position:absolute;left:16px;right:16px;bottom:9px;height:8px;opacity:.7;
+  background:repeating-linear-gradient(90deg,rgba(0,217,255,.55) 0 4px,transparent 4px 15px)}
+.vgen-cap.top .vgen-nubs{bottom:auto;top:9px}
+@keyframes vgenspin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.vgen-conduit{position:absolute;left:15px;top:144px;bottom:72px;width:3px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(0,217,255,.9),rgba(10,40,55,.5));
+  box-shadow:0 0 10px rgba(0,217,255,.55)}
+.vgen-conduit i{position:absolute;left:0;width:3px;height:70px;top:-70px;
+  background:#c8f7ff;box-shadow:0 0 16px #00d9ff;animation:vgpulse 2.6s linear infinite}
+@keyframes vgpulse{0%{top:-70px}100%{top:100%}}
+.vgen-bolt{position:absolute;width:16px;height:16px;border:2px solid rgba(0,217,255,.7);box-shadow:0 0 8px rgba(0,217,255,.6)}
+.vgen-bolt.tl{left:6px;top:78px;border-right:none;border-bottom:none}
+.vgen-bolt.tr{right:6px;top:78px;border-left:none;border-bottom:none}
+.vgen-bolt.bl{left:6px;bottom:6px;border-right:none;border-top:none}
+.vgen-bolt.br{right:6px;bottom:6px;border-left:none;border-top:none}
+@media (max-width:720px){#vgen{width:150px}}
+@media (prefers-reduced-motion: reduce){.vgen-cap::after,.vgen-conduit i{animation:none}}
 /* v98 (James 2026-11-19): split the layout into 2 columns -- main content lives
    in a left column, the chain+gear side panel is its own right column. The
    gutter equals the panel width (250px) so the neon rail is the column divider.
