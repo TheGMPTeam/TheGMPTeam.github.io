@@ -1357,9 +1357,12 @@
   function begin(){
     if(started) return; started=true;
     v.load();                 // preload=none: fetch only now, after enter
-    pos();
+    pos();                    // stay parked at the left until it's actually walking
     try{ var p=v.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){}
-    requestAnimationFrame(tick);
+    // v154 (James): don't start the horizontal movement until the clip is
+    // actually rendering frames (the 'playing' event) — i.e. once the walk has
+    // begun — so the robot never slides before its legs start stepping.
+    v.addEventListener('playing', function(){ requestAnimationFrame(tick); }, {once:true});
   }
   if(window.__vgEntered) begin();
   else document.addEventListener('vg:enter', begin, {once:true});
