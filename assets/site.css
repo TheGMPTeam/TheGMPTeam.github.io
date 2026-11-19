@@ -317,25 +317,27 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
    Built in scalable CSS/SVG (not raster) so the conduits stretch to 100vh
    without blurring. The gears read as the turbine, the chain as the drive
    belt, the caps as the machine housing, the conduit as the power bus. */
-#vgen{position:fixed;right:25px;top:300px;width:200px;height:300px;z-index:1;pointer-events:none}
+#vgen{position:fixed;right:0;top:0;width:250px;height:100vh;z-index:1;pointer-events:none}
 #vgpanel{position:fixed;inset:0;z-index:1;pointer-events:none;transform:translateX(110%);opacity:0}
 /* v118 (James): the side panel is now built from ComfyUI-generated raster
    generator pieces (topcap / botcap / conduit rail / corner brackets) instead
    of CSS-drawn shapes. */
 #vgen img{position:absolute;filter:drop-shadow(0 3px 8px rgba(0,0,0,.55))}
-/* v119 (James): build the border -- a closed housing frame. Full-height conduit
-   rails run the FULL height on BOTH the left and right edges (the vertical
-   border); caps sit flush top/bottom; brackets sit flush at the four corners. */
-.vgen-rail{top:0;height:100%;width:40px;object-fit:cover;object-position:center}
+/* v125 (James): REVERTED to the full-height closed housing frame (the v119 look,
+   verified clean and screen-height adaptive). The compact block couldn't close
+   cleanly because the raster pieces are organic machine parts, not flat bars.
+   Full-height conduit rails run the FULL height on BOTH edges; caps sit flush
+   top/bottom; brackets sit flush at the four corners. */
+.vgen-rail{top:66px;height:calc(100vh - 132px);width:40px;object-fit:cover;object-position:center}
 .vgen-rail.left{left:6px}
 .vgen-rail.right{right:6px;transform:scaleX(-1)}
-.vgen-cap.top{top:0;left:50%;transform:translateX(-50%);width:176px}
-.vgen-cap.bot{bottom:0;left:50%;transform:translateX(-50%);width:176px}
+.vgen-cap.top{top:66px;left:50%;transform:translateX(-50%);width:176px}
+.vgen-cap.bot{bottom:6px;left:50%;transform:translateX(-50%);width:176px}
 .vgen-bolt{width:46px}
-.vgen-bolt.tl{top:0;left:0}
-.vgen-bolt.tr{top:0;right:0;transform:scaleX(-1)}
-.vgen-bolt.bl{bottom:0;left:0;transform:scaleY(-1)}
-.vgen-bolt.br{bottom:0;right:0;transform:scale(-1,-1)}
+.vgen-bolt.tl{top:64px;left:4px}
+.vgen-bolt.tr{top:64px;right:4px;transform:scaleX(-1)}
+.vgen-bolt.bl{bottom:4px;left:4px;transform:scaleY(-1)}
+.vgen-bolt.br{bottom:4px;right:4px;transform:scale(-1,-1)}
 @media (max-width:720px){#vgen{width:150px}.vgen-cap.top,.vgen-cap.bot{width:112px}.vgen-rail{width:28px}.vgen-bolt{width:34px}}
 /* v120 (James): side-panel load transition -- the housing frame slides in from
    the right edge and the chain + gears seat in, staggered inward. One-shot on
