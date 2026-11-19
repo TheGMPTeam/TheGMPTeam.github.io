@@ -30,6 +30,7 @@
       b.setAttribute('aria-label','go to video '+(i+1));
       b.addEventListener('click',function(){ go(i); });
       if(dotsWrap) dotsWrap.appendChild(b);
+      var th=s.querySelector('.thumb'); if(th&&s.dataset.local){ th.style.backgroundImage="url('"+s.dataset.local.replace(/\.mp4$/,'_thumb.jpg')+"')"; }
     });
     var dots=dotsWrap?Array.prototype.slice.call(dotsWrap.children):[];
     function stop(){
