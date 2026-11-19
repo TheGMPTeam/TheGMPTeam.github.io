@@ -8,7 +8,7 @@ OUT = "." if (len(sys.argv)>1 and sys.argv[1]=="--root") else "_build/dist"
 PAGES=["index.html","products.html","games.html","videos.html","status.html","outtakes.html"]
 LINKS=[("/","HOME"),("/products.html","PRODUCTS"),("/games.html","GAMES"),
        ("/status.html","STATUS"),("/videos.html","VIDEOS"),("/outtakes.html","OUTTAKES")]
-CSSV="103"; JSV="98"
+CSSV="104"; JSV="98"
 
 cfg=json.load(open("_build/config.json"))
 head=open("_partials/head.html").read()
