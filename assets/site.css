@@ -331,7 +331,10 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 .vgen-rail{top:66px;height:calc(100vh - 132px);width:40px;object-fit:cover;object-position:center}
 .vgen-rail.left{left:6px}
 .vgen-rail.right{right:6px;transform:scaleX(-1)}
-.vgen-cap.top{top:66px;left:50%;transform:translateX(-50%);width:176px}
+/* v126 (James): keep the frame full-height (full to window); move ONLY the top
+   center cap down below the mascot so the mascot is the crown and the cap/core
+   sits just under it. Mascot bottom ~278, so top:288. */
+.vgen-cap.top{top:288px;left:50%;transform:translateX(-50%);width:176px}
 .vgen-cap.bot{bottom:6px;left:50%;transform:translateX(-50%);width:176px}
 .vgen-bolt{width:46px}
 .vgen-bolt.tl{top:64px;left:4px}
