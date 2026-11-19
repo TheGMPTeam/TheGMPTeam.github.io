@@ -231,7 +231,7 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 #vgtrack{position:absolute;inset:0;pointer-events:none}
 .vgsprocket{position:fixed;z-index:-1;opacity:.55;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.85))}
 .vgsprocket.t{top:-6px;right:-18px;width:191px;height:172px}
-.vgsprocket.b{bottom:91px;right:-100px;width:340px;height:198px;transform:rotate(90deg)}
+.vgsprocket.b{bottom:20px;right:-100px;width:340px;height:198px;transform:rotate(90deg)}
 .vgsprocket img{position:absolute;transform-origin:50% 50%;transition:transform .3s linear;will-change:transform}
 /* v79: top/bottom swapped. Top = 3-gear (bronze->small->ref1), bottom = 5-gear
    cluster (main->dome->small->ref3->ref2). Tangent-meshed; each meshed neighbour
