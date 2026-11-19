@@ -290,7 +290,7 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 #vgchain::after{content:'PULL';position:absolute;left:50%;transform:translateX(-50%);top:6px;font:bold 9px "Courier New",monospace;color:#00d9ff;text-shadow:0 0 8px rgba(0,217,255,.9);opacity:0;transition:opacity .25s;letter-spacing:1px}
 #vgchain:hover::after,#vgchain.vg-tug::after{opacity:.95}
 #vgtrack{position:absolute;inset:0;pointer-events:none}
-.vgsprocket{position:fixed;z-index:2;opacity:.55;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.85))}
+.vgsprocket{position:fixed;z-index:2;opacity:1;pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.85))}
 .vgsprocket.t{top:-6px;right:-18px;width:191px;height:172px}
 .vgsprocket.b{bottom:20px;right:-100px;width:340px;height:198px;transform:rotate(90deg)}
 .vgsprocket img{position:absolute;transform-origin:50% 50%;transition:transform .3s linear;will-change:transform}
@@ -342,7 +342,7 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
    opacity only so their rotate(90deg) transform on .vgsprocket.b is preserved. */
 @keyframes vgFrameIn{from{transform:translateX(72px);opacity:0}to{transform:none;opacity:1}}
 @keyframes vgChainIn{from{transform:translateX(44px);opacity:0}to{transform:none;opacity:1}}
-@keyframes vgGearIn{from{opacity:0}to{opacity:.55}}
+@keyframes vgGearIn{from{opacity:0}to{opacity:1}}
 #vgen{animation:vgFrameIn .55s cubic-bezier(.2,.7,.2,1) .12s both}
 #vgchain{animation:vgChainIn .55s cubic-bezier(.2,.7,.2,1) .05s both}
 .vgsprocket{animation:vgGearIn .6s ease .32s both}
