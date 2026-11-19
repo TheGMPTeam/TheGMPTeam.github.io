@@ -373,7 +373,27 @@ body.vg-entered #vgpanel{animation:vgPanelIn .65s cubic-bezier(.2,.7,.2,1) .1s f
 #vgen .vgen-rail.right{animation-delay:.4s}
 #vgen .vgen-cap.bot{animation-delay:.8s}
 #vgen .vgen-bolt.tr{animation-delay:.5s}#vgen .vgen-bolt.bl{animation-delay:.9s}#vgen .vgen-bolt.br{animation-delay:1.3s}
-@media (prefers-reduced-motion: reduce){#vgen,#vgchain,.vgsprocket,#vgen img,#vgpanel{animation:none}}
+/* v131 (James 2026-11-19): electrical energy core in the generator channel.
+   Slow breathing pulse + irregular crackle + rotating arc streaks. Inside #vgen
+   (z:1, within the #vgpanel stacking context) so it slides in with the panel and
+   auto-hides on data-vgclean pages (outtakes hide #vgen). */
+#vgencore{position:absolute;left:50%;top:50vh;transform:translate(-50%,-50%);
+  width:120px;height:120px;border-radius:50%;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(circle at center,#eafcff 0%,rgba(0,217,255,.95) 20%,rgba(0,150,255,.5) 46%,rgba(0,110,255,0) 72%);
+  box-shadow:0 0 26px 6px rgba(0,217,255,.5),0 0 64px 18px rgba(0,150,255,.26);
+  animation:vgCorePulse 2.6s ease-in-out infinite,vgCoreFlick .23s steps(3,jump-none) infinite,vgCoreFlick2 .37s ease-in-out infinite}
+#vgencore::before,#vgencore::after{content:'';position:absolute;left:50%;top:50%;height:2px;
+  transform:translate(-50%,-50%) rotate(0);background:linear-gradient(90deg,transparent,rgba(0,217,255,.85) 30%,#fff 50%,rgba(0,217,255,.85) 70%,transparent);
+  filter:blur(1px)}
+#vgencore::before{width:170%;opacity:.65;animation:vgArc 1.9s linear infinite}
+#vgencore::after{width:120%;height:1px;opacity:.4;animation:vgArc 2.7s linear infinite reverse}
+@keyframes vgCorePulse{0%,100%{transform:translate(-50%,-50%) scale(.9);box-shadow:0 0 20px 4px rgba(0,217,255,.42),0 0 52px 14px rgba(0,150,255,.2)}
+  50%{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 0 34px 10px rgba(0,217,255,.62),0 0 84px 26px rgba(0,150,255,.34)}}
+@keyframes vgCoreFlick{0%,100%{opacity:1}50%{opacity:.86}}
+@keyframes vgCoreFlick2{0%,100%{filter:brightness(1)}50%{filter:brightness(1.28)}}
+@keyframes vgArc{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@media (max-width:720px){#vgencore{width:80px;height:80px}}
+@media (prefers-reduced-motion: reduce){#vgen,#vgchain,.vgsprocket,#vgen img,#vgpanel,#vgencore,#vgencore::before,#vgencore::after{animation:none}}
 /* v98 (James 2026-11-19): split the layout into 2 columns -- main content lives
    in a left column, the chain+gear side panel is its own right column. The
    gutter equals the panel width (250px) so the neon rail is the column divider.
