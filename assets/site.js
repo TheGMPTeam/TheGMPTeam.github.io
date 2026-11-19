@@ -52,11 +52,10 @@
           var mag=Math.abs(off);
           if(mag<=2){
             var sgn=off>0?1:-1;
-            // v92: spread the coverflow wider + face neighbors more forward so the side
-            // cards are clearly visible beside the center clip (was x46/82, rot30/45, op.55/.3).
-            var x=mag===1?74:122, z=mag===1?-150:-320, rot=mag===1?16:24;
+            // v93: spread even wider + flatter so the side cards read as full cards.
+            var x=mag===1?108:168, z=mag===1?-140:-300, rot=mag===1?12:20;
             s.style.transform='translate3d('+(sgn*x)+'%,0,'+z+'px) rotateY('+(sgn*rot)+'deg)';
-            s.style.opacity=mag===1?'0.85':'0.5';
+            s.style.opacity=mag===1?'0.9':'0.55';
           } else {
             var sgn2=off>0?1:-1;
             s.style.transform='translate3d('+(sgn2*120)+'%,0,-400px) rotateY('+(sgn2*55)+'deg)';

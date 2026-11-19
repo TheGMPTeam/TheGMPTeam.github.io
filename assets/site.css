@@ -85,8 +85,8 @@ body[data-vgclean]{height:100vh;height:100dvh;display:flex;flex-direction:column
 body[data-vgclean] nav{position:static;flex:0 0 auto}
 body[data-vgclean] section{position:relative;z-index:1;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:16px 0 12px}
 body[data-vgclean] section .wrap{flex:1;display:flex;flex-direction:column;min-height:0}
-body[data-vgclean] footer{flex:0 0 auto;margin-top:0;padding:16px 0;background:#060a10;color:#eaf1fb;font-size:.8rem}
-body[data-vgclean] footer a{color:var(--cyan)}
+body[data-vgclean] footer{flex:0 0 auto;margin-top:0;padding:16px 0;background:#060a10;color:#f3f7ff;font-size:.82rem}
+body[data-vgclean] footer a{color:#6fdcff}
 body[data-vgclean] h2{margin-bottom:12px;font-size:1.15rem;font-weight:700;color:#f2f8ff;align-self:flex-start;display:inline-block;background:rgba(6,10,16,.85);padding:8px 16px;border-radius:8px;border-left:3px solid var(--cyan)}
 body[data-vgclean] h2 .idx{color:var(--cyan)}
 body[data-vgclean] .dots{margin-top:10px}
