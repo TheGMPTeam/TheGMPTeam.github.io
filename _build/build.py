@@ -7,7 +7,7 @@ import json, os, sys
 OUT = "." if (len(sys.argv)>1 and sys.argv[1]=="--root") else "_build/dist"
 
 PAGES=["index.html","products.html","games.html","videos.html","status.html","system.html","outtakes.html"]
-CSSV="150"; JSV="129"; CHV="124"
+CSSV="151"; JSV="129"; CHV="124"
 
 cfg=json.load(open("_build/config.json"))
 head=open("_partials/head.html").read()
