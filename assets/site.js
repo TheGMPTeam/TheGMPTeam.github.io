@@ -369,7 +369,7 @@
     //   walkoffN.mp4  exits stage            -- only from a present stage
     //   welcome-home.mp4 / welcome-videos.mp4 are NEVER probed into the pool:
     //   they belong to the enter presentation only.
-    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);for(i=1;i<=5;i++)SLOT.push(['action',i]);
+    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);for(i=1;i<=6;i++)SLOT.push(['action',i]);  // v162: action6 = RC-remote "control the robot" beat
     var IV=[],IA=[]; // entries: {u:URL, endGone:bool, role:'idle'|'walkon'|'walkoff'|'action'}
     window.__vgPool=IV;
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
