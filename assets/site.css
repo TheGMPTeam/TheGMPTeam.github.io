@@ -480,6 +480,10 @@ body.vg-entered #vgpanel{animation:vgPanelIn .65s cubic-bezier(.2,.7,.2,1) .1s f
   background:url('/assets/stage/light.jpg?v=146') center top/cover no-repeat;
   opacity:0;transition:opacity 1.8s ease}
 body.vg-stage #vgstagelight{opacity:.5;transition:opacity .45s ease}
+/* v157 (James): center the stage bg on the FIRST column, not the whole window.
+   The 2-col layout reserves a 250px right gutter; constrain the bg box to the
+   content column so its 'center' aligns with the column, not the viewport. */
+@media (min-width:901px){ #vgstagelight{right:250px} }
 .grid-bg{transition:filter 1.8s ease}
 #mascot{transition:filter 1.8s ease}
 body.vg-stage .grid-bg{filter:brightness(1.6);transition:filter .45s ease}
