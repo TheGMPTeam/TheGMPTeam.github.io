@@ -1334,31 +1334,56 @@
   })();
 })();
 
-// v156 (James): full-body walker is now an animated WebP <img> (true alpha).
-// Crossing is driven off a wall-clock timer (the <img> has no currentTime): on
-// vg:enter we set the deferred src (so it loads only after the splash) and
-// animate the horizontal position over the clip's nominal duration. The clip
-// opens by turning to the side, so travel is held until WSTART, then advances
-// to the right and stops at the end (webp loop=1 plays once, holds last frame).
+// v156: full-body walker is an animated WebP <img> (true alpha).
+// v160 (James spec): full action state machine, driven off wall-clock timers
+// (the <img> has no currentTime). On vg:enter:
+//   Phase 1 POWER-ON: play power_on_alpha parked at the left, no travel.
+//   Phase 2 WALK:     swap to walk_left_alpha, travel left->right over DUR;
+//                     travel held until WSTART (clip opens by turning to side).
+//   Phase 3 RC-IDLE:  swap to rc_idle_alpha (loop=0) parked at the right end.
+// Each phase sets img.src fresh so the animated WebP restarts at frame 0.
 (function(){
   var w=document.getElementById('vgwalk'); if(!w) return;
   var img=document.getElementById('vgwalkimg'); if(!img) return;
-  var FROM=12, WSTART=1500, DUR=5208;   // ms; 124 frames @ 42ms; walk starts ~1.5s
-  var started=false, lastEl=0;
+  var FROM=12, WSTART=1500, DUR=5208, POW=5208;  // ms; 124 frames @ 42ms
+  var started=false, phase=0, lastEl=0;
   function to(){ return window.innerWidth - 250; }   // stop short of the gen rail
-  function setPos(el){
+  function setPos(px){ w.style.transform='translateX('+px+'px)'; }
+  function walkPos(el){
     var t=(el>WSTART)?Math.min(1,(el-WSTART)/(DUR-WSTART)):0, a=to();
-    w.style.transform='translateX('+(FROM+(a-FROM)*t)+'px)';
+    return FROM+(a-FROM)*t;
   }
   function begin(){
     if(started) return; started=true;
-    setPos(0);
-    img.src=img.dataset.src;            // load only now, after enter
+    setPos(FROM);
+    img.src=w.dataset.power;          // Phase 1: power on, parked, no travel
     var t0=performance.now();
-    (function loop(){ lastEl=performance.now()-t0; setPos(lastEl);
-      if(lastEl<DUR) requestAnimationFrame(loop); else setPos(DUR); })();
+    (function powerLoop(){
+      if(performance.now()-t0 < POW){ requestAnimationFrame(powerLoop); }
+      else { startWalk(); }
+    })();
+  }
+  function startWalk(){
+    phase=1;
+    img.src=w.dataset.walk;           // Phase 2: walk across
+    var t0=performance.now();
+    (function walkLoop(){
+      lastEl=performance.now()-t0;
+      setPos(walkPos(lastEl));
+      if(lastEl<DUR){ requestAnimationFrame(walkLoop); }
+      else { startIdle(); }
+    })();
+  }
+  function startIdle(){
+    phase=2;
+    setPos(to());                     // Phase 3: RC idle at the right end
+    img.src=w.dataset.idle;           // rc_idle_alpha, loop=0 (continuous)
   }
   if(window.__vgEntered) begin();
   else document.addEventListener('vg:enter', begin, {once:true});
-  window.addEventListener('resize', function(){ if(started) setPos(lastEl); });
+  window.addEventListener('resize', function(){
+    if(!started) return;
+    if(phase===1) setPos(walkPos(lastEl));
+    else if(phase>=2) setPos(to());
+  });
 })();
