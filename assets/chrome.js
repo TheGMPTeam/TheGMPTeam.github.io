@@ -13,6 +13,7 @@
     ["products.html", "PRODUCTS", "/products.html"],
     ["games.html", "GAMES", "/games.html"],
     ["status.html", "STATUS", "/status.html"],
+    ["system.html", "SYSTEM", "/system.html"],
     ["videos.html", "VIDEOS", "/videos.html"],
     ["outtakes.html", "OUTTAKES", "/outtakes.html"]
   ];

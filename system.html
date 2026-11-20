@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>System Status - TheGMPTeam Studios</title>
+<meta name="description" content="Live telemetry from the rig behind thegmpteamstudios.com: CPU, memory, disks, GPUs and fleet services, refreshed every 60 seconds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css?v=150">
+<link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
+<script src="/assets/chrome.js?v=124" defer></script>
+<script src="/assets/site.js?v=129" defer></script>
+<style>
+.hero{position:relative;z-index:20;text-align:center;color:#fff;padding:96px 0 6px}
+.hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
+.hero-eyebrow{color:#7d90a8;letter-spacing:.26em;font-size:.66rem;text-transform:uppercase}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);margin-right:8px;vertical-align:middle;flex:0 0 auto}
+#pills .dot{width:12px;height:12px;margin:0 6px 12px 0}
+.pills{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 24px}
+.dot-ok{background:#3fe0a0;box-shadow:0 0 12px #3fe0a0}
+.dot-am{background:#ffb347;box-shadow:0 0 12px #ffb347}
+#stamp{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);letter-spacing:.06em}
+.hub-note{color:#ffb347;letter-spacing:.12em;font-size:.78rem;opacity:.9}
+main#livegrid{margin-top:30px;position:relative;z-index:2}
+.g{display:block;padding:48px 6vw}
+.g h2{display:flex;align-items:center;gap:14px;font-family:'Orbitron',sans-serif;font-size:1.4rem;letter-spacing:.16em;color:#00d9ff;margin-bottom:30px;text-shadow:0 0 18px rgba(0,217,255,.5)}
+.g h2 .idx{color:#2b3a55;font-size:1.1rem}
+.g h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(0,217,255,.55),transparent)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));gap:16px}
+.node{position:relative;background:linear-gradient(165deg,rgba(11,18,32,.94),rgba(6,10,16,.88));border:1px solid var(--line);border-radius:12px;padding:18px 18px 15px;transition:transform .2s, border-color .2s, box-shadow .2s;cursor:default}
+.node:hover{transform:translateY(-4px);border-color:var(--line-hot);box-shadow:0 0 34px rgba(0,217,255,.16)}
+.node .top{display:flex;align-items:center;gap:12px}
+.node h3{font-family:'Orbitron',sans-serif;font-size:.92rem;margin-bottom:8px;color:#fff;letter-spacing:.04em}
+.node .log{font-size:.78rem;color:var(--muted);line-height:1.5;min-height:22px}
+footer.site-footer{border-top:1px solid var(--line);padding:24px 24px;color:var(--muted);font-size:.75rem}
+footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+@media (max-width:720px){
+.hero{padding:48px 0 4px}
+#hud{gap:8px;padding:10px 12px}
+#pills{padding:4px 8px;justify-content:center}
+#stamp{width:100%;text-align:center;font-size:.7rem;word-break:break-word}
+main#livegrid .g{padding:26px 4vw}
+.g h2{font-size:1rem;letter-spacing:.1em}
+.cards{grid-template-columns:1fr}
+.node .log{word-break:break-word}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<header class="hero"><div class="wrap">
+  <h1 class="hero-hd">SYSTEM STATUS</h1>
+  <p class="hero-eyebrow">LIVE TELEMETRY &mdash; READ DIRECTLY FROM THE RIG, EVERY 60 SECONDS</p>
+</div></header>
+<div id="hud">
+  <div id="pills" class="pills"></div>
+  <div id="stamp" class="hub-note">connecting&hellip;</div>
+</div>
+<main id="livegrid">
+  <div class="wrap">
+    <div class="g" data-grp="RIG">
+      <h2><span class="idx">&#9672;</span>THE RIG &mdash; CPU / MEMORY / DISK</h2>
+      <div class="cards" id="cards-rig"></div>
+    </div>
+    <div class="g" data-grp="GPU">
+      <h2><span class="idx">&#9672;</span>GPUs</h2>
+      <div class="cards" id="cards-gpu"></div>
+    </div>
+    <div class="g" data-grp="FLEET">
+      <h2><span class="idx">&#9672;</span>SERVICES</h2>
+      <div class="cards" id="cards-svc"></div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <span>THEGMPTeam Studios</span>
+  <span class="vg-footnote" style="color:var(--cyan);opacity:.85">&mdash; SYSTEM STATUS &middot; LIVE FEED &middot; coarse telemetry, no secrets &mdash;</span>
+</div></footer>
+<script>
+(function () {
+  var FEED = "https://pony-sound-oarfish.ngrok-free.app/system-status.json";
+  function el(html) { var d = document.createElement("div"); d.innerHTML = html; return d; }
+  function up(name, extra) {
+    return '<div class="node"><div class="top"><span class="dot dot-ok"></span>' +
+      '<div><h3>' + name + '</h3></div></div>' +
+      '<div class="log">' + (extra || "") + '</div></div>';
+  }
+  function down(name) {
+    return '<div class="node"><div class="top"><span class="dot" style="background:#ff5470;box-shadow:0 0 12px #ff5470"></span>' +
+      '<div><h3>' + name + '</h3></div></div><div class="log">offline</div></div>';
+  }
+  function meter(pct) {
+    var w = Math.max(0, Math.min(100, pct || 0));
+    var col = w > 90 ? "#ff5470" : w > 75 ? "#ffb347" : "#00d9ff";
+    return '<div style="height:6px;background:rgba(0,217,255,.12);border-radius:3px;margin:6px 0">' +
+      '<div style="height:6px;width:' + w + '%;background:' + col + ';border-radius:3px"></div></div>';
+  }
+  function fmtUp(s) {
+    if (!s && s !== 0) return "?";
+    var d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+    return (d ? d + "d " : "") + h + "h " + m + "m";
+  }
+  function render(d) {
+    var rig = document.getElementById("cards-rig"), gpu = document.getElementById("cards-gpu"), svc = document.getElementById("cards-svc");
+    var c = d.cpu || {}, m = d.memory || {};
+    rig.innerHTML =
+      up("CPU &mdash; " + (c.cores || "?") + " threads",
+        "load 1m: " + (c.load1 || "?") + " &middot; 5m: " + (c.load5 || "?") + meter(c.usage_pct)) +
+      up("MEMORY", (m.used_mb || "?") + " / " + (m.total_mb || "?") + " MB" + meter(m.pct)) +
+      (d.disks || []).map(function (k) {
+        return up("DISK " + k.mount, k.used_gb + " / " + k.total_gb + " GB" + meter(k.pct));
+      }).join("");
+    gpu.innerHTML = (d.gpus || []).map(function (g) {
+      return up(g.name, "util " + (g.util_pct != null ? g.util_pct + "%" : "?") +
+        " &middot; vram " + g.vram_used_mb + " / " + g.vram_total_mb + " MB &middot; " +
+        (g.temp_c != null ? g.temp_c + " C" : "") + " &middot; fan " + (g.fan_pct != null ? g.fan_pct + "%" : "") +
+        meter(g.util_pct));
+    }).join("");
+    var items = [];
+    (d.containers || []).forEach(function (s) { items.push(s.state === "up" ? up(s.name) : down(s.name)); });
+    (d.services || []).forEach(function (s) { items.push(s.state === "up" ? up(s.name) : down(s.name)); });
+    (d.endpoints || []).forEach(function (s) { items.push(s.state === "up" ? up(s.name) : down(s.name)); });
+    svc.innerHTML = items.join("");
+    var ok = (d.containers || []).concat(d.services || [], d.endpoints || []);
+    var bad = ok.filter(function (s) { return s.state !== "up"; }).length;
+    var pills = document.getElementById("pills");
+    pills.innerHTML = '<span class="dot ' + (bad ? "dot-am" : "dot-ok") + '"></span>' +
+      '<span style="letter-spacing:.14em;font-size:.8rem">' + (bad ? bad + " DEGRADED" : "ALL SYSTEMS UP") + '</span>';
+    var stamp = document.getElementById("stamp");
+    stamp.textContent = "updated " + (d.updated || "?") + " UTC  |  uptime " + fmtUp(d.uptime_s);
+  }
+  function tick() {
+    fetch(FEED, { cache: "no-store", headers: { "ngrok-skip-browser-warning": "true" } }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(render).catch(function () {
+      document.getElementById("stamp").textContent = "feed unreachable - will retry";
+    });
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+</script>
+</body>
+</html>

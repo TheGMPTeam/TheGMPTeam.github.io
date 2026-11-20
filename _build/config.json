@@ -1,6 +1,6 @@
 {
   "index.html": {
-    "title": "TheGMPTeam Studios \u2014 Local-First AI & Game Studios",
+    "title": "TheGMPTeam Studios — Local-First AI & Game Studios",
     "desc": "TheGMPTeam Studios builds local-first AI agents, the VirusGPT workstation, Roblox game worlds, and creative automation pipelines. Your machine. Your data. Your studio.",
     "active": "/",
     "credit": false,
@@ -11,7 +11,7 @@
     "footer": true
   },
   "products.html": {
-    "title": "Products & Labs \u2014 TheGMPTeam Studios",
+    "title": "Products & Labs — TheGMPTeam Studios",
     "desc": "Everything TheGMPTeam Studios offers: VirusGPT, NEXUS agent network, production automation, VBVCODE voice, ComfyUI rendering, 3D pipelines, games.",
     "active": "/products.html",
     "credit": false,
@@ -22,7 +22,7 @@
     "footer": true
   },
   "games.html": {
-    "title": "The Train Game \u2014 TheGMPTeam Studios",
+    "title": "The Train Game — TheGMPTeam Studios",
     "desc": "The Train Game: a transport-tycoon world on Roblox built by our own AI production fleet. Full game description, what is live now, and how the locomotives are engineered.",
     "active": "/games.html",
     "credit": false,
@@ -32,19 +32,8 @@
     "nav": true,
     "footer": true
   },
-  "videos.html": {
-    "title": "Videos \u2014 TheGMPTeam Studios",
-    "desc": "Recorded demos, shorts and behind-the-scenes from TheGMPTeam Studios. Hover the slide to play.",
-    "active": "/videos.html",
-    "credit": false,
-    "extra_head": "",
-    "logomark": "<img class=\"logo-mark\" src=\"/assets/brand/logo-128.jpg\" alt=\"\">",
-    "head": true,
-    "nav": true,
-    "footer": true
-  },
   "status.html": {
-    "title": "Fleet Status \u2014 TheGMPTeam Studios",
+    "title": "Fleet Status — TheGMPTeam Studios",
     "desc": "Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.",
     "active": "/status.html",
     "credit": false,
@@ -55,8 +44,30 @@
     "note": "<span class=\"vg-footnote\" style=\"color:var(--cyan);opacity:.85\">&mdash; FLEET STATUS &middot; SIMULATION LOOP &mdash; this build is reconstructed for review; nothing here is live</span>",
     "footer": true
   },
+  "system.html": {
+    "title": "System Status - TheGMPTeam Studios",
+    "desc": "Live telemetry from the rig behind thegmpteamstudios.com: CPU, memory, disks, GPUs and fleet services, refreshed every 60 seconds.",
+    "active": "/system.html",
+    "credit": false,
+    "extra_head": "<style>\n.hero{position:relative;z-index:20;text-align:center;color:#fff;padding:96px 0 6px}\n.hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}\n.hero-eyebrow{color:#7d90a8;letter-spacing:.26em;font-size:.66rem;text-transform:uppercase}\n@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}\n.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);margin-right:8px;vertical-align:middle;flex:0 0 auto}\n#pills .dot{width:12px;height:12px;margin:0 6px 12px 0}\n.pills{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding:14px 24px}\n.dot-ok{background:#3fe0a0;box-shadow:0 0 12px #3fe0a0}\n.dot-am{background:#ffb347;box-shadow:0 0 12px #ffb347}\n#stamp{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);letter-spacing:.06em}\n.hub-note{color:#ffb347;letter-spacing:.12em;font-size:.78rem;opacity:.9}\nmain#livegrid{margin-top:30px;position:relative;z-index:2}\n.g{display:block;padding:48px 6vw}\n.g h2{display:flex;align-items:center;gap:14px;font-family:'Orbitron',sans-serif;font-size:1.4rem;letter-spacing:.16em;color:#00d9ff;margin-bottom:30px;text-shadow:0 0 18px rgba(0,217,255,.5)}\n.g h2 .idx{color:#2b3a55;font-size:1.1rem}\n.g h2::after{content:\"\";flex:1;height:1px;background:linear-gradient(90deg,rgba(0,217,255,.55),transparent)}\n.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));gap:16px}\n.node{position:relative;background:linear-gradient(165deg,rgba(11,18,32,.94),rgba(6,10,16,.88));border:1px solid var(--line);border-radius:12px;padding:18px 18px 15px;transition:transform .2s, border-color .2s, box-shadow .2s;cursor:default}\n.node:hover{transform:translateY(-4px);border-color:var(--line-hot);box-shadow:0 0 34px rgba(0,217,255,.16)}\n.node .top{display:flex;align-items:center;gap:12px}\n.node h3{font-family:'Orbitron',sans-serif;font-size:.92rem;margin-bottom:8px;color:#fff;letter-spacing:.04em}\n.node .log{font-size:.78rem;color:var(--muted);line-height:1.5;min-height:22px}\nfooter.site-footer{border-top:1px solid var(--line);padding:24px 24px;color:var(--muted);font-size:.75rem}\nfooter.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}\n\n@media (max-width:720px){\n.hero{padding:48px 0 4px}\n#hud{gap:8px;padding:10px 12px}\n#pills{padding:4px 8px;justify-content:center}\n#stamp{width:100%;text-align:center;font-size:.7rem;word-break:break-word}\nmain#livegrid .g{padding:26px 4vw}\n.g h2{font-size:1rem;letter-spacing:.1em}\n.cards{grid-template-columns:1fr}\n.node .log{word-break:break-word}\n}\n</style>",
+    "logomark": "<img class=\"logo-mark\" src=\"/assets/brand/logo-128.jpg\" alt=\"\">",
+    "head": true,
+    "nav": true,
+    "footer": true
+  },
+  "videos.html": {
+    "title": "Videos — TheGMPTeam Studios",
+    "desc": "Recorded demos, shorts and behind-the-scenes from TheGMPTeam Studios. Hover the slide to play.",
+    "active": "/videos.html",
+    "credit": false,
+    "extra_head": "",
+    "logomark": "<img class=\"logo-mark\" src=\"/assets/brand/logo-128.jpg\" alt=\"\">",
+    "head": true,
+    "nav": true,
+    "footer": true
+  },
   "outtakes.html": {
-    "title": "Outtakes \u2014 TheGMPTeam Studios",
+    "title": "Outtakes — TheGMPTeam Studios",
     "desc": "The bloopers we kept. Wrong words, wrong voices, wrong universes.",
     "active": "/outtakes.html",
     "credit": false,

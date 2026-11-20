@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+{{HEAD}}
+<body>
+<div class="grid-bg"></div>
+<header class="hero"><div class="wrap">
+  <h1 class="hero-hd">SYSTEM STATUS</h1>
+  <p class="hero-eyebrow">LIVE TELEMETRY &mdash; READ DIRECTLY FROM THE RIG, EVERY 60 SECONDS</p>
+</div></header>
+<div id="hud">
+  <div id="pills" class="pills"></div>
+  <div id="stamp" class="hub-note">connecting&hellip;</div>
+</div>
+<main id="livegrid">
+  <div class="wrap">
+    <div class="g" data-grp="RIG">
+      <h2><span class="idx">&#9672;</span>THE RIG &mdash; CPU / MEMORY / DISK</h2>
+      <div class="cards" id="cards-rig"></div>
+    </div>
+    <div class="g" data-grp="GPU">
+      <h2><span class="idx">&#9672;</span>GPUs</h2>
+      <div class="cards" id="cards-gpu"></div>
+    </div>
+    <div class="g" data-grp="FLEET">
+      <h2><span class="idx">&#9672;</span>SERVICES</h2>
+      <div class="cards" id="cards-svc"></div>
+    </div>
+  </div>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <span>THEGMPTeam Studios</span>
+  <span class="vg-footnote" style="color:var(--cyan);opacity:.85">&mdash; SYSTEM STATUS &middot; LIVE FEED &middot; coarse telemetry, no secrets &mdash;</span>
+</div></footer>
+<script>
+(function () {
+  var FEED = "https://pony-sound-oarfish.ngrok-free.app/system-status.json";
+  function el(html) { var d = document.createElement("div"); d.innerHTML = html; return d; }
+  function up(name, extra) {
+    return '<div class="node"><div class="top"><span class="dot dot-ok"></span>' +
+      '<div><h3>' + name + '</h3></div></div>' +
+      '<div class="log">' + (extra || "") + '</div></div>';
+  }
+  function down(name) {
+    return '<div class="node"><div class="top"><span class="dot" style="background:#ff5470;box-shadow:0 0 12px #ff5470"></span>' +
+      '<div><h3>' + name + '</h3></div></div><div class="log">offline</div></div>';
+  }
+  function meter(pct) {
+    var w = Math.max(0, Math.min(100, pct || 0));
+    var col = w > 90 ? "#ff5470" : w > 75 ? "#ffb347" : "#00d9ff";
+    return '<div style="height:6px;background:rgba(0,217,255,.12);border-radius:3px;margin:6px 0">' +
+      '<div style="height:6px;width:' + w + '%;background:' + col + ';border-radius:3px"></div></div>';
+  }
+  function fmtUp(s) {
+    if (!s && s !== 0) return "?";
+    var d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+    return (d ? d + "d " : "") + h + "h " + m + "m";
+  }
+  function render(d) {
+    var rig = document.getElementById("cards-rig"), gpu = document.getElementById("cards-gpu"), svc = document.getElementById("cards-svc");
+    var c = d.cpu || {}, m = d.memory || {};
+    rig.innerHTML =
+      up("CPU &mdash; " + (c.cores || "?") + " threads",
+        "load 1m: " + (c.load1 || "?") + " &middot; 5m: " + (c.load5 || "?") + meter(c.usage_pct)) +
+      up("MEMORY", (m.used_mb || "?") + " / " + (m.total_mb || "?") + " MB" + meter(m.pct)) +
+      (d.disks || []).map(function (k) {
+        return up("DISK " + k.mount, k.used_gb + " / " + k.total_gb + " GB" + meter(k.pct));
+      }).join("");
+    gpu.innerHTML = (d.gpus || []).map(function (g) {
+      return up(g.name, "util " + (g.util_pct != null ? g.util_pct + "%" : "?") +
+        " &middot; vram " + g.vram_used_mb + " / " + g.vram_total_mb + " MB &middot; " +
+        (g.temp_c != null ? g.temp_c + " C" : "") + " &middot; fan " + (g.fan_pct != null ? g.fan_pct + "%" : "") +
+        meter(g.util_pct));
+    }).join("");
+    var items = [];
+    (d.containers || []).forEach(function (s) { items.push(s.state === "up" ? up(s.name) : down(s.name)); });
+    (d.services || []).forEach(function (s) { items.push(s.state === "up" ? up(s.name) : down(s.name)); });
+    (d.endpoints || []).forEach(function (s) { items.push(s.state === "up" ? up(s.name) : down(s.name)); });
+    svc.innerHTML = items.join("");
+    var ok = (d.containers || []).concat(d.services || [], d.endpoints || []);
+    var bad = ok.filter(function (s) { return s.state !== "up"; }).length;
+    var pills = document.getElementById("pills");
+    pills.innerHTML = '<span class="dot ' + (bad ? "dot-am" : "dot-ok") + '"></span>' +
+      '<span style="letter-spacing:.14em;font-size:.8rem">' + (bad ? bad + " DEGRADED" : "ALL SYSTEMS UP") + '</span>';
+    var stamp = document.getElementById("stamp");
+    stamp.textContent = "updated " + (d.updated || "?") + " UTC  |  uptime " + fmtUp(d.uptime_s);
+  }
+  function tick() {
+    fetch(FEED, { cache: "no-store", headers: { "ngrok-skip-browser-warning": "true" } }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(render).catch(function () {
+      document.getElementById("stamp").textContent = "feed unreachable - will retry";
+    });
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+</script>
+</body>
+</html>

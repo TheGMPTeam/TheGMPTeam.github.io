@@ -508,3 +508,26 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
 #vgwalk{position:fixed;bottom:14px;left:0;width:190px;z-index:40;pointer-events:none;
   transform:translateX(12px)}
 #vgwalk img{width:100%;height:auto;display:block}
+
+/* -----------------------------------------------------------------------
+   Mobile pass (v150, tracker 142): the layout was desktop-only below the
+   nav. At <=720px: nav wraps to two rows instead of clipping, hero type
+   scales down, eyebrow tracking shrinks, status pill wraps cleanly.
+   Fluid values only (clamp/percent) so 390px and 430px phones both work.
+   ----------------------------------------------------------------------- */
+@media (max-width:720px){
+  nav .wrap{flex-wrap:wrap;height:auto;padding:10px 14px;gap:8px 14px}
+  nav .logo{font-size:.8rem;white-space:nowrap}
+  nav .links{margin-left:0;width:100%;flex-wrap:wrap;gap:10px 14px}
+  nav .links a{font-size:.72rem;letter-spacing:.05em}
+  #vgpanel{display:none!important}
+  header.hero{padding:56px 0 40px}
+  h1{font-size:clamp(1.5rem,7.5vw,2.2rem)}
+  .eyebrow{letter-spacing:.18em;font-size:.62rem}
+  .sub{font-size:.92rem;padding:0 8px}
+  .status{display:flex;flex-direction:column;gap:6px;width:100%;max-width:340px;margin-left:auto;margin-right:auto;justify-content:center;text-align:center;font-size:.72rem;padding:10px 14px}
+  .status a{white-space:nowrap}
+  .wrap{padding-left:14px;padding-right:14px}
+  .specs{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+  section .wrap h2{font-size:1.05rem;letter-spacing:.1em}
+}
