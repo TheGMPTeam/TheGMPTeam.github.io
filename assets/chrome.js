@@ -49,12 +49,17 @@
 
   // v147 (James test): standalone full-body mascot walker clip, walks in place.
   // v156: TRUE ALPHA — animated WebP (RGBA, bg removed) as an <img>, no box.
-  // v160: action sequence — power on, then walk across.
-  // v161 (James): the RC remote belongs to the VIRUS MASCOT, not the robot, so
-  // the robot sequence is just power-on -> walk (no RC-idle phase on the robot).
+  // v161: fix moonwalk + remove RC-remote from the robot.
+  // v163 (James spec): full on-enter action chain — power on -> turn to side &
+  // walk right -> turn around (stepping) to face camera -> turn to other side &
+  // walk left -> power down. Clip URLs live on #vgwalk; site.js runs the chain.
   var WALK = '<div id="vgwalk" aria-hidden="true"'
-    + ' data-power="/assets/mascot/power_on_alpha.webp?v=161"'
-    + ' data-walk="/assets/mascot/walk_right_alpha.webp?v=161">'
+    + ' data-power="/assets/mascot/power_on_alpha.webp?v=163"'
+    + ' data-walkr="/assets/mascot/walk_right_t_alpha.webp?v=163"'
+    + ' data-turn="/assets/mascot/turn_walk_alpha.webp?v=163"'
+    + ' data-walkl="/assets/mascot/walk_left_t_alpha.webp?v=163"'
+    + ' data-turn2="/assets/mascot/turn_left_alpha.webp?v=163"'
+    + ' data-pwrdown="/assets/mascot/power_down_alpha.webp?v=163">'
     + '<img id="vgwalkimg" alt=""></div>';
 
   var b = document.body;

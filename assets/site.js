@@ -502,6 +502,7 @@
       if(pre===null)ensurePre();
       if(pre===null)return;
       var e=pre;pre=null;curEntry=e;
+      try{document.dispatchEvent(new CustomEvent('vg:clip',{detail:{u:e.u}}));}catch(_cx){}
       buf.muted=true;buf.style.opacity='0';
       if(buf.currentSrc.indexOf(e.u)<0){buf.src=e.u;}
       var pr=buf.play();if(pr&&pr.catch)pr.catch(function(){});
@@ -521,6 +522,7 @@
       if(!IV.length)return;
       var e0=pick();if(!e0)return;
       curEntry=e0;
+      try{document.dispatchEvent(new CustomEvent('vg:clip',{detail:{u:e0.u}}));}catch(_cy){}
       try{shown.muted=!!window.__vgMuted;}catch(e){}
       shown.src=e0.u;
       try{shown.load();}catch(e){}
@@ -575,7 +577,7 @@
       }
     };
     var MENU=document.createElement('div');MENU.id='vgmenu';
-    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="portal">PORTAL FX</div><div class="vgmi" data-a="hover">HOVER ACTIONS</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
+    MENU.innerHTML='<div class="vgmi" data-a="skip">SKIP WELCOME</div><div class="vgmi" data-a="portal">PORTAL FX</div><div class="vgmi" data-a="hover">HOVER ACTIONS</div><div class="vgmi" data-a="robot">ROBOT ACTION</div><div class="vgmi" data-a="stop">STOP</div><div class="vgmi" data-a="resume">RESUME</div><div class="vgmi" data-a="mute">MUTE</div>';
     document.body.appendChild(MENU);
     function closeMenu(){MENU.style.display='none';}
     function openMenu(x,y){
@@ -583,6 +585,7 @@
       MENU.querySelector('[data-a="mute"]').textContent=(window.__vgMuted?'UNMUTE':'MUTE')+(window.__vgMuted?' \u2713':'');
       MENU.querySelector('[data-a="portal"]').textContent='PORTAL FX'+(vgSet().portalFx===false?'':' \u2713');
       MENU.querySelector('[data-a="hover"]').textContent='HOVER ACTIONS'+(vgSet().hoverOff?'':' \u2713');
+      MENU.querySelector('[data-a="robot"]').textContent='ROBOT ACTION'+(vgSet().robotFx===false?'':' \u2713');
       MENU.style.display='block';
       var w=MENU.offsetWidth,h=MENU.offsetHeight;
       MENU.style.left=Math.min(x,window.innerWidth-w-8)+'px';
@@ -595,6 +598,7 @@
       if(a==='skip')window.vgCtl.skip();
       else if(a==='portal'){var ps=vgSet();ps.portalFx=ps.portalFx===false;vgSave(ps);}
       else if(a==='hover'){var hs=vgSet();hs.hoverOff=!(hs.hoverOff===true);vgSave(hs);}
+      else if(a==='robot'){var rs=vgSet();rs.robotFx=rs.robotFx===false;vgSave(rs);}
       else if(a==='stop')window.vgCtl.stop();
       else if(a==='resume')window.vgCtl.resume();
       else window.vgCtl.mute();
@@ -1335,50 +1339,59 @@
 })();
 
 // v156: full-body walker is an animated WebP <img> (true alpha).
-// v160 (James spec): full action state machine, driven off wall-clock timers
-// (the <img> has no currentTime). On vg:enter:
-//   Phase 1 POWER-ON: play power_on_alpha parked at the left, no travel.
-//   Phase 2 WALK:     swap to walk_left_alpha, travel left->right over DUR;
-//                     travel held until WSTART (clip opens by turning to side).
-//   Phase 3 RC-IDLE:  swap to rc_idle_alpha (loop=0) parked at the right end.
-// Each phase sets img.src fresh so the animated WebP restarts at frame 0.
+// v163 (James spec): full-body robot action chain, wall-clock driven (the <img>
+// has no currentTime). TRIGGERED when the mascot plays the RC-remote action clip
+// (action6) -- synced to the mascot "using the remote" -- and gated by the ROBOT
+// ACTION submenu toggle. Each phase sets img.src fresh (WebP restarts at frame 0)
+// and, for travel phases, slides the walker left<->right; travel is held until
+// WSTART so the clip's opening front->side turn plays before the body moves.
+//   1 power_on   (parked at left)
+//   2 walk right (left -> right)
+//   3 turn to face camera by stepping (stays at right)
+//   4 walk left  (right -> left)
+//   5 power_down (parked at left) -> then hold
 (function(){
   var w=document.getElementById('vgwalk'); if(!w) return;
   var img=document.getElementById('vgwalkimg'); if(!img) return;
-  var FROM=12, WSTART=1500, DUR=5208, POW=5208;  // ms; 124 frames @ 42ms
-  var started=false, phase=0, lastEl=0;
+  var FROM=12, DUR=5208, WSTART=1500;   // ms; 124 frames @ 42ms; front->side intro ~1.5s
   function to(){ return window.innerWidth - 250; }   // stop short of the gen rail
   function setPos(px){ w.style.transform='translateX('+px+'px)'; }
-  function walkPos(el){
-    var t=(el>WSTART)?Math.min(1,(el-WSTART)/(DUR-WSTART)):0, a=to();
-    return FROM+(a-FROM)*t;
+  function phase(src, from, to2, hold, done){
+    img.src=src;
+    var t0=performance.now();
+    (function loop(){
+      var el=performance.now()-t0;
+      if(from!==to2){
+        var t=(el>hold)?Math.min(1,(el-hold)/(DUR-hold)):0;
+        setPos(from+(to2-from)*t);
+      }
+      if(el<DUR){ requestAnimationFrame(loop); } else { done(); }
+    })();
   }
-  function begin(){
-    if(started) return; started=true;
+  var running=false;
+  function robotOn(){try{return JSON.parse(localStorage.getItem('vgset')||'{}').robotFx!==false;}catch(e){return true;}}
+  function runChain(){
+    if(running) return; running=true;
     setPos(FROM);
-    img.src=w.dataset.power;          // Phase 1: power on, parked, no travel
-    var t0=performance.now();
-    (function powerLoop(){
-      if(performance.now()-t0 < POW){ requestAnimationFrame(powerLoop); }
-      else { startWalk(); }
-    })();
+    phase(w.dataset.power,  FROM, FROM, 0, function(){        // 1 power on
+      phase(w.dataset.walkr, FROM, to(), WSTART, function(){   // 2 walk right
+        phase(w.dataset.turn, to(), to(), 0, function(){       // 3 step-turn to front
+          phase(w.dataset.walkl, to(), FROM, WSTART, function(){ // 4 walk left
+            phase(w.dataset.turn2, FROM, FROM, 0, function(){  // 5 step-turn back to front
+              setPos(FROM);
+              img.src=w.dataset.pwrdown;                       // 6 power down, hold
+              setTimeout(function(){running=false;}, DUR);       // allow retrigger after the hold
+            });
+          });
+        });
+      });
+    });
   }
-  function startWalk(){
-    phase=1;
-    img.src=w.dataset.walk;           // Phase 2: walk across
-    var t0=performance.now();
-    (function walkLoop(){
-      lastEl=performance.now()-t0;
-      setPos(walkPos(lastEl));
-      if(lastEl<DUR){ requestAnimationFrame(walkLoop); }
-      else { setPos(to()); }          // v161: stop at the right end (no RC idle)
-    })();
-  }
-  if(window.__vgEntered) begin();
-  else document.addEventListener('vg:enter', begin, {once:true});
-  window.addEventListener('resize', function(){
-    if(!started) return;
-    if(phase===1) setPos(walkPos(lastEl));
-    else if(phase>=1) setPos(to());
+  // Trigger: when the mascot plays the RC-remote action clip (action6), boot the
+  // robot chain -- synced to the mascot "using the remote". Gated by the ROBOT
+  // ACTION submenu toggle (vgset.robotFx, default ON).
+  document.addEventListener('vg:clip', function(ev){
+    var u=(ev&&ev.detail&&ev.detail.u)||'';
+    if(/\/action6(\.|\?)/.test(u) && robotOn()) runChain();
   });
 })();
