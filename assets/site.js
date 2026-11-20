@@ -1371,19 +1371,14 @@
       lastEl=performance.now()-t0;
       setPos(walkPos(lastEl));
       if(lastEl<DUR){ requestAnimationFrame(walkLoop); }
-      else { startIdle(); }
+      else { setPos(to()); }          // v161: stop at the right end (no RC idle)
     })();
-  }
-  function startIdle(){
-    phase=2;
-    setPos(to());                     // Phase 3: RC idle at the right end
-    img.src=w.dataset.idle;           // rc_idle_alpha, loop=0 (continuous)
   }
   if(window.__vgEntered) begin();
   else document.addEventListener('vg:enter', begin, {once:true});
   window.addEventListener('resize', function(){
     if(!started) return;
     if(phase===1) setPos(walkPos(lastEl));
-    else if(phase>=2) setPos(to());
+    else if(phase>=1) setPos(to());
   });
 })();
