@@ -48,10 +48,10 @@
     + '</div></footer>';
 
   // v147 (James test): standalone full-body mascot walker clip, walks in place.
-  // v156 (James): TRUE ALPHA — the clip is now an animated WebP (RGBA, per-frame
-  // background removed) shown as an <img>, so there is no near-black box. src is
-  // deferred via data-src and set by site.js only after the splash/enter.
-  var WALK = '<div id="vgwalk" aria-hidden="true"><img id="vgwalkimg" alt="" data-src="/assets/mascot/walk_alpha.webp?v=156"></div>';
+  // v156: TRUE ALPHA — animated WebP (RGBA, bg removed) as an <img>, no box.
+  // v158 (James): use the RIGHT-facing mirror clip (walk_left_alpha) so the
+  // robot faces the direction of travel — it walks right correctly, not backwards.
+  var WALK = '<div id="vgwalk" aria-hidden="true"><img id="vgwalkimg" alt="" data-src="/assets/mascot/walk_left_alpha.webp?v=158"></div>';
 
   var b = document.body;
   b.insertAdjacentHTML("afterbegin", NAV);
