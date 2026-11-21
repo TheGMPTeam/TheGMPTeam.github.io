@@ -15,7 +15,8 @@
     ["status.html", "STATUS", "/status.html"],
     ["system.html", "SYSTEM", "/system.html"],
     ["videos.html", "VIDEOS", "/videos.html"],
-    ["outtakes.html", "OUTTAKES", "/outtakes.html"]
+    ["outtakes.html", "OUTTAKES", "/outtakes.html"],
+    ["schematic.html", "SCHEMATIC", "/schematic.html"]
   ];
   var links = "";
   for (var i = 0; i < LINKS.length; i++) {

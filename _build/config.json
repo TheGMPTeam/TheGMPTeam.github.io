@@ -76,5 +76,16 @@
     "head": true,
     "nav": true,
     "footer": true
+  },
+  "schematic.html": {
+    "title": "Mascot Unit Schematic \u2014 TheGMPTeam Studios",
+    "desc": "Exploded assembly schematic of the TheGMPTeam Studios mascot unit (GMPT-S-01): six cyberpunk layers shown separated.",
+    "active": "/schematic.html",
+    "credit": false,
+    "extra_head": "",
+    "logomark": "",
+    "head": true,
+    "nav": true,
+    "footer": true
   }
 }

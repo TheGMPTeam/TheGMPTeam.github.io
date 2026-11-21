@@ -533,3 +533,9 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
   .specs{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
   section .wrap h2{font-size:1.05rem;letter-spacing:.1em}
 }
+
+/* v166 (James): mascot unit schematic page (GMPT-S-01 exploded view). */
+.page-note{color:#9fb0bd;opacity:.8;font-size:.9rem;margin:8px 0 22px;letter-spacing:.02em}
+.schem-wrap{display:flex;justify-content:center;background:rgba(5,7,12,.6);border:1px solid rgba(34,211,238,.25);border-radius:12px;padding:16px}
+.schem-img{width:100%;max-width:900px;height:auto;display:block}
+@media(max-width:720px){.schem-wrap{padding:8px}}
