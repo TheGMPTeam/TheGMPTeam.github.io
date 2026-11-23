@@ -11,6 +11,7 @@
   var LINKS = [
     ["", "HOME", "/"],
     ["products.html", "PRODUCTS", "/products.html"],
+    ["pay-for-work.html", "PAY FOR WORK", "/pay-for-work.html"],
     ["games.html", "GAMES", "/games.html"],
     ["status.html", "STATUS", "/status.html"],
     ["system.html", "SYSTEM", "/system.html"],

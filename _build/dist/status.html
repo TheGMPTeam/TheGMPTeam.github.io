@@ -7,9 +7,10 @@
 <meta name="description" content="Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=99">
+<link rel="stylesheet" href="/assets/site.css?v=152">
 <link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
-<script src="/assets/site.js?v=98" defer></script>
+<script src="/assets/chrome.js?v=126" defer></script>
+<script src="/assets/site.js?v=129" defer></script>
 <style>
 .hero{position:relative;z-index:20;text-align:center;color:#fff;padding:96px 0 6px}
 .hero-hd{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.2em;font-size:clamp(1.4rem,3.4vw,2.3rem);margin-bottom:8px}
@@ -55,12 +56,6 @@ footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wr
 </style>
 </head>
 <body>
-<nav><div class="wrap">
-  <a class="logo" href="/"><img class="logo-mark" src="/assets/brand/logo-128.jpg" alt="">THEGMPTeam STUDIOS</a>
-  <span class="links">
-    <a href="/">HOME</a><a href="/products.html">PRODUCTS</a><a href="/games.html">GAMES</a><a class="on" href="/status.html">STATUS</a><a href="/videos.html">VIDEOS</a><a href="/outtakes.html">OUTTAKES</a>
-  </span>
-</div></nav>
 <div class="grid-bg"></div>
 <header class="hero"><div class="wrap">
   <h1 class="hero-hd">FLEET STATUS</h1>
@@ -94,13 +89,9 @@ footer.site-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wr
     </div>
   </div>
 </main>
-<footer class="site-footer">
-  <div class="wrap">
-    <span class="dot"></span>
-    <span>&copy; 2026 TheGMPTeam Studios &mdash; <b style="color:var(--cyan)">FLEET STATUS &middot; SIMULATION LOOP</b> &middot; this build is reconstructed for review; nothing here is live</span>
-  </div>
-  <span style="font-size:11px;opacity:.55">Chain imagery: Vecteezy asset 45838195.</span>
-  </footer>
+<div class="vg-warning" style="max-width:1000px;margin:44px auto 0;padding:16px 22px;border:1px solid rgba(255,179,71,.4);border-left:3px solid #ffb347;border-radius:10px;background:rgba(255,179,71,.08);color:#ffcf8f;letter-spacing:.08em;font-size:.85rem">
+  <b style="color:#ffb347;letter-spacing:.14em">SIMULATION LOOP</b> &mdash; this build is reconstructed for review; nothing here is live.
+</div>
 
 <script>
 const NODES=[{g:"CORE",n:"SERVER CORE",p:"su",t:"cold boot — workers joining"}, {g:"CORE",n:"N8N ENGINE",p:"up",t:"workflows queued · 147 active"}, {g:"CORE",n:"BEDROCK VAULT",p:"id",t:"index 412 · searchable"}, {g:"CORE",n:"REDIS QUEUE",p:"up",t:"draining · 217 jobs in flight"}, {g:"CORE",n:"MAC NODE",p:"id",t:"director heartbeat 02s"}, {g:"MIND",n:"OLLAMA",p:"up",t:"7 models · 33 tok/s"}, {g:"MIND",n:"STRATA ENGINE",p:"id",t:"qwen3.8-flash serving"}, {g:"MIND",n:"LLM EVAL",p:"te",t:"benchmark sweep v2"}, {g:"MIND",n:"GPU SWITCH",p:"up",t:"rtx 5060 ti online"}, {g:"MIND",n:"VIRUSGPT CORE",p:"up",t:"stt → thought → speak"}, {g:"CREATE",n:"COMFYUI RENDER",p:"id",t:"prompts queued 07"}, {g:"CREATE",n:"FFMPEG FORGE",p:"up",t:"4k export round 02"}, {g:"CREATE",n:"BLENDER FORGE",p:"su",t:"scene load 014 of 014"}, {g:"CREATE",n:"SEARXNG",p:"id",t:"anon search active"}, {g:"CREATE",n:"LIVE BROWSER",p:"su",t:"CDP harness warming"}, {g:"VOICE",n:"WHISPER EARS",p:"up",t:"nemo-1.6 · low latency"}, {g:"VOICE",n:"PARAKEET EARS",p:"id",t:"auto speech recognition"}, {g:"VOICE",n:"POCKETTTS VOICE",p:"up",t:"voice bank 05 live"}, {g:"EDGE",n:"CADDY GATE",p:"id",t:"lan + live endpoints routed"}, {g:"EDGE",n:"N8N TABLE UI",p:"up",t:"the production command center"}];
@@ -216,9 +207,5 @@ if(NOTOUR){
 setTimeout(function(){tour(0);},1300);
 }
 </script>
-<div id="vgchain" aria-hidden="true"><div id="vgtrack"></div></div>
-<div id="vgrigframe" aria-hidden="true"></div>
-<div class="vgsprocket t"><img class="p1" src="/assets/gear_bronze.png?v=95" alt=""><img class="p2" src="/assets/gear_small.png?v=96" alt=""><img class="p3" src="/assets/gear_ref1.png?v=95" alt=""></div>
-<div class="vgsprocket b"><img class="p1" src="/assets/gear_main.png?v=95" alt=""><img class="p2" src="/assets/gear_dome.png?v=95" alt=""><img class="p3" src="/assets/gear_small.png?v=96" alt=""><img class="p4" src="/assets/gear_ref3.png?v=95" alt=""><img class="p5" src="/assets/gear_ref2.png?v=95" alt=""></div>
 </body>
 </html>
