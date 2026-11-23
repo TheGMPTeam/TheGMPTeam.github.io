@@ -23,7 +23,7 @@
  },
  "pay-for-work.html": {
   "title": "Pay For Work — TheGMPTeam Studios",
-  "desc": "Fixed-scope work delivered by our AI fleet: automation builds, agents, ComfyUI workflows and LoRA training, data pipelines, websites, voice and music. Fixed quote, one invoice.",
+  "desc": "Fixed-scope, fixed-price packages delivered by our AI fleet: AI UGC video ads, n8n workflow builds and fixes, consistent-character LoRA packs, data pipelines with monitoring, website care plans. One invoice, no calls.",
   "active": "/pay-for-work.html",
   "credit": false,
   "extra_head": "",
