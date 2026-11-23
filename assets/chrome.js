@@ -11,7 +11,7 @@
   var LINKS = [
     ["", "HOME", "/"],
     ["products.html", "PRODUCTS", "/products.html"],
-    ["pay-for-work.html", "PAY FOR WORK", "/pay-for-work.html"],
+    ["pay-for-work.html", "SERVICES", "/pay-for-work.html", "SOON"],
     ["games.html", "GAMES", "/games.html"],
     ["status.html", "STATUS", "/status.html"],
     ["system.html", "SYSTEM", "/system.html"],
@@ -22,7 +22,7 @@
   var links = "";
   for (var i = 0; i < LINKS.length; i++) {
     var l = LINKS[i];
-    links += '<a' + on(l[0]) + ' href="' + l[2] + '">' + l[1] + '</a>';
+    links += '<a' + on(l[0]) + ' href="' + l[2] + '">' + l[1] + (l[3] ? '<span class="vgnb">' + l[3] + '</span>' : '') + '</a>';
   }
 
   var NAV = '<nav><div class="wrap">'

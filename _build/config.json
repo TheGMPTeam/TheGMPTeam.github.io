@@ -1,6 +1,6 @@
 {
  "index.html": {
-  "title": "TheGMPTeam Studios — Local-First AI & Game Studios",
+  "title": "TheGMPTeam Studios \u2014 Local-First AI & Game Studios",
   "desc": "TheGMPTeam Studios builds local-first AI agents, the VirusGPT workstation, Roblox game worlds, and creative automation pipelines. Your machine. Your data. Your studio.",
   "active": "/",
   "credit": false,
@@ -11,7 +11,7 @@
   "footer": true
  },
  "products.html": {
-  "title": "Products & Labs — TheGMPTeam Studios",
+  "title": "Products & Labs \u2014 TheGMPTeam Studios",
   "desc": "Everything TheGMPTeam Studios offers: VirusGPT, NEXUS agent network, production automation, VBVCODE voice, ComfyUI rendering, 3D pipelines, games.",
   "active": "/products.html",
   "credit": false,
@@ -22,8 +22,8 @@
   "footer": true
  },
  "pay-for-work.html": {
-  "title": "Pay For Work — TheGMPTeam Studios",
-  "desc": "Fixed-scope, fixed-price packages delivered by our AI fleet: AI UGC video ads, n8n workflow builds and fixes, consistent-character LoRA packs, data pipelines with monitoring, website care plans. One invoice, no calls.",
+  "title": "Services \u2014 TheGMPTeam Studios",
+  "desc": "Fixed-scope, fixed-price packages delivered by our AI fleet: AI UGC video ads, n8n workflow builds and fixes, consistent-character LoRA packs, data pipelines with monitoring, website care plans. Opening soon - early briefs read now.",
   "active": "/pay-for-work.html",
   "credit": false,
   "extra_head": "",
@@ -33,7 +33,7 @@
   "footer": true
  },
  "games.html": {
-  "title": "The Train Game — TheGMPTeam Studios",
+  "title": "The Train Game \u2014 TheGMPTeam Studios",
   "desc": "The Train Game: a transport-tycoon world on Roblox built by our own AI production fleet. Full game description, what is live now, and how the locomotives are engineered.",
   "active": "/games.html",
   "credit": false,
@@ -44,7 +44,7 @@
   "footer": true
  },
  "status.html": {
-  "title": "Fleet Status — TheGMPTeam Studios",
+  "title": "Fleet Status \u2014 TheGMPTeam Studios",
   "desc": "Reconstruction of the production floor: nodes light up as if doing something. Simulation, not a live feed.",
   "active": "/status.html",
   "credit": false,
@@ -67,7 +67,7 @@
   "footer": true
  },
  "videos.html": {
-  "title": "Videos — TheGMPTeam Studios",
+  "title": "Videos \u2014 TheGMPTeam Studios",
   "desc": "Recorded demos, shorts and behind-the-scenes from TheGMPTeam Studios. Hover the slide to play.",
   "active": "/videos.html",
   "credit": false,
@@ -78,7 +78,7 @@
   "footer": true
  },
  "outtakes.html": {
-  "title": "Outtakes — TheGMPTeam Studios",
+  "title": "Outtakes \u2014 TheGMPTeam Studios",
   "desc": "The bloopers we kept. Wrong words, wrong voices, wrong universes.",
   "active": "/outtakes.html",
   "credit": false,
@@ -89,7 +89,7 @@
   "footer": true
  },
  "schematic.html": {
-  "title": "Mascot Unit Schematic — TheGMPTeam Studios",
+  "title": "Mascot Unit Schematic \u2014 TheGMPTeam Studios",
   "desc": "Exploded assembly schematic of the TheGMPTeam Studios mascot unit (GMPT-S-01): six cyberpunk layers shown separated.",
   "active": "/schematic.html",
   "credit": false,
