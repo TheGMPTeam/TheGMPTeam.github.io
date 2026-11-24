@@ -696,7 +696,13 @@
     function hovOff(){try{return JSON.parse(localStorage.getItem('vgset')||'{}').hoverOff===true;}catch(e){return false;}}
     // Bubble text shows only while mascot audio is muted (toggle state lives
     // in vgset.muted and window.__vgMuted).
-    function bubAllowed(){try{if(window.__vgMuted)return true;return JSON.parse(localStorage.getItem('vgset')||'{}').muted===true;}catch(e){return !!window.__vgMuted;}}
+    function bubAllowed(){
+      // v189 (James): while the mascot is off-screen on phones, every hover/tap
+      // fx pops the bubble - he has no video or sound down there, text is the
+      // only channel.
+      try{if(window.__mobMascotOff&&window.__mobMascotOff())return true;}catch(e){}
+      try{if(window.__vgMuted)return true;return JSON.parse(localStorage.getItem('vgset')||'{}').muted===true;}catch(e){return !!window.__vgMuted;}
+    }
     function talkClip(){return /videos/.test(location.pathname)?'/assets/status/welcome-videos.mp4':'/assets/status/welcome-home.mp4';}
     document.addEventListener('mouseover',function(e){
       if(hovOff())return;
@@ -788,35 +794,66 @@
     var MQ=window.matchMedia('(max-width:720px)');
     var btn=null,busy=false;
     // v184 (James): while the mascot is off-screen on phones the engine is
-    // stopped (vgCtl.stop - the 1500ms watchdog would restart merely-paused
-    // clips); it resumes only after he has slid in.
+    // stopped (the 1500ms watchdog would restart merely-paused clips); it
+    // resumes only after he has slid in.
     function engineStop(){try{if(window.__vgEngineStop)window.__vgEngineStop();}catch(_){}}
     function engineResume(){try{if(window.__vgEngineResume)window.__vgEngineResume();}catch(_){}}
     function offscreen(){return MQ.matches&&!document.getElementById('mascot').classList.contains('mascot-in');}
+    window.__mobMascotOff=function(){return MQ.matches&&offscreen();};
+    // v189 (James): the summon plays a full-page info brief - page-specific,
+    // in the mascot's voice - while he talks; then he slides back out.
+    var BRIEFS={
+      '/':'Welcome to my grid. I am the resident machine-gremlin: every pixel here was rendered on hardware we own. Tap anything and I will narrate it.',
+      '/index.html':'Welcome to my grid. I am the resident machine-gremlin: every pixel here was rendered on hardware we own. Tap anything and I will narrate it.',
+      '/videos.html':'Two real demos live up top: my VirusGPT and the Command Center. The rest is my archive. Tap a card and I will pitch it.',
+      '/outtakes.html':'This is my bloopers vault. Every clip here is a take we kept on purpose. Tap one and I will tell you what went sideways.',
+      '/games.html':'My Train Game runs on Roblox: seven beta worlds deep. Tap a card and I will show you the rails.',
+      '/products.html':'Here are my machines and labs: VirusGPT, NEXUS, VBVCODE. All offline, all ours. Tap a card for the spec.',
+      '/pay-for-work.html':'This is my order desk: fixed-scope jobs, everything in writing, no calls. Tap a card and I open the spec sheet.',
+      '/status.html':'These are my fleet vitals, live: the render queue, the GPUs, the uptime. Read straight from the rig.',
+      '/system.html':'Under my hood: cores, GPUs, services, plumbing. Tap around and I will explain what each wire does.',
+      '/schematic.html':'This is the schematic: how my machines, models, and pipelines wire together. Tap a node and I will trace it.'
+    };
+    function briefText(){
+      var p=location.pathname.replace(/\/$/,'/index.html');
+      return BRIEFS[p]||BRIEFS['/'];
+    }
+    function briefTitle(){
+      var h=document.querySelector('h2');
+      var t=h?(h.textContent||'').replace(/[\u2500-\u25FF\u96A0-\u96FF#&]/g,'').trim():'';
+      t=t.replace(/^\s*\d\d\s*\//,'');
+      return (t||'MY STUDIO').toUpperCase().slice(0,28);
+    }
+    function endVisit(m){
+      var b=document.getElementById('vgbrief');if(b)b.classList.remove('on');
+      m.classList.remove('mascot-in');busy=false;engineStop();
+    }
     function summon(){
       var m=document.getElementById('mascot');
       if(!m||busy||!MQ.matches)return;
       busy=true;
       m.classList.add('mascot-in');
       engineResume();
+      var txt=briefText();
+      var b=document.getElementById('vgbrief');
+      if(!b){b=document.createElement('div');b.id='vgbrief';document.body.appendChild(b);}
+      b.setAttribute('role','dialog');
+      b.innerHTML='<div class="card"><div class="hd"><span>MASCOT BRIEF</span><b>'+briefTitle()+'</b></div><div class="bd"></div><div class="skip">TAP ANYWHERE TO CLOSE</div></div>';
+      var bd=b.querySelector('.bd');var k=0;
       setTimeout(function(){
+        b.classList.add('on');
         try{m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}catch(_){}
         if(window.__vgForce){
           var u=/videos/.test(location.pathname)?'/assets/status/welcome-videos.mp4':'/assets/status/welcome-home.mp4';
           if(!window.__vgForce(u))window.__vgForce('/assets/status/action1.mp4');
         }
-        var bub=document.getElementById('vgbubble');
-        if(!bub){bub=document.createElement('div');bub.id='vgbubble';document.body.appendChild(bub);}
-        bub.textContent='There I am! Tap around and I will light up for you.';
-        bub.classList.add('on');
-        // outlives the slide-out; fades on its own timer (4s after he is back out)
-        setTimeout(function(){bub.classList.remove('on');},11000);
+        (function tw(){if(k<txt.length){bd.textContent=txt.slice(0,++k);if(window.__vgEye)window.__vgEye(k,true);setTimeout(tw,26);}})();
       },650);
-      setTimeout(function(){
-        // v188 (James): the bubble stays up when he slides back out - it hides
-        // only via its own timer or the next line, never with the slide-out.
-        m.classList.remove('mascot-in');busy=false;engineStop();
-      },7000);
+      function close(){b.removeEventListener('click',close);endVisit(m);}
+      b.addEventListener('click',close);
+      // auto-close after the line finishes typing + a beat to read it
+      var auto=1200+650+txt.length*26+4000;
+      setTimeout(function(){if(busy)close();},auto);
     }
     function ensure(){
       if(!MQ.matches){if(btn){btn.remove();btn=null;}engineResume();return;}
