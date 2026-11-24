@@ -798,7 +798,7 @@
     // resumes only after he has slid in.
     function engineStop(){try{if(window.__vgEngineStop)window.__vgEngineStop();}catch(_){}}
     function engineResume(){try{if(window.__vgEngineResume)window.__vgEngineResume();}catch(_){}}
-    function offscreen(){return MQ.matches&&!document.getElementById('mascot').classList.contains('mascot-in');}
+    function offscreen(){var m=document.getElementById('mascot');return MQ.matches&&(!m||!m.classList.contains('mascot-in'));}
     window.__mobMascotOff=function(){return MQ.matches&&offscreen();};
     // v189 (James): the summon plays a full-page info brief - page-specific,
     // in the mascot's voice - while he talks; then he slides back out.
@@ -858,6 +858,7 @@
     function ensure(){
       if(!MQ.matches){if(btn){btn.remove();btn=null;}engineResume();return;}
       if(btn)return;
+      if(!document.getElementById('mascot'))return; // pages without the port (outtakes) get no button
       btn=document.createElement('button');
       btn.id='mgbtn';btn.type='button';btn.setAttribute('aria-label','summon the mascot');
       btn.addEventListener('click',summon);
