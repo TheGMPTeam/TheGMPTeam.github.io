@@ -17,7 +17,11 @@ body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospa
 .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
 nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:rgba(8,11,18,.75);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;gap:26px;height:62px}
-.logo{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.14em;color:var(--cyan);font-size:.95rem;text-decoration:none}
+/* v180 (James): bigger logo mark + name; 'STUDIOS' set lighter/wider so the
+   wordmark has hierarchy and fits the bar cleanly. */
+.logo{display:inline-flex;align-items:center;gap:11px;font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.14em;color:var(--cyan);font-size:1.22rem;text-decoration:none;white-space:nowrap}
+.logo-word{font-weight:800;letter-spacing:.1em}
+.logo-sub{font-weight:500;font-size:.62em;letter-spacing:.34em;color:#a9dbe6;padding-top:.35em}
 nav .links{margin-left:auto;display:flex;gap:22px}
 nav .links a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:.08em;padding:9px 6px}
 nav .links a:hover,nav .links a.on{color:var(--cyan)}
@@ -136,9 +140,9 @@ body[data-vgclean] .slide .meta{opacity:0;pointer-events:none;transition:opacity
 body[data-vgclean] .slide.current:hover .meta,body[data-vgclean] .slide.current.showmeta .meta{opacity:1}
 body[data-vgclean] .slide{border-color:rgba(97,146,160,.5)}
 body[data-vgclean] #ot-car{filter:drop-shadow(0 22px 40px rgba(0,0,0,.55))}
-/* v179 (James): projector beam never on outtakes, and hidden on all pages at
-   phone+tablet widths (was <=720px only; <=900px now per tablet class). */
-body[data-vgclean] #vgenbeam{display:none!important}
+/* v179 (James): projector beam never on outtakes (superseded by v180
+   entry choreography), and hidden on all pages at phone+tablet widths
+   (was <=720px only; <=900px now per tablet class). */
 @media (max-width:900px){#vgenbeam{display:none!important}}
 body[data-vgclean] h2,body[data-vgclean] .sub,body[data-vgclean] .back,
 body[data-vgclean] .logo,body[data-vgclean] nav .links a,
@@ -187,7 +191,7 @@ footer a{color:var(--blue);text-decoration:none}
 footer a:hover{color:var(--cyan)}
 a.plain{color:var(--cyan);text-decoration:none}
 .back{font-size:.75rem;color:var(--muted);letter-spacing:.1em}
-.logo-mark{width:26px;height:26px;border-radius:6px;margin-right:10px;vertical-align:middle}
+.logo-mark{width:34px;height:34px;border-radius:7px;flex:0 0 auto}
 #splash{position:fixed;inset:0;z-index:999;background:#000;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .8s ease}
 #splash img{max-width:min(70vmin,480px);max-height:70vmin;border-radius:50%;border:1px solid rgba(0,217,255,.4);box-shadow:0 0 60px rgba(0,217,255,.22),0 0 90px rgba(0,255,120,.12)}
 .splash-inner{display:flex;flex-direction:column;align-items:center;gap:20px}
@@ -375,7 +379,12 @@ html,body{scrollbar-width:none;-ms-overflow-style:none}
 #vgenbeam::after{content:'';position:absolute;left:50%;top:330px;transform:translateX(-50%);width:150px;height:40px;border-radius:50%;background:radial-gradient(ellipse at center, rgba(0,217,255,.95), rgba(0,217,255,0) 72%);filter:blur(5px);animation:vgBeamShim 2.4s ease-in-out infinite}
 @keyframes vgBeamShim{0%,100%{opacity:.6}50%{opacity:1}}
 @keyframes vgBeamIn{from{opacity:0}to{opacity:1}}
-body.vg-entered #vgenbeam{animation:vgBeamIn .6s ease .15s forwards}
+/* v180 (James): beam + circular mascot stay hidden until the side panel has
+   finished sliding in (vgPanelIn: .1s delay + .65s = .75s), then flicker on
+   like studio lights (vgflick) at .8s. Applies on all pages. */
+body.vg-entered #vgenbeam{animation:vgflick .85s ease .8s forwards}
+body.vg-entered #mascot{opacity:0;animation:vgflick .85s ease .8s forwards}
+@media (prefers-reduced-motion: reduce){body.vg-entered #vgenbeam{animation:none;opacity:1}body.vg-entered #mascot{animation:none;opacity:.9}}
 @media (prefers-reduced-motion: reduce){#vgenbeam{opacity:1}#vgenbeam::before,#vgenbeam::after{animation:none}}
 @media (max-width:900px){#vgen{width:150px}.vgen-cap.top,.vgen-cap.bot{width:112px}.vgen-rail{width:28px}.vgen-bolt{width:34px}}
 /* v120 (James): side-panel load transition -- the housing frame slides in from
@@ -549,7 +558,8 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
    ----------------------------------------------------------------------- */
 @media (max-width:720px){
   nav .wrap{flex-wrap:wrap;height:auto;padding:10px 14px;gap:8px 14px}
-  nav .logo{font-size:.8rem;white-space:nowrap}
+  nav .logo{font-size:.86rem;white-space:nowrap}
+  .logo-mark{width:24px;height:24px}
   nav .links{margin-left:0;width:100%;flex-wrap:wrap;gap:10px 14px}
   nav .links a{font-size:.72rem;letter-spacing:.05em}
   #vgpanel{display:none!important}

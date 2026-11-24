@@ -26,7 +26,7 @@
   }
 
   var NAV = '<nav><div class="wrap">'
-    + '<a class="logo" href="/"><img class="logo-mark" src="/assets/brand/logo-128.jpg" alt="">THEGMPTeam STUDIOS</a>'
+    + '<a class="logo" href="/"><img class="logo-mark" src="/assets/brand/logo-128.jpg" alt=""><span class="logo-word">THEGMPTeam</span><span class="logo-sub">STUDIOS</span></a>'
     + '<span class="links">' + links + '</span>'
     + '</div></nav>';
 
