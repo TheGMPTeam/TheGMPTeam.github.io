@@ -562,6 +562,11 @@
       idleLoop(true);
     },1500);
 
+    // v184: hard engine stop/resume for phoneside off-screen mascot. Unlike
+    // vgCtl.stop this ignores the intro branch: it truly stops the idle engine
+    // (watchdog included) and restarts it on demand.
+    window.__vgEngineStop=function(){engineOn=false;try{shown.pause();buf.pause();}catch(e){}};
+    window.__vgEngineResume=function(){engineOn=true;if(mediaDead||!IV.length)return;if(!started){started=true;startIdle();ensurePre();return;}if(shown.paused||shown.ended)idleLoop();};
     // Playback controls for the portholes: click = mute toggle, right-click = menu.
     window.vgCtl={
       skip:function(){
@@ -782,18 +787,18 @@
   (function(){
     var MQ=window.matchMedia('(max-width:720px)');
     var btn=null,busy=false;
-    // v184 (James): while the mascot is off-screen on phones its port video is
-    // paused - nothing plays or downloads until he has slid in.
-    function vids(){return Array.prototype.slice.call(document.querySelectorAll('#mascot video'));}
-    function pauseAll(){vids().forEach(function(v){try{v.pause();}catch(_){}});}
-    function resumeAll(){vids().forEach(function(v){try{if(v.paused&&v.readyState>2)v.play();}catch(_){}});}
+    // v184 (James): while the mascot is off-screen on phones the engine is
+    // stopped (vgCtl.stop - the 1500ms watchdog would restart merely-paused
+    // clips); it resumes only after he has slid in.
+    function engineStop(){try{if(window.__vgEngineStop)window.__vgEngineStop();}catch(_){}}
+    function engineResume(){try{if(window.__vgEngineResume)window.__vgEngineResume();}catch(_){}}
     function offscreen(){return MQ.matches&&!document.getElementById('mascot').classList.contains('mascot-in');}
     function summon(){
       var m=document.getElementById('mascot');
       if(!m||busy||!MQ.matches)return;
       busy=true;
       m.classList.add('mascot-in');
-      resumeAll();
+      engineResume();
       setTimeout(function(){
         try{m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}catch(_){}
         if(window.__vgForce){
@@ -807,23 +812,26 @@
       },650);
       setTimeout(function(){
         var b=document.getElementById('vgbubble');if(b)b.classList.remove('on');
-        m.classList.remove('mascot-in');busy=false;pauseAll();
+        m.classList.remove('mascot-in');busy=false;engineStop();
       },7000);
     }
     function ensure(){
-      if(!MQ.matches){if(btn){btn.remove();btn=null;}resumeAll();return;}
+      if(!MQ.matches){if(btn){btn.remove();btn=null;}engineResume();return;}
       if(btn)return;
       btn=document.createElement('button');
       btn.id='mgbtn';btn.type='button';btn.setAttribute('aria-label','summon the mascot');
       btn.addEventListener('click',summon);
       document.body.appendChild(btn);
-      if(offscreen())pauseAll();
+      if(offscreen())engineStop();
     }
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensure);else ensure();
     if(MQ.addEventListener)MQ.addEventListener('change',ensure);else MQ.addListener(ensure);
     // the idle engine starts playback when the welcome lands in the port; if we
-    // are phoneside and he is off-screen, pause right after that kickoff.
-    document.addEventListener('vg:enter',function(){if(offscreen())setTimeout(pauseAll,1200);});
+    // are phoneside and he is off-screen, stop it (the engine hooks never touch
+    // a playing welcome presentation - that is the allowed center mascot).
+    document.addEventListener('vg:enter',function(){
+      if(offscreen())setTimeout(function(){if(offscreen())engineStop();},1200);
+    });
   })();
 
   // Real page interaction (v33): a pull-chain gear hangs off the port --
