@@ -564,6 +564,15 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
   nav .wrap{flex-wrap:wrap;height:auto;padding:10px 14px;gap:8px 14px}
   nav .logo{font-size:.86rem;white-space:nowrap}
   .logo-mark{width:24px;height:24px}
+  /* v182 (James): no side mascot on phones - only the welcome (splash) mascot.
+     A small inner-core button takes its place; the mascot slides in scaled down
+     on demand (JS adds .mascot-in), plays its interaction, slides back out. */
+  #mascot{width:100px;height:100px;top:74px;right:10px;transform:translateX(170%);opacity:0;
+    transition:transform .55s cubic-bezier(.2,.7,.2,1),opacity .4s}
+  #mascot.mascot-in{transform:none;opacity:.95}
+  #mgbtn{display:block;position:fixed;top:80px;right:12px;z-index:61;width:44px;height:44px;border-radius:50%;
+    border:1px solid rgba(0,217,255,.5);background:rgba(1,3,10,.9) 70%/70% no-repeat url('/assets/brand/logo-128.jpg');
+    box-shadow:0 0 16px rgba(0,217,255,.35);cursor:pointer;padding:0}
   nav .links{margin-left:0;width:100%;flex-wrap:wrap;gap:10px 14px}
   nav .links a{font-size:.72rem;letter-spacing:.05em}
   #vgpanel{display:none!important}

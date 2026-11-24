@@ -723,6 +723,46 @@
     },5000);
   })();
 
+  // v182 (James): mobile mascot on demand. No side mascot by default on phones;
+  // a small inner-core button sits in its place. Tap: the mascot slides in
+  // scaled down, plays a full-page greeting interaction (react + talk clip +
+  // bubble), then slides back out.
+  (function(){
+    var MQ=window.matchMedia('(max-width:720px)');
+    var btn=null,busy=false;
+    function summon(){
+      var m=document.getElementById('mascot');
+      if(!m||busy||!MQ.matches)return;
+      busy=true;
+      m.classList.add('mascot-in');
+      setTimeout(function(){
+        try{m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}catch(_){}
+        if(window.__vgForce){
+          var u=/videos/.test(location.pathname)?'/assets/status/welcome-videos.mp4':'/assets/status/welcome-home.mp4';
+          if(!window.__vgForce(u))window.__vgForce('/assets/status/action1.mp4');
+        }
+        var bub=document.getElementById('vgbubble');
+        if(!bub){bub=document.createElement('div');bub.id='vgbubble';document.body.appendChild(bub);}
+        bub.textContent='Hey! I am right here. Tap around and I will talk.';
+        bub.classList.add('on');
+      },650);
+      setTimeout(function(){
+        var b=document.getElementById('vgbubble');if(b)b.classList.remove('on');
+        m.classList.remove('mascot-in');busy=false;
+      },7000);
+    }
+    function ensure(){
+      if(!MQ.matches){if(btn){btn.remove();btn=null;}return;}
+      if(btn)return;
+      btn=document.createElement('button');
+      btn.id='mgbtn';btn.type='button';btn.setAttribute('aria-label','summon the mascot');
+      btn.addEventListener('click',summon);
+      document.body.appendChild(btn);
+    }
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensure);else ensure();
+    if(MQ.addEventListener)MQ.addEventListener('change',ensure);else MQ.addListener(ensure);
+  })();
+
   // Real page interaction (v33): a pull-chain gear hangs off the port --
   // clicking it tugs, pops the mascot, and scrolls to the next section.
   // The mascot's "eye" sorts along its own bubble text while typing, and
