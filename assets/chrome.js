@@ -57,12 +57,12 @@
   // walk right -> turn around (stepping) to face camera -> turn to other side &
   // walk left -> power down. Clip URLs live on #vgwalk; site.js runs the chain.
   var WALK = '<div id="vgwalk" aria-hidden="true"'
-    + ' data-power="/assets/mascot/power_on_alpha.webp?v=163"'
-    + ' data-walkr="/assets/mascot/walk_right_t_alpha.webp?v=163"'
-    + ' data-turn="/assets/mascot/turn_walk_alpha.webp?v=163"'
-    + ' data-walkl="/assets/mascot/walk_left_t_alpha.webp?v=163"'
-    + ' data-turn2="/assets/mascot/turn_left_alpha.webp?v=163"'
-    + ' data-pwrdown="/assets/mascot/power_down_alpha.webp?v=163">'
+    + ' data-power="/assets/mascot/power_on_alpha.webp?v=173"'
+    + ' data-walkr="/assets/mascot/walk_right_t_alpha.webp?v=173"'
+    + ' data-turn="/assets/mascot/turn_walk_alpha.webp?v=173"'
+    + ' data-walkl="/assets/mascot/walk_left_t_alpha.webp?v=173"'
+    + ' data-turn2="/assets/mascot/turn_left_alpha.webp?v=173"'
+    + ' data-pwrdown="/assets/mascot/power_down_alpha.webp?v=173">'
     + '<img id="vgwalkimg" alt=""></div>';
 
   var b = document.body;
