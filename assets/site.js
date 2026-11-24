@@ -753,7 +753,7 @@
     if(!chain||!gT||!gB)return; // rig markup comes from the shared partial; skip wiring if absent
     var gT1=gT.querySelector('.p1'),gT2=gT.querySelector('.p2'),gT3=gT.querySelector('.p3');
     var gB1=gB.querySelector('.p1'),gB2=gB.querySelector('.p2'),gB3=gB.querySelector('.p3'),gB4=gB.querySelector('.p4'),gB5=gB.querySelector('.p5');
-    var CH=64; // chain tile period on screen (background-size: 64px)
+    var CH=50; // chain tile period on screen (background-size: 18px 50px)
     var lastTug=0;
     var K=360/(2*Math.PI*58); // 1px of chain travel = K deg of main gear (r=58px)
     function playing(){
