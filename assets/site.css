@@ -563,15 +563,25 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
    Fluid values only (clamp/percent) so 390px and 430px phones both work.
    ----------------------------------------------------------------------- */
 @media (max-width:720px){
-  /* v183 (James): mobile nav stays inline - links keep normal inline flow and
-     simply wrap onto more rows. (Old width:100% collapsed the flex item to
-     ~100px, stacking every link in one tall right-side column.) */
-  nav .wrap{flex-wrap:wrap;height:auto;padding:10px 14px;gap:4px 14px}
+  /* v185 (James, supersedes v183 rows): mobile nav stays one inline row; tabs
+     that do not fit move into a MORE submenu dropdown (JS: fitNav()). */
+  nav .wrap{flex-wrap:nowrap;height:auto;padding:10px 14px;gap:10px}
   nav .logo{font-size:.86rem;white-space:nowrap}
   .logo-mark{width:24px;height:24px}
-  nav .links{margin-left:0;flex:1 1 100%;min-width:0;display:flex;flex-wrap:wrap;
-    justify-content:flex-start;gap:0 12px}
-  nav .links a{font-size:.72rem;letter-spacing:.05em;padding:6px 4px}
+  nav .links{margin-left:0;min-width:0;max-width:none;overflow:hidden;
+    display:flex;flex-wrap:nowrap;align-items:center;gap:0 10px}
+  nav .links a{font-size:.72rem;letter-spacing:.05em;padding:6px 4px;white-space:nowrap;flex:0 0 auto}
+  #navmore{background:none;border:1px solid rgba(0,217,255,.4);color:var(--cyan);
+    font:inherit;font-size:.72rem;letter-spacing:.08em;padding:6px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
+  #navmore.open{background:rgba(0,217,255,.12)}
+  #navmore.has-on{border-color:var(--cyan);box-shadow:0 0 10px rgba(0,217,255,.35)}
+  #navmore-menu{position:absolute;right:12px;top:calc(100% + 2px);display:none;flex-direction:column;
+    background:rgba(9,19,31,.92);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);
+    border:1px solid rgba(0,217,255,.42);border-radius:10px;padding:6px;
+    box-shadow:0 14px 40px rgba(0,0,0,.55),0 0 24px rgba(0,217,255,.13),inset 0 1px 0 rgba(0,217,255,.16);z-index:30}
+  #navmore-menu.open{display:flex}
+  #navmore-menu a{color:var(--muted);text-decoration:none;font-size:.78rem;letter-spacing:.06em;padding:10px 16px;white-space:nowrap}
+  #navmore-menu a:hover,#navmore-menu a.on{color:var(--cyan)}
   /* v182 (James): no side mascot on phones - only the welcome (splash) mascot.
      A small inner-core button takes its place; the mascot slides in scaled down
      on demand (JS adds .mascot-in), plays its interaction, slides back out.

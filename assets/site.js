@@ -727,6 +727,54 @@
     },5000);
   })();
 
+  // v185 (James): mobile nav submenu fitting - tabs stay inline; any that do
+  // not fit in the row move into a MORE dropdown. Re-fits on resize/orientation.
+  (function(){
+    var MQ=window.matchMedia('(max-width:720px)');
+    var moreBtn=null,menu=null,overflow=[];
+    function fit(){
+      var nav=document.querySelector('nav');
+      var wrap=nav&&nav.querySelector('.wrap');
+      var links=nav&&nav.querySelector('.links');
+      if(!wrap||!links)return;
+      if(overflow.length){overflow.forEach(function(a){links.appendChild(a);});overflow=[];}
+      if(moreBtn){moreBtn.remove();moreBtn=null;}
+      if(menu){menu.remove();menu=null;}
+      if(!MQ.matches)return;
+      var logo=nav.querySelector('.logo');
+      var items=Array.prototype.slice.call(links.querySelectorAll('a'));
+      if(!items.length)return;
+      var moreW=70;
+      var avail=wrap.clientWidth-(logo?logo.getBoundingClientRect().width:0)-30-moreW;
+      var used=0;
+      items.forEach(function(a){
+        var w=a.getBoundingClientRect().width;
+        if(used+w<=avail){used+=w+10;}else{overflow.push(a);}
+      });
+      if(!overflow.length)return;
+      moreBtn=document.createElement('button');
+      moreBtn.id='navmore';moreBtn.type='button';moreBtn.textContent='MORE';
+      menu=document.createElement('div');menu.id='navmore-menu';
+      wrap.appendChild(moreBtn);nav.appendChild(menu);
+      moreBtn.addEventListener('click',function(e){
+        e.stopPropagation();
+        moreBtn.classList.toggle('open');menu.classList.toggle('open');
+      });
+      document.addEventListener('click',function(){
+        if(moreBtn){moreBtn.classList.remove('open');menu.classList.remove('open');}
+      });
+      overflow.forEach(function(a){
+        menu.appendChild(a);
+        if(a.classList.contains('on'))moreBtn.classList.add('has-on');
+      });
+    }
+    window.__vgNavFit=fit;
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fit);else fit();
+    window.addEventListener('resize',fit);
+    if(MQ.addEventListener)MQ.addEventListener('change',fit);else MQ.addListener(fit);
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+  })();
+
   // v182 (James): mobile mascot on demand. No side mascot by default on phones;
   // a small inner-core button sits in its place. Tap: the mascot slides in
   // scaled down, plays a full-page greeting interaction (react + talk clip +
@@ -734,11 +782,18 @@
   (function(){
     var MQ=window.matchMedia('(max-width:720px)');
     var btn=null,busy=false;
+    // v184 (James): while the mascot is off-screen on phones its port video is
+    // paused - nothing plays or downloads until he has slid in.
+    function vids(){return Array.prototype.slice.call(document.querySelectorAll('#mascot video'));}
+    function pauseAll(){vids().forEach(function(v){try{v.pause();}catch(_){}});}
+    function resumeAll(){vids().forEach(function(v){try{if(v.paused&&v.readyState>2)v.play();}catch(_){}});}
+    function offscreen(){return MQ.matches&&!document.getElementById('mascot').classList.contains('mascot-in');}
     function summon(){
       var m=document.getElementById('mascot');
       if(!m||busy||!MQ.matches)return;
       busy=true;
       m.classList.add('mascot-in');
+      resumeAll();
       setTimeout(function(){
         try{m.classList.remove('vg-react');void m.offsetWidth;m.classList.add('vg-react');}catch(_){}
         if(window.__vgForce){
@@ -752,19 +807,23 @@
       },650);
       setTimeout(function(){
         var b=document.getElementById('vgbubble');if(b)b.classList.remove('on');
-        m.classList.remove('mascot-in');busy=false;
+        m.classList.remove('mascot-in');busy=false;pauseAll();
       },7000);
     }
     function ensure(){
-      if(!MQ.matches){if(btn){btn.remove();btn=null;}return;}
+      if(!MQ.matches){if(btn){btn.remove();btn=null;}resumeAll();return;}
       if(btn)return;
       btn=document.createElement('button');
       btn.id='mgbtn';btn.type='button';btn.setAttribute('aria-label','summon the mascot');
       btn.addEventListener('click',summon);
       document.body.appendChild(btn);
+      if(offscreen())pauseAll();
     }
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensure);else ensure();
     if(MQ.addEventListener)MQ.addEventListener('change',ensure);else MQ.addListener(ensure);
+    // the idle engine starts playback when the welcome lands in the port; if we
+    // are phoneside and he is off-screen, pause right after that kickoff.
+    document.addEventListener('vg:enter',function(){if(offscreen())setTimeout(pauseAll,1200);});
   })();
 
   // Real page interaction (v33): a pull-chain gear hangs off the port --
