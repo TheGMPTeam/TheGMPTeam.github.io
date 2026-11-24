@@ -640,6 +640,10 @@
       if(document.body.classList.contains('vg-pre'))return false;
       return true;
     }
+    // v183 (James): on phones, hover/tap actions stay but the video is off -
+    // the only mascot video on mobile is the inner-button summon interaction.
+    var MOBQ=window.matchMedia('(max-width:720px)');
+    function vgNoVid(){return MOBQ.matches;}
     function speak(txt,force){
       if(!txt||!active())return;
       var now=Date.now();
@@ -701,7 +705,7 @@
       var txt=t.getAttribute('data-say')||t.getAttribute('data-tip');
       if(!txt||seen[txt])return;
       clearTimeout(hovT);
-      hovT=setTimeout(function(){seen[txt]=1;speak(txt,true);var u=t.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u))window.__vgForce(talkClip());},1300);
+      hovT=setTimeout(function(){seen[txt]=1;speak(txt,true);if(vgNoVid())return;var u=t.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u))window.__vgForce(talkClip());},1300);
     });
     // v74: leaving the spot cancels a pending hover talk -- a timer that
     // fires after the pointer is gone reads as a random outburst.
@@ -711,15 +715,15 @@
     });
     document.addEventListener('click',function(e){
       var t=e.target&&e.target.closest?e.target.closest('[data-say]'):null;
-      if(t){speak(t.getAttribute('data-say'),true);var u1=t.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u1))window.__vgForce(talkClip());return;}
+      if(t){speak(t.getAttribute('data-say'),true);if(vgNoVid())return;var u1=t.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u1))window.__vgForce(talkClip());return;}
       var c=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;
-      if(c){var txt=c.getAttribute('data-tip');seen[txt]=1;speak(txt,true);var u2=c.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u2))window.__vgForce(talkClip());}
+      if(c){var txt=c.getAttribute('data-tip');seen[txt]=1;speak(txt,true);if(vgNoVid())return;var u2=c.getAttribute('data-talk')||talkClip();if(window.__vgForce&&!window.__vgForce(u2))window.__vgForce(talkClip());}
     });
     setInterval(function(){
       if(helpOffered>=2||Date.now()-lastAct<45000)return;
       if(!active())return;
       helpOffered++;
-      speak(helpOffered===1?'Need a hand? Hover anything on the page and I will talk. Right-click me for playback controls.':'Still there? The live fleet sim runs at /status.html, product demos at /videos.html.',true);
+      speak(helpOffered===1?'I am great at this. Hover anything and I will narrate it. Right-click me and I run playback.':'I never leave. My live fleet sim runs at /status.html, my product demos live at /videos.html.',true);
     },5000);
   })();
 
@@ -743,7 +747,7 @@
         }
         var bub=document.getElementById('vgbubble');
         if(!bub){bub=document.createElement('div');bub.id='vgbubble';document.body.appendChild(bub);}
-        bub.textContent='Hey! I am right here. Tap around and I will talk.';
+        bub.textContent='There I am! Tap around and I will light up for you.';
         bub.classList.add('on');
       },650);
       setTimeout(function(){
