@@ -19,9 +19,9 @@ nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:rgba(
 nav .wrap{display:flex;align-items:center;gap:26px;height:62px}
 .logo{font-family:'Orbitron',sans-serif;font-weight:800;letter-spacing:.14em;color:var(--cyan);font-size:.95rem;text-decoration:none}
 nav .links{margin-left:auto;display:flex;gap:22px}
-nav .links a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:.08em}
+nav .links a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:.08em;padding:9px 6px}
 nav .links a:hover,nav .links a.on{color:var(--cyan)}
-.vgnb{display:inline-block;margin-left:6px;font-size:.55rem;letter-spacing:.18em;color:var(--amber);border:1px solid rgba(255,180,60,.5);padding:1px 5px;border-radius:3px;vertical-align:2px}
+.vgnb{display:inline-block;margin-left:6px;font-size:.62rem;letter-spacing:.18em;color:var(--amber);border:1px solid rgba(255,180,60,.5);padding:1px 5px;border-radius:3px;vertical-align:2px}
 .soon{display:inline-block;margin:0 0 22px;font-size:.7rem;letter-spacing:.3em;color:var(--amber);border:1px solid rgba(255,180,60,.55);padding:6px 14px;border-radius:4px}
 header.hero{padding:110px 0 80px;text-align:center;position:relative;z-index:2}
 .eyebrow{color:var(--blue);letter-spacing:.35em;font-size:.75rem;text-transform:uppercase}
@@ -46,6 +46,7 @@ h2 .idx{color:var(--blue);margin-right:12px}
 .card h3{font-family:'Orbitron',sans-serif;font-size:.95rem;margin-bottom:10px;color:var(--text)}
 .card p{color:var(--muted);font-size:.85rem}
 .tag{display:inline-block;margin-top:14px;font-size:.65rem;letter-spacing:.2em;color:var(--blue)}
+.cards .card .tag{display:block;margin-top:10px}
 .card:nth-child(2) .tag{color:var(--cyan)}
 .card:nth-child(3) .tag{color:var(--violet)}
 .card:nth-child(4) .tag{color:var(--amber)}
@@ -142,7 +143,8 @@ body[data-vgclean] .slide .t,body[data-vgclean] .slide .d{
 .mute-btn:hover{border-color:var(--line-hot);box-shadow:0 0 16px rgba(0,217,255,.25)}
 .mute-btn.on{background:rgba(0,217,255,.18);border-color:var(--cyan);color:#fff}
 .dots{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap}
-.dot-i{width:9px;height:9px;border-radius:50%;background:var(--panel);border:1px solid var(--line);cursor:pointer;padding:0;transition:.25s}
+.dot-i{width:9px;height:9px;border-radius:50%;background:var(--panel);border:1px solid var(--line);cursor:pointer;padding:0;transition:.25s;position:relative}
+.dot-i::before{content:"";position:absolute;inset:-8px}
 .dot-i:hover{border-color:var(--line-hot)}
 .dot-i.on{width:26px;border-radius:6px;background:var(--cyan);border-color:var(--cyan);box-shadow:0 0 10px var(--cyan)}
 .manifesto{border-left:2px solid var(--blue);padding:22px 28px;background:rgba(8,123,255,.06);border-radius:0 10px 10px 0;font-size:.95rem}

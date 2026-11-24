@@ -5,12 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Products & Labs — TheGMPTeam Studios</title>
 <meta name="description" content="Everything TheGMPTeam Studios offers: VirusGPT, NEXUS agent network, production automation, VBVCODE voice, ComfyUI rendering, 3D pipelines, games.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TheGMPTeam Studios">
+<meta property="og:url" content="https://thegmpteamstudios.com/products.html">
+<meta property="og:title" content="Products & Labs — TheGMPTeam Studios">
+<meta property="og:description" content="Everything TheGMPTeam Studios offers: VirusGPT, NEXUS agent network, production automation, VBVCODE voice, ComfyUI rendering, 3D pipelines, games.">
+<meta property="og:image" content="https://thegmpteamstudios.com/assets/brand/logo.jpg">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css?v=154">
+<link rel="stylesheet" href="/assets/site.css?v=155">
 <link rel="icon" type="image/jpeg" href="/assets/brand/favicon.jpg">
 <script src="/assets/chrome.js?v=128" defer></script>
-<script src="/assets/site.js?v=130" defer></script>
+<script src="/assets/site.js?v=131" defer></script>
 </head>
 <body>
 <div class="grid-bg"></div>
@@ -72,7 +79,7 @@
 </div></section>
 
 <!-- product spec modal -->
-<div id="pmodal">
+<div id="pmodal" role="dialog" aria-modal="true" aria-labelledby="pmt">
   <div id="pmbox">
     <button id="pmx" title="close">&times;</button>
     <div id="pmmedia"></div>
@@ -90,10 +97,11 @@
 (function(){
   var modal=document.getElementById('pmodal');
   var box=document.getElementById('pmbox');
+  var lastCard=null;
+  function close(){modal.classList.remove('on');mm.innerHTML='';if(lastCard){try{lastCard.focus();}catch(e){}lastCard=null;}}
   var mt=document.getElementById('pmt'),mtag=document.getElementById('pmtag'),
       mbl=document.getElementById('pmblurb'),ms=document.getElementById('pmspecs'),
       mm=document.getElementById('pmmedia'),ml=document.getElementById('pmlink');
-  function close(){modal.classList.remove('on');mm.innerHTML='';}
   function playLocal(src){
     var v=document.createElement('video');
     v.src=src;v.controls=true;v.autoplay=true;v.loop=true;v.playsInline=true;
@@ -102,6 +110,7 @@
   }
   function open(card){
     var d=card.dataset;
+    lastCard=card;
     mt.textContent=(d.title||'').replace(/&amp;/g,'&');
     mtag.textContent='// '+(d.tag||'');
     mbl.textContent=d.blurb||'';
@@ -134,6 +143,7 @@
     if(d.link){ml.href=d.link;ml.style.display='block';}else{ml.style.display='none';}
     modal.classList.add('on');
     box.scrollTop=0;
+    try{document.getElementById('pmx').focus();}catch(e){}
   }
   document.querySelectorAll('.card.pop').forEach(function(c){
     c.tabIndex=0;

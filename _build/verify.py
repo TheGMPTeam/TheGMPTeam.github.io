@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Normalized diff of _build/dist/<p> vs root <p>. Reports intended-vs-bug deltas."""
 import re, difflib
-PAGES=["index.html","products.html","games.html","videos.html","status.html","outtakes.html"]
+# v172: page list comes from build.py itself - verify can never lag behind the site.
+_src=open("_build/build.py").read()
+PAGES=eval(re.search(r"PAGES=(\[.*?\])",_src).group(1))
 def nl(s):
     s=s.replace("&middot;","·")
     lines=[re.sub(r"\s+"," ",l).strip() for l in s.splitlines()]

@@ -61,7 +61,7 @@
 </div></section>
 
 <!-- product spec modal -->
-<div id="pmodal">
+<div id="pmodal" role="dialog" aria-modal="true" aria-labelledby="pmt">
   <div id="pmbox">
     <button id="pmx" title="close">&times;</button>
     <div id="pmmedia"></div>
@@ -79,10 +79,11 @@
 (function(){
   var modal=document.getElementById('pmodal');
   var box=document.getElementById('pmbox');
+  var lastCard=null;
+  function close(){modal.classList.remove('on');mm.innerHTML='';if(lastCard){try{lastCard.focus();}catch(e){}lastCard=null;}}
   var mt=document.getElementById('pmt'),mtag=document.getElementById('pmtag'),
       mbl=document.getElementById('pmblurb'),ms=document.getElementById('pmspecs'),
       mm=document.getElementById('pmmedia'),ml=document.getElementById('pmlink');
-  function close(){modal.classList.remove('on');mm.innerHTML='';}
   function playLocal(src){
     var v=document.createElement('video');
     v.src=src;v.controls=true;v.autoplay=true;v.loop=true;v.playsInline=true;
@@ -91,6 +92,7 @@
   }
   function open(card){
     var d=card.dataset;
+    lastCard=card;
     mt.textContent=(d.title||'').replace(/&amp;/g,'&');
     mtag.textContent='// '+(d.tag||'');
     mbl.textContent=d.blurb||'';
@@ -123,6 +125,7 @@
     if(d.link){ml.href=d.link;ml.style.display='block';}else{ml.style.display='none';}
     modal.classList.add('on');
     box.scrollTop=0;
+    try{document.getElementById('pmx').focus();}catch(e){}
   }
   document.querySelectorAll('.card.pop').forEach(function(c){
     c.tabIndex=0;

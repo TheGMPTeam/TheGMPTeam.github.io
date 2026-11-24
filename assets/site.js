@@ -236,7 +236,6 @@
         document.dispatchEvent(new CustomEvent('vg:enter'));
       },280);
     }
-    var WSRC=(ivv&&ivv.getAttribute('src'))||'/assets/status/welcome-home.mp4';
     // Transition sound effects (synthesized, local): glitch zap on click,
     // vacuum suck on collapse, power-on hum+pop when the welcome ignites.
     var SFXP={glitch:'/assets/sfx/glitch.mp3',whoosh:'/assets/sfx/whoosh.mp3',ignite:'/assets/sfx/ignite.mp3'};
@@ -369,12 +368,22 @@
     //   walkoffN.mp4  exits stage            -- only from a present stage
     //   welcome-home.mp4 / welcome-videos.mp4 are NEVER probed into the pool:
     //   they belong to the enter presentation only.
-    var SLOT=[];var i;for(i=1;i<=8;i++)SLOT.push(['idle',i]);for(i=1;i<=4;i++)SLOT.push(['walkon',i]);for(i=1;i<=4;i++)SLOT.push(['walkoff',i]);for(i=1;i<=6;i++)SLOT.push(['action',i]);  // v162: action6 = RC-remote "control the robot" beat
+    // v172: manifest = exactly the files on the CDN (was a 1..N name probe that
+    // guaranteed 10 404s per page). New clips: drop the file AND add a line here.
+    var SLOT=[['idle',1],['idle',2],['idle',5],['walkon',1],['walkon',2],['walkoff',1],['action',1],['action',2],['action',3],['action',4],['action',5],['action',6]];
     var IV=[],IA=[]; // entries: {u:URL, endGone:bool, role:'idle'|'walkon'|'walkoff'|'action'}
     window.__vgPool=IV;
     var shown=document.getElementById('mvid1'),buf=document.getElementById('mvid2');
     var mediaDead=false,probed=0,started=false;
-    [shown,buf].forEach(function(x){x.addEventListener('error',function(){mediaDead=true;});});
+    [shown,buf].forEach(function(x){x.addEventListener('error',function(){
+      // v172: a transient decode/network error no longer kills the engine for
+      // the whole page life. Drop the offending URL from the pool when it can
+      // be identified; declare media dead only when nothing is left. The 1.5s
+      // watchdog below re-pumps the idle loop on its own once mediaDead clears.
+      var bad=(x.currentSrc||'').replace(location.origin,'');
+      if(bad){for(var k=IV.length-1;k>=0;k--){if(IV[k].u===bad)IV.splice(k,1);}}
+      mediaDead=!IV.length;
+    });});
     var pre=null,audioOn=false,lastEndGone=false,lastU='',lastRole='';
     var paused=false,curEntry=null,exiting=false;
     var engineOn=!document.getElementById('splash');
@@ -517,7 +526,6 @@
     function arm(){audioOn=!window.__vgMuted;try{shown.muted=!!window.__vgMuted;}catch(e){}}
     document.addEventListener('click',arm,{once:true});
     document.addEventListener('keydown',arm,{once:true});
-    if(window.__audioPrearmed){audioOn=true;}
     function startIdle(){
       if(!IV.length)return;
       var e0=pick();if(!e0)return;
@@ -542,10 +550,6 @@
     setInterval(function(){
       if(mediaDead||!engineOn||!started||!IV.length||paused){return;}
       if(!shown.paused&&!shown.ended&&!shown.seeking)return;
-      // v71 watchdog guard kept for safety: __vgRev is never set since the
-      // scroll->video engine was removed in v73, but the seek-state check
-      // stays harmless.
-      if(window.__vgRev)return;
       idleLoop(true);
     },1500);
 
@@ -1038,11 +1042,6 @@
     // mascot immediately plays the page-fix action clip, and the text repairs
     // WHILE the animation is still playing -- the mascot "fixes the browser".
     var glitchOn=false;
-    function corrupt(t){
-      var g='#%&@$/\\|<>~*+=?',out='',k,c;
-      for(k=0;k<t.length;k++){c=t[k];if(c===' '&&Math.random()<0.85){out+=c;continue;}out+=(Math.random()<0.42?g.charAt(Math.floor(Math.random()*g.length)):c);}
-      return out;
-    }
     function glitchEvent(){
       window.__vgGlitchWhy='run';
       if(glitchOn){window.__vgGlitchWhy='already-running';return;}
