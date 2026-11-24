@@ -594,6 +594,8 @@ body.vg-bounce section,body.vg-bounce header,body.vg-bounce footer{animation:vgb
   #vgbrief .hd{font-size:.62rem;letter-spacing:.22em;color:#7fd8ee;margin-bottom:10px;
     display:flex;justify-content:space-between;border-bottom:1px solid rgba(0,217,255,.25);padding-bottom:8px}
   #vgbrief .hd b{color:#ffb347;font-weight:400}
+  #vgbrief .bd{min-height:2.5em}
+  #vgbrief video{width:100%;border-radius:10px;display:block;margin-top:6px;background:#01030a}
   #vgbrief .skip{margin-top:14px;font-size:.62rem;letter-spacing:.18em;color:#6f93a4;text-align:right}
   /* v182 (James): no side mascot on phones - only the welcome (splash) mascot.
      A small inner-core button takes its place; the mascot slides in scaled down

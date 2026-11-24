@@ -814,6 +814,17 @@
       '/system.html':'Under my hood: cores, GPUs, services, plumbing. Tap around and I will explain what each wire does.',
       '/schematic.html':'This is the schematic: how my machines, models, and pipelines wire together. Tap a node and I will trace it.'
     };
+    // v192 (James): the brief WILL be a generated video per page (rendered on
+    // the rig, todo-tracked). When /assets/brief/<slug>.mp4 exists, list it
+    // here and the card plays the clip full-card instead of the text line.
+    // Text is the placeholder until the gen videos land.
+    var BRIEFVID={
+      // '/':'/assets/brief/home.mp4',  // enable when generated
+    };
+    function briefSlug(){
+      var p=location.pathname.replace(/^\/+/,'').replace(/index\.html$/,'');
+      return p||'home';
+    }
     function briefText(){
       var p=location.pathname.replace(/\/$/,'/index.html');
       return BRIEFS[p]||BRIEFS['/'];
@@ -835,10 +846,16 @@
       m.classList.add('mascot-in');
       engineResume();
       var txt=briefText();
+      var vid=BRIEFVID[briefSlug()]||null;
       var b=document.getElementById('vgbrief');
       if(!b){b=document.createElement('div');b.id='vgbrief';document.body.appendChild(b);}
       b.setAttribute('role','dialog');
-      b.innerHTML='<div class="card"><div class="hd"><span>MASCOT BRIEF</span><b>'+briefTitle()+'</b></div><div class="bd"></div><div class="skip">TAP ANYWHERE TO CLOSE</div></div>';
+      if(vid){
+        b.innerHTML='<div class="card"><div class="hd"><span>MASCOT BRIEF</span><b>'+briefTitle()+'</b></div>'+
+          '<video playsinline autoplay preload="auto" src="'+vid+'"></video><div class="skip">TAP ANYWHERE TO CLOSE</div></div>';
+      }else{
+        b.innerHTML='<div class="card"><div class="hd"><span>MASCOT BRIEF</span><b>'+briefTitle()+'</b></div><div class="bd"></div><div class="skip">TAP ANYWHERE TO CLOSE</div></div>';
+      }
       var bd=b.querySelector('.bd');var k=0;
       setTimeout(function(){
         b.classList.add('on');
@@ -847,12 +864,21 @@
           var u=/videos/.test(location.pathname)?'/assets/status/welcome-videos.mp4':'/assets/status/welcome-home.mp4';
           if(!window.__vgForce(u))window.__vgForce('/assets/status/action1.mp4');
         }
+        if(vid){
+          // close when the generated brief clip ends
+          var vv=b.querySelector('video');
+          if(vv)vv.addEventListener('ended',function(){if(busy)close();});
+          else close();
+          if(vv){vv.play().catch(function(){});}
+          return;
+        }
         (function tw(){if(k<txt.length){bd.textContent=txt.slice(0,++k);if(window.__vgEye)window.__vgEye(k,true);setTimeout(tw,26);}})();
       },650);
       function close(){b.removeEventListener('click',close);endVisit(m);}
       b.addEventListener('click',close);
       // auto-close after the line finishes typing + a beat to read it
       var auto=1200+650+txt.length*26+4000;
+      if(vid)auto=1200+650+30000; // safety cap while the clip plays
       setTimeout(function(){if(busy)close();},auto);
     }
     function ensure(){
