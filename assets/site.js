@@ -809,9 +809,12 @@
         if(!bub){bub=document.createElement('div');bub.id='vgbubble';document.body.appendChild(bub);}
         bub.textContent='There I am! Tap around and I will light up for you.';
         bub.classList.add('on');
+        // outlives the slide-out; fades on its own timer (4s after he is back out)
+        setTimeout(function(){bub.classList.remove('on');},11000);
       },650);
       setTimeout(function(){
-        var b=document.getElementById('vgbubble');if(b)b.classList.remove('on');
+        // v188 (James): the bubble stays up when he slides back out - it hides
+        // only via its own timer or the next line, never with the slide-out.
         m.classList.remove('mascot-in');busy=false;engineStop();
       },7000);
     }
