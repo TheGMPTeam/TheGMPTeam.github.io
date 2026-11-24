@@ -57,12 +57,16 @@ h2 .idx{color:var(--blue);margin-right:12px}
    .dot (green, for its status pills) at equal specificity and later in the head. */
 footer .dot{background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
 @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
-.car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:min(440px,100%);margin:0 auto;overflow:hidden}
+.car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:min(440px,100%);margin:0 auto}
 /* v87: outtakes carousel is portrait (clips are 480x864, ~5:9). Height-driven to fill the
    vertical space; thumb fills the taller slide; at matching aspect, cover shows the full frame. */
 #ot-car{aspect-ratio:5/9;height:auto;flex:1 1 auto;min-height:0;max-width:92vw;max-height:100%;margin:8px auto;align-self:center}
 #ot-car .thumb{aspect-ratio:auto;height:100%}
 .slides{display:contents}
+/* v177: coverflow side cards translate outside the .car box - no clip on
+   desktop (that killed the fade, v171 regression). Re-clip only at phone
+   width, where v171's videos-page overflow fix is still wanted. */
+@media (max-width:720px){.car{overflow:clip}}
 .slide{position:absolute;inset:0;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel2);
   transition:transform .55s cubic-bezier(.4,0,.2,1),opacity .55s;will-change:transform;
   backface-visibility:hidden;box-shadow:0 14px 34px rgba(0,0,0,.5)}
