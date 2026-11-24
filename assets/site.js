@@ -70,7 +70,10 @@
             var sgn=off>0?1:-1;
             // v117 (James): narrower carousel + tighter side offset so the whole
             // coverflow fits the left column (flanking cards not cropped).
-            var x=mag===1?62:118, z=mag===1?-140:-300, rot=mag===1?12:20;
+            // v179 (James): outtakes portrait card fans wider so side cards
+            // clearly flank the main card on wide screens.
+            var OT=(car.id==='ot-car');
+            var x=OT?(mag===1?95:170):(mag===1?62:118), z=mag===1?-140:-300, rot=OT?(mag===1?14:22):(mag===1?12:20);
             s.style.transform='translate3d('+(sgn*x)+'%,0,'+z+'px) rotateY('+(sgn*rot)+'deg)';
             s.style.opacity=mag===1?'0.9':'0.55';
           } else {
@@ -187,6 +190,12 @@
           b.classList.toggle('on',!muted);
         });
         h.appendChild(b);
+      });
+      s.addEventListener('click',function(){
+        if(!CLEAN||slides[cur]!==s) return; // v179 (James): tap reveals the caption for 3.5s
+        s.classList.add('showmeta');
+        clearTimeout(s.__mt);
+        s.__mt=setTimeout(function(){ s.classList.remove('showmeta'); },3500);
       });
     });
     if(!CLEAN) car.addEventListener('mouseleave',stop); // v85: no hover-stop on outtakes

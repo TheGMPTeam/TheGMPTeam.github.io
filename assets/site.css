@@ -58,9 +58,10 @@ h2 .idx{color:var(--blue);margin-right:12px}
 footer .dot{background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 2.6s infinite}
 @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
 .car{position:relative;perspective:1000px;aspect-ratio:16/9;max-width:min(440px,100%);margin:0 auto}
-/* v87: outtakes carousel is portrait (clips are 480x864, ~5:9). Height-driven to fill the
-   vertical space; thumb fills the taller slide; at matching aspect, cover shows the full frame. */
-#ot-car{aspect-ratio:5/9;height:auto;flex:1 1 auto;min-height:0;max-width:92vw;max-height:100%;margin:8px auto;align-self:center}
+/* v87: outtakes carousel is portrait (clips are 480x864, ~5:9). v179 (James): size off
+   available HEIGHT so the card is as large as the viewport allows; width follows from the
+   5:9 aspect. Seek/controls restructure to two rows so they fit at any card width. */
+#ot-car{aspect-ratio:5/9;height:min(78dvh,calc(100dvh - 235px));width:auto;max-width:92vw;margin:8px auto;align-self:center;flex:0 1 auto}
 #ot-car .thumb{aspect-ratio:auto;height:100%}
 .slides{display:contents}
 /* v177: coverflow side cards translate outside the .car box - no clip on
@@ -116,19 +117,29 @@ body[data-vgclean] footer{position:relative;z-index:2}
 body[data-vgclean] .slide .meta{background:rgba(8,12,18,.90)}
 body[data-vgclean] .slide .d{color:#eef4ff}
 /* v91: outtakes clip controls -- bigger + opaque so they're unmistakable */
-.vctrl{position:absolute;left:0;right:0;bottom:0;z-index:130;display:flex;align-items:center;gap:12px;
+.vctrl{position:absolute;left:0;right:0;bottom:0;z-index:130;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:11px 14px;background:rgba(4,8,14,.94);border-top:1px solid rgba(63,199,232,.45);font-family:inherit}
+/* v179 (James): two-row controls on narrow/portrait cards - seek+buffer bar gets
+   its own full-width row ABOVE the buttons, so it always fits; buttons below. */
+.vc-seek{position:relative;flex:1 1 100%;order:-1;height:12px;border-radius:6px;background:rgba(97,146,160,.30);cursor:pointer;overflow:hidden;touch-action:none;margin-bottom:2px}
 .vc-play,.vc-mute{cursor:pointer;background:rgba(63,199,232,.10);border:1px solid var(--cyan);color:var(--cyan);
   border-radius:7px;padding:9px 14px;font-family:inherit;font-weight:700;font-size:.72rem;letter-spacing:.12em;min-width:66px}
 .vc-play:hover,.vc-mute:hover{background:rgba(63,199,232,.22)}
 .vc-mute.on{color:#eef4ff;border-color:var(--line)}
-.vc-seek{position:relative;flex:1;height:12px;border-radius:6px;background:rgba(97,146,160,.30);cursor:pointer;overflow:hidden;touch-action:none}
 .vc-buf{position:absolute;left:0;top:0;bottom:0;width:0;background:rgba(97,146,160,.55)}
 .vc-prog{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--cyan);box-shadow:0 0 10px rgba(63,199,232,.7)}
 .vc-time{color:#eef4ff;white-space:nowrap;font-size:.72rem;letter-spacing:.06em}
-body[data-vgclean] .slide .meta{bottom:50px}
+body[data-vgclean] .slide .meta{bottom:96px}
+/* v179 (James): captions hidden by default; revealed on hover of the current card,
+   or for 3.5s after a tap (JS adds .showmeta). Outtakes only (data-vgclean). */
+body[data-vgclean] .slide .meta{opacity:0;pointer-events:none;transition:opacity .35s}
+body[data-vgclean] .slide.current:hover .meta,body[data-vgclean] .slide.current.showmeta .meta{opacity:1}
 body[data-vgclean] .slide{border-color:rgba(97,146,160,.5)}
 body[data-vgclean] #ot-car{filter:drop-shadow(0 22px 40px rgba(0,0,0,.55))}
+/* v179 (James): projector beam never on outtakes, and hidden on all pages at
+   phone+tablet widths (was <=720px only; <=900px now per tablet class). */
+body[data-vgclean] #vgenbeam{display:none!important}
+@media (max-width:900px){#vgenbeam{display:none!important}}
 body[data-vgclean] h2,body[data-vgclean] .sub,body[data-vgclean] .back,
 body[data-vgclean] .logo,body[data-vgclean] nav .links a,
 body[data-vgclean] .slide .t,body[data-vgclean] .slide .d{
