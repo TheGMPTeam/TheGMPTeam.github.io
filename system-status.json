@@ -1,18 +1,18 @@
 {
- "updated": "2026-11-25T14:44:04Z",
+ "updated": "2026-11-25T14:59:12Z",
  "host": "server",
  "os": "Ubuntu LTS",
- "uptime_s": 200693,
+ "uptime_s": 201601,
  "cpu": {
   "cores": 24,
-  "load1": "0.12",
-  "load5": "0.15",
+  "load1": "0.36",
+  "load5": "0.55",
   "usage_pct": 0.5
  },
  "memory": {
   "total_mb": 124359,
-  "used_mb": 79792,
-  "pct": 64.2
+  "used_mb": 78893,
+  "pct": 63.4
  },
  "disks": [
   {
@@ -37,7 +37,7 @@
    "vram_used_mb": 15127,
    "vram_total_mb": 16311,
    "temp_c": 31,
-   "fan_pct": 35
+   "fan_pct": 36
   }
  ],
  "containers": [
