@@ -1,18 +1,18 @@
 {
- "updated": "2026-11-25T10:44:06Z",
+ "updated": "2026-11-25T10:59:13Z",
  "host": "server",
  "os": "Ubuntu LTS",
- "uptime_s": 186295,
+ "uptime_s": 187202,
  "cpu": {
   "cores": 24,
-  "load1": "1.30",
-  "load5": "2.71",
-  "usage_pct": 0.4
+  "load1": "0.02",
+  "load5": "0.24",
+  "usage_pct": 0.2
  },
  "memory": {
   "total_mb": 124359,
-  "used_mb": 88743,
-  "pct": 71.4
+  "used_mb": 78468,
+  "pct": 63.1
  },
  "disks": [
   {
@@ -26,9 +26,9 @@
   {
    "name": "RTX 3060",
    "util_pct": 0,
-   "vram_used_mb": 8495,
+   "vram_used_mb": 3279,
    "vram_total_mb": 12288,
-   "temp_c": 39,
+   "temp_c": 31,
    "fan_pct": 34
   },
   {
@@ -36,7 +36,7 @@
    "util_pct": 0,
    "vram_used_mb": 15127,
    "vram_total_mb": 16311,
-   "temp_c": 44,
+   "temp_c": 32,
    "fan_pct": 35
   }
  ],
