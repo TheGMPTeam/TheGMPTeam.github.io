@@ -1,18 +1,18 @@
 {
- "updated": "2026-11-26T10:59:30Z",
+ "updated": "2026-11-26T11:14:35Z",
  "host": "server",
  "os": "Ubuntu LTS",
- "uptime_s": 7087,
+ "uptime_s": 7992,
  "cpu": {
   "cores": 24,
-  "load1": "3.68",
-  "load5": "3.91",
-  "usage_pct": 8.8
+  "load1": "1.58",
+  "load5": "1.60",
+  "usage_pct": 5.7
  },
  "memory": {
   "total_mb": 124359,
-  "used_mb": 15152,
-  "pct": 12.2
+  "used_mb": 13446,
+  "pct": 10.8
  },
  "disks": [
   {
@@ -28,8 +28,8 @@
    "util_pct": 0,
    "vram_used_mb": 241,
    "vram_total_mb": 12288,
-   "temp_c": 32,
-   "fan_pct": 34
+   "temp_c": 33,
+   "fan_pct": 35
   },
   {
    "name": "RTX 5060 Ti",
