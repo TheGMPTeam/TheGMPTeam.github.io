@@ -1,17 +1,17 @@
 {
- "updated": "2026-11-27T18:44:34Z",
+ "updated": "2026-11-27T18:59:38Z",
  "host": "server",
  "os": "Ubuntu LTS",
- "uptime_s": 7623,
+ "uptime_s": 8528,
  "cpu": {
   "cores": 24,
-  "load1": "0.20",
-  "load5": "0.14",
-  "usage_pct": 0.8
+  "load1": "0.27",
+  "load5": "0.27",
+  "usage_pct": 0.1
  },
  "memory": {
   "total_mb": 124359,
-  "used_mb": 91751,
+  "used_mb": 91779,
   "pct": 73.8
  },
  "disks": [
